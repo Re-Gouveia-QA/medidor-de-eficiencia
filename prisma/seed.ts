@@ -15,7 +15,27 @@ async function main() {
   const categorias = [
     { nome: 'Trabalho', cor: '#2563EB', descricao: 'Atividades profissionais' },
     { nome: 'Estudos', cor: '#16A34A', descricao: 'Cursos, leituras e prática' },
-    { nome: 'Lazer', cor: '#F59E0B', descricao: 'Descanso e diversão' },
+    {
+      nome: 'Lazer',
+      cor: '#F59E0B',
+      descricao: 'Descanso e diversão',
+      duracaoPadraoMin: 60, // toda atividade de lazer sugere 1h de duração
+    },
+    {
+      nome: 'Deslocamento',
+      cor: '#9333EA',
+      descricao: 'Trajetos para o trabalho ou compromissos',
+      possuiValor: true,
+      valorLabel: 'Custo da passagem (R$)',
+      valorPadrao: 4.4,
+    },
+    {
+      nome: 'Poupança',
+      cor: '#0D9488',
+      descricao: 'Depósitos em conta de investimento',
+      possuiValor: true,
+      valorLabel: 'Valor do depósito (R$)',
+    },
   ];
 
   for (const c of categorias) {

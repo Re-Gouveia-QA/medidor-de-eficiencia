@@ -30,6 +30,12 @@ model Category {
   descricao         String?
   cor               String // hexadecimal, ex.: #3B82F6 (regra 6)
   tempoDesejadoMin  Int?       @map("tempo_desejado_min") // meta opcional
+  // Regra 9: valor numérico de referência por atividade (ex.: custo de passagem, valor de depósito)
+  possuiValor       Boolean    @default(false) @map("possui_valor")
+  valorLabel        String?    @map("valor_label") // rótulo exibido no formulário, ex.: "Custo da passagem (R$)"
+  valorPadrao       Decimal?   @db.Decimal(12, 2) @map("valor_padrao") // sugerido ao registrar atividade, pode ser alterado
+  // Regra 10: duração padrão sugerida para atividades desta categoria (ex.: Lazer sempre 1h)
+  duracaoPadraoMin  Int?       @map("duracao_padrao_min")
   criadoEm          DateTime   @default(now()) @map("criado_em")
   user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   atividades        Activity[]
@@ -48,6 +54,8 @@ model Activity {
   horaInicio   DateTime @map("hora_inicio") // armazenado em UTC (RNF05)
   horaFim      DateTime @map("hora_fim")
   duracaoMin   Int      @map("duracao_min") // sempre calculado pelo sistema (regra 5)
+  // Regra 9: valor numérico de referência, só é relevante quando category.possuiValor = true
+  valor        Decimal? @db.Decimal(12, 2)
   descricao    String?
   criadoEm     DateTime @default(now()) @map("criado_em")
   atualizadoEm DateTime @updatedAt @map("atualizado_em")
