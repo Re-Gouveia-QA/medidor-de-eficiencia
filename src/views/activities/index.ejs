@@ -1,0 +1,46 @@
+<div class="page-header">
+  <h1>Visualizar Atividades</h1>
+  <a class="btn btn-primary" href="/activities/new">Registrar atividade</a>
+</div>
+
+<form method="GET" action="/activities" class="filters">
+  <label>De <input type="date" name="inicio" value="<%= filtros.inicio %>" /></label>
+  <label>Até <input type="date" name="fim" value="<%= filtros.fim %>" /></label>
+  <label>Categoria
+    <select name="categoria">
+      <option value="">Todas</option>
+      <% categorias.forEach((c) => { %>
+        <option value="<%= c.id %>" <%= filtros.categoria === c.id ? 'selected' : '' %>><%= c.nome %></option>
+      <% }) %>
+    </select>
+  </label>
+  <button type="submit" class="btn">Filtrar</button>
+</form>
+
+<% if (atividades.length === 0) { %>
+  <p class="muted">Nenhuma atividade encontrada para os filtros selecionados.</p>
+<% } else { %>
+  <ul class="list">
+    <% atividades.forEach((a) => { %>
+      <li class="list-item">
+        <span class="color-dot" style="background: <%= a.category.cor %>"></span>
+        <div class="list-item-body">
+          <strong><%= a.nome %></strong>
+          <span class="muted">
+            <%= a.data.toISOString().slice(0, 10).split('-').reverse().join('/') %> ·
+            <%= a.horaInicio.toISOString().slice(11, 16) %>–<%= a.horaFim.toISOString().slice(11, 16) %> ·
+            <%= formatMinutes(a.duracaoMin) %> · <%= a.category.nome %>
+          </span>
+          <% if (a.descricao) { %><span class="muted"><%= a.descricao %></span><% } %>
+        </div>
+        <div class="actions">
+          <a class="btn btn-small" href="/activities/<%= a.id %>/edit">Editar</a>
+          <form action="/activities/<%= a.id %>?_method=DELETE" method="POST" class="inline"
+                onsubmit="return confirm('Excluir esta atividade?')">
+            <button type="submit" class="btn btn-small btn-danger">Excluir</button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>

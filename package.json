@@ -1,0 +1,54 @@
+{
+  "name": "medidor-de-eficiencia",
+  "version": "0.1.0",
+  "description": "Sistema web para registro de atividades e análise de eficiência pessoal (MVP)",
+  "private": true,
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json && npm run copy:assets",
+    "copy:assets": "cpy 'src/views/**/*' dist/views --parents=false --cwd=. && cpy 'public/**/*' dist/public",
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "db:seed": "tsx prisma/seed.ts",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.{ts,ejs}\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.1",
+    "method-override": "^3.0.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/connect-flash": "^0.0.40",
+    "@types/express": "^4.17.21",
+    "@types/express-ejs-layouts": "^2.5.4",
+    "@types/express-session": "^1.18.0",
+    "@types/method-override": "^0.0.35",
+    "@types/node": "^20.14.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "cpy-cli": "^5.0.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "prisma": "^5.22.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.4"
+  }
+}

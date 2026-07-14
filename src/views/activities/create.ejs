@@ -1,0 +1,35 @@
+<h1><%= atividade ? 'Editar Atividade' : 'Registrar Nova Atividade' %></h1>
+
+<form action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>" method="POST" class="form form-narrow">
+  <label for="nome">Nome da atividade</label>
+  <input type="text" id="nome" name="nome" required value="<%= atividade?.nome ?? '' %>" />
+
+  <label for="categoryId">Categoria</label>
+  <select id="categoryId" name="categoryId" required>
+    <% categorias.forEach((c) => { %>
+      <option value="<%= c.id %>" <%= atividade?.categoryId === c.id ? 'selected' : '' %>><%= c.nome %></option>
+    <% }) %>
+  </select>
+
+  <label for="data">Data</label>
+  <input type="date" id="data" name="data" required
+         value="<%= atividade ? atividade.data.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>" />
+
+  <div class="form-row">
+    <div>
+      <label for="horaInicio">Hora de início</label>
+      <input type="time" id="horaInicio" name="horaInicio" required
+             value="<%= atividade ? atividade.horaInicio.toISOString().slice(11, 16) : '' %>" />
+    </div>
+    <div>
+      <label for="horaFim">Hora de fim</label>
+      <input type="time" id="horaFim" name="horaFim" required
+             value="<%= atividade ? atividade.horaFim.toISOString().slice(11, 16) : '' %>" />
+    </div>
+  </div>
+
+  <label for="descricao">Descrição / observações (opcional)</label>
+  <textarea id="descricao" name="descricao" rows="4"><%= atividade?.descricao ?? '' %></textarea>
+
+  <button type="submit" class="btn btn-primary"><%= atividade ? 'Salvar' : 'Registrar' %></button>
+</form>

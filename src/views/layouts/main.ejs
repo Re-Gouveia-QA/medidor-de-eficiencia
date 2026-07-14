@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> · Medidor de Eficiência</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">⏱ Medidor de Eficiência</a>
+    <% if (currentUser) { %>
+    <nav class="nav">
+      <a href="/activities/new">Registrar</a>
+      <a href="/activities">Atividades</a>
+      <a href="/categories">Categorias</a>
+      <a href="/reports">Relatórios</a>
+      <form action="/logout" method="POST" class="inline">
+        <button type="submit" class="link-button">Sair</button>
+      </form>
+    </nav>
+    <% } %>
+  </header>
+
+  <main class="container">
+    <%- include('../partials/flash') %>
+    <%- body %>
+  </main>
+</body>
+</html>

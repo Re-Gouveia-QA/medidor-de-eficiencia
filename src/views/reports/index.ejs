@@ -1,0 +1,37 @@
+<h1>Relatório</h1>
+
+<form method="GET" action="/reports" class="filters">
+  <label>De <input type="date" name="inicio" value="<%= filtros.inicio %>" required /></label>
+  <label>Até <input type="date" name="fim" value="<%= filtros.fim %>" required /></label>
+  <button type="submit" class="btn">Aplicar período</button>
+</form>
+
+<div class="report-cards">
+  <div class="card report-card">
+    <span class="report-big"><%= relatorio.diasRegistrados %>/<%= relatorio.diasNoPeriodo %></span>
+    <span class="muted">dias registrados</span>
+  </div>
+  <div class="card report-card">
+    <span class="report-big"><%= relatorio.totalFormatado %></span>
+    <span class="muted">total de horas registradas no período</span>
+  </div>
+</div>
+
+<h2>Tempo por categoria</h2>
+<% if (relatorio.distribuicao.length === 0) { %>
+  <p class="muted">Nenhuma atividade registrada no período selecionado.</p>
+<% } else { %>
+  <ul class="bars">
+    <% relatorio.distribuicao.forEach((d) => { %>
+      <li>
+        <div class="bar-label">
+          <span><span class="color-dot" style="background: <%= d.cor %>"></span> <%= d.categoria %></span>
+          <span class="muted"><%= d.totalFormatado %> (<%= d.percentual %>%)</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width: <%= d.percentual %>%; background: <%= d.cor %>"></div>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>

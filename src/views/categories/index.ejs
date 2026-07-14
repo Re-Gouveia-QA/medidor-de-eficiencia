@@ -1,0 +1,29 @@
+<div class="page-header">
+  <h1>Visualizar Categorias</h1>
+  <a class="btn btn-primary" href="/categories/new">Nova categoria</a>
+</div>
+
+<% if (categorias.length === 0) { %>
+  <p class="muted">Você ainda não tem categorias. Crie a primeira para começar a registrar atividades.</p>
+<% } else { %>
+  <ul class="list">
+    <% categorias.forEach((c) => { %>
+      <li class="list-item">
+        <span class="color-dot" style="background: <%= c.cor %>"></span>
+        <div class="list-item-body">
+          <strong><%= c.nome %></strong>
+          <% if (c.descricao) { %><span class="muted"><%= c.descricao %></span><% } %>
+          <% if (c.tempoDesejadoMin) { %><span class="muted">Meta: <%= c.tempoDesejadoMin %> min</span><% } %>
+          <span class="muted"><%= c._count.atividades %> atividade(s)</span>
+        </div>
+        <div class="actions">
+          <a class="btn btn-small" href="/categories/<%= c.id %>/edit">Editar</a>
+          <form action="/categories/<%= c.id %>?_method=DELETE" method="POST" class="inline"
+                onsubmit="return confirm('Excluir a categoria <%= c.nome %>?')">
+            <button type="submit" class="btn btn-small btn-danger">Excluir</button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } %>

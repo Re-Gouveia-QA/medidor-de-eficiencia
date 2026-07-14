@@ -1,0 +1,60 @@
+// Schema do banco — Modelos conforme seção 4.2 da documentação
+// User 1—N Category | User 1—N Activity | Category 1—N Activity
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @default(uuid())
+  nome       String
+  email      String     @unique
+  senhaHash  String?    @map("senha_hash") // nulo para conta Google (regra 3)
+  googleId   String?    @unique @map("google_id") // nulo para conta local
+  criadoEm   DateTime   @default(now()) @map("criado_em")
+  categorias Category[]
+  atividades Activity[]
+
+  @@map("users")
+}
+
+model Category {
+  id                String     @id @default(uuid())
+  userId            String     @map("user_id")
+  nome              String
+  descricao         String?
+  cor               String // hexadecimal, ex.: #3B82F6 (regra 6)
+  tempoDesejadoMin  Int?       @map("tempo_desejado_min") // meta opcional
+  criadoEm          DateTime   @default(now()) @map("criado_em")
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  atividades        Activity[]
+
+  // Unicidade de nome por usuário (regra 6)
+  @@unique([userId, nome])
+  @@map("categories")
+}
+
+model Activity {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  categoryId   String   @map("category_id")
+  nome         String
+  data         DateTime @db.Date
+  horaInicio   DateTime @map("hora_inicio") // armazenado em UTC (RNF05)
+  horaFim      DateTime @map("hora_fim")
+  duracaoMin   Int      @map("duracao_min") // sempre calculado pelo sistema (regra 5)
+  descricao    String?
+  criadoEm     DateTime @default(now()) @map("criado_em")
+  atualizadoEm DateTime @updatedAt @map("atualizado_em")
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // Restrict: bloqueia exclusão de categoria com atividades vinculadas (regra 7)
+  category     Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([userId, data])
+  @@map("activities")
+}
