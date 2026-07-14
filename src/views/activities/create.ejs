@@ -7,7 +7,12 @@
   <label for="categoryId">Categoria</label>
   <select id="categoryId" name="categoryId" required>
     <% categorias.forEach((c) => { %>
-      <option value="<%= c.id %>" <%= atividade?.categoryId === c.id ? 'selected' : '' %>><%= c.nome %></option>
+      <option value="<%= c.id %>" <%= atividade?.categoryId === c.id ? 'selected' : '' %>
+        data-duracao-padrao-min="<%= c.duracaoPadraoMin ?? '' %>"
+        data-possui-valor="<%= c.possuiValor %>"
+        data-valor-label="<%= c.valorLabel ?? 'Valor' %>"
+        data-valor-padrao="<%= c.valorPadrao ?? '' %>"
+      ><%= c.nome %></option>
     <% }) %>
   </select>
 
@@ -28,8 +33,64 @@
     </div>
   </div>
 
+  <div id="valorField" class="hidden">
+    <label for="valor" id="valorLabelText">Valor</label>
+    <input type="number" id="valor" name="valor" min="0.01" step="0.01"
+           value="<%= atividade?.valor ?? '' %>" />
+  </div>
+
   <label for="descricao">Descrição / observações (opcional)</label>
   <textarea id="descricao" name="descricao" rows="4"><%= atividade?.descricao ?? '' %></textarea>
 
   <button type="submit" class="btn btn-primary"><%= atividade ? 'Salvar' : 'Registrar' %></button>
 </form>
+
+<script>
+  (function () {
+    var categorySelect = document.getElementById('categoryId');
+    var horaInicio = document.getElementById('horaInicio');
+    var horaFim = document.getElementById('horaFim');
+    var valorField = document.getElementById('valorField');
+    var valorInput = document.getElementById('valor');
+    var valorLabelText = document.getElementById('valorLabelText');
+    var isEditing = <%= atividade ? 'true' : 'false' %>;
+
+    function selectedOption() {
+      return categorySelect.options[categorySelect.selectedIndex];
+    }
+
+    function addMinutes(hhmm, minutes) {
+      var parts = hhmm.split(':').map(Number);
+      var total = parts[0] * 60 + parts[1] + minutes;
+      total = ((total % 1440) + 1440) % 1440;
+      var h = Math.floor(total / 60).toString().padStart(2, '0');
+      var m = (total % 60).toString().padStart(2, '0');
+      return h + ':' + m;
+    }
+
+    function applyCategoryDefaults() {
+      var opt = selectedOption();
+      if (!opt) return;
+
+      var duracaoPadraoMin = opt.getAttribute('data-duracao-padrao-min');
+      if (duracaoPadraoMin && horaInicio.value && !horaFim.value) {
+        horaFim.value = addMinutes(horaInicio.value, Number(duracaoPadraoMin));
+      }
+
+      var possuiValor = opt.getAttribute('data-possui-valor') === 'true';
+      valorField.classList.toggle('hidden', !possuiValor);
+      valorLabelText.textContent = opt.getAttribute('data-valor-label') || 'Valor';
+      if (possuiValor && !isEditing && !valorInput.value) {
+        var valorPadrao = opt.getAttribute('data-valor-padrao');
+        if (valorPadrao) valorInput.value = valorPadrao;
+      }
+    }
+
+    categorySelect.addEventListener('change', applyCategoryDefaults);
+    horaInicio.addEventListener('change', function () {
+      if (!horaFim.value) applyCategoryDefaults();
+    });
+
+    applyCategoryDefaults();
+  })();
+</script>

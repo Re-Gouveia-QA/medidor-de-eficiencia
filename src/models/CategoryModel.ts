@@ -14,11 +14,36 @@ export const CategoryModel = {
     return prisma.category.findFirst({ where: { id, userId } });
   },
 
-  create(userId: string, data: { nome: string; descricao?: string; cor: string; tempoDesejadoMin?: number }) {
+  create(
+    userId: string,
+    data: {
+      nome: string;
+      descricao?: string;
+      cor: string;
+      tempoDesejadoMin?: number;
+      possuiValor?: boolean;
+      valorLabel?: string;
+      valorPadrao?: number;
+      duracaoPadraoMin?: number;
+    },
+  ) {
     return prisma.category.create({ data: { ...data, userId } });
   },
 
-  update(id: string, userId: string, data: { nome: string; descricao?: string; cor: string; tempoDesejadoMin?: number | null }) {
+  update(
+    id: string,
+    userId: string,
+    data: {
+      nome: string;
+      descricao?: string;
+      cor: string;
+      tempoDesejadoMin?: number | null;
+      possuiValor?: boolean;
+      valorLabel?: string | null;
+      valorPadrao?: number | null;
+      duracaoPadraoMin?: number | null;
+    },
+  ) {
     return prisma.category.updateMany({ where: { id, userId }, data });
   },
 

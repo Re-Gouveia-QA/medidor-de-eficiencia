@@ -41,8 +41,11 @@ export const ActivityController = {
       req.flash('error', 'Categoria inválida.');
       return res.redirect('/activities/new');
     }
+    // Regra 9: se o valor não foi informado, usa o valor padrão da categoria (quando houver)
+    const valorInformado = parsed.data.valor === '' ? undefined : Number(parsed.data.valor);
+    const valor = valorInformado ?? (categoria.possuiValor && categoria.valorPadrao != null ? categoria.valorPadrao.toNumber() : undefined);
     try {
-      await ActivityModel.create(req.currentUser!.id, parsed.data);
+      await ActivityModel.create(req.currentUser!.id, { ...parsed.data, valor });
       req.flash('success', 'Atividade registrada com sucesso.');
       res.redirect('/activities');
     } catch (e) {
@@ -69,8 +72,9 @@ export const ActivityController = {
       req.flash('error', parsed.error.errors[0].message);
       return res.redirect(`/activities/${req.params.id}/edit`);
     }
+    const valor = parsed.data.valor === '' ? null : Number(parsed.data.valor);
     try {
-      await ActivityModel.update(req.params.id, req.currentUser!.id, parsed.data);
+      await ActivityModel.update(req.params.id, req.currentUser!.id, { ...parsed.data, valor });
       req.flash('success', 'Atividade atualizada.');
       res.redirect('/activities');
     } catch (e) {

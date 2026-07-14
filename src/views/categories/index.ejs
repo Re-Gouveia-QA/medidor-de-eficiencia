@@ -14,6 +14,8 @@
           <strong><%= c.nome %></strong>
           <% if (c.descricao) { %><span class="muted"><%= c.descricao %></span><% } %>
           <% if (c.tempoDesejadoMin) { %><span class="muted">Meta: <%= c.tempoDesejadoMin %> min</span><% } %>
+          <% if (c.duracaoPadraoMin) { %><span class="muted">Duração padrão: <%= c.duracaoPadraoMin %> min</span><% } %>
+          <% if (c.possuiValor) { %><span class="muted"><%= c.valorLabel || 'Valor' %><% if (c.valorPadrao) { %> · padrão: <%= c.valorPadrao %><% } %></span><% } %>
           <span class="muted"><%= c._count.atividades %> atividade(s)</span>
         </div>
         <div class="actions">

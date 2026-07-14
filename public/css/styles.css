@@ -46,6 +46,9 @@ h2 { font-size: 1.2rem; margin: 1.5rem 0 0.75rem; }
 .form-narrow { max-width: 480px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 input[type="color"] { padding: 0.2rem; height: 2.6rem; cursor: pointer; }
+.checkbox-label { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.9rem; color: var(--text); font-size: 0.9rem; }
+.checkbox-label input { width: auto; }
+.hidden { display: none; }
 
 /* Botões */
 .btn {

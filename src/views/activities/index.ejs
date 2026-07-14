@@ -31,6 +31,9 @@
             <%= a.horaInicio.toISOString().slice(11, 16) %>–<%= a.horaFim.toISOString().slice(11, 16) %> ·
             <%= formatMinutes(a.duracaoMin) %> · <%= a.category.nome %>
           </span>
+          <% if (a.category.possuiValor && a.valor != null) { %>
+            <span class="muted"><%= a.category.valorLabel || 'Valor' %>: <%= a.valor %></span>
+          <% } %>
           <% if (a.descricao) { %><span class="muted"><%= a.descricao %></span><% } %>
         </div>
         <div class="actions">

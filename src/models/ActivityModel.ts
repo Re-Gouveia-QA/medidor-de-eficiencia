@@ -8,6 +8,7 @@ export interface ActivityData {
   horaInicio: string; // HH:mm
   horaFim: string; // HH:mm
   descricao?: string;
+  valor?: number | null; // regra 9 — só relevante se a categoria tiver possuiValor = true
 }
 
 export interface ActivityFilters {
@@ -33,7 +34,7 @@ export const ActivityModel = {
           : {}),
       },
       orderBy: [{ data: 'desc' }, { horaInicio: 'desc' }],
-      include: { category: { select: { nome: true, cor: true } } },
+      include: { category: { select: { nome: true, cor: true, possuiValor: true, valorLabel: true } } },
     });
   },
 
@@ -56,6 +57,7 @@ export const ActivityModel = {
         horaFim,
         duracaoMin,
         descricao: input.descricao || null,
+        valor: input.valor ?? null,
       },
     });
   },
@@ -75,6 +77,7 @@ export const ActivityModel = {
         horaFim,
         duracaoMin,
         descricao: input.descricao || null,
+        valor: input.valor ?? null,
       },
     });
   },
