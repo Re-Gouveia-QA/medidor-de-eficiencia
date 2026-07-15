@@ -13,6 +13,7 @@ Sistema web para registro de atividades diárias e análise de eficiência pesso
 - **Banco:** PostgreSQL via Prisma (`prisma/schema.prisma` é a fonte de verdade dos Models)
 - **Validação:** Zod no servidor (`src/utils/validators.ts`) + atributos HTML5 no cliente (RNF06)
 - **Sessão:** `express-session` (memória em dev; produção deve migrar para `connect-pg-simple`)
+- **Segurança:** `helmet` (cabeçalhos/CSP), `express-rate-limit` (rate limit), `express-async-errors` (encaminha erros de rotas async para o errorHandler)
 - **Testes:** Vitest (`tests/`)
 - **Dev:** `npm run dev` (tsx watch) · **Build:** `npm run build` · **Testes:** `npm test` · **Lint:** `npm run lint`
 
@@ -23,7 +24,7 @@ src/
 ├── controllers/   # Finos: validam entrada (Zod), acionam Models/Services, renderizam Views
 ├── models/        # Regras de domínio + acesso a dados via Prisma (UserModel, CategoryModel, ActivityModel)
 ├── services/      # ReportService (agregações de relatório), GoogleAuthService (OAuth 2.0 com google-auth-library)
-├── middlewares/   # requireAuth (protege rotas privadas — RNF02), errorHandler
+├── middlewares/   # requireAuth/requireAdmin (RNF02), flash (substitui connect-flash), errorHandler
 ├── routes/        # Mapeamento rota → Controller#ação (seguir seção 4.5 da documentação)
 ├── config/        # env (validado com Zod no boot), database (Prisma singleton), session
 ├── utils/         # time.ts (duração/UTC), validators.ts (schemas Zod)
@@ -47,6 +48,17 @@ src/
 8. Datas/horários armazenados em UTC (RNF05); exibição no fuso do usuário ainda pendente (Fase 6).
 9. Categoria pode habilitar um valor numérico (`possuiValor` + `valorLabel` + `valorPadrao` opcional) para referência de métricas (ex.: custo de passagem em "Deslocamento", valor de depósito em "Poupança"). Ao registrar uma atividade sem informar o valor, usa-se `valorPadrao` da categoria quando definido; o campo `Activity.valor` só é relevante quando `category.possuiValor = true`.
 10. Categoria pode ter `duracaoPadraoMin` opcional (ex.: Lazer sempre 1h). Isso apenas sugere a hora de fim no formulário (`horaInicio + duracaoPadraoMin`) — não força a duração; `duracaoMin` continua sempre calculado de hora início/fim (regra 5).
+11. `User.isAdmin` restringe o acesso a `/docs` (documentação Swagger/OpenAPI): `requireAdmin` (em `middlewares/requireAuth.ts`) roda depois de `requireAuth` e bloqueia não-administradores redirecionando para `/` com flash de erro. O status é copiado para `req.session.isAdmin` no login (local, registro e Google) — não há UI para promover usuários; isso é feito diretamente no banco (`UPDATE users SET is_admin = true` ou `prisma studio`).
+
+## Segurança e confiabilidade
+
+- **CSP restritiva (helmet):** `script-src 'self'` e `script-src-attr 'none'` — proibido usar `<script>` inline ou atributos `onclick`/`onsubmit` etc. em views. JS de página fica em `public/js/*.js` (ver `activity-form.js`, `category-form.js`); dados do servidor para esses scripts vão em atributos `data-*`, nunca interpolados dentro de `<script>` ou de um atributo de evento (isso já causou um XSS armazenado via nome de categoria — corrigido trocando `onsubmit` por `data-confirm` + `public/js/confirm-submit.js`, delegado no layout).
+- **`/docs` tem CSP própria (desabilitada)** — Swagger UI depende de recursos que a política padrão bloquearia; isso só se aplica àquela rota, já restrita a admins.
+- **Rate limit (`src/config/rateLimit.ts`):** `globalLimiter` (300 req/15min por IP, toda a app) + `authLimiter` (10 req/15min por IP, aplicado a `POST /login`, `POST /register` e `GET /auth/google/callback`) contra força bruta/spam. Ambos são desabilitados quando `NODE_ENV=test` (`skip`), senão os testes de rota se bloqueiam entre si.
+- **`app.set('trust proxy', 1)` só em produção** (`isProd`) — necessário para o rate limit e o cookie `secure` enxergarem o IP/protocolo reais atrás de um proxy/load balancer; não habilitar em dev (permitiria spoofing de IP via `X-Forwarded-For`).
+- **`express-async-errors`** (importado no topo de `app.ts`) — sem isso, uma exceção em um controller `async` sem try/catch (ex.: data inválida em `?inicio=`) vira uma rejeição de Promise não tratada que o Express 4 não captura, travando a requisição e podendo derrubar o processo Node inteiro (unhandled rejection). Com o import, todo erro assíncrono de rota cai no `errorHandler` normalmente. `server.ts` ainda tem um `process.on('unhandledRejection', ...)` como rede de segurança.
+- **RF12 (isolamento por usuário):** ao aceitar um `categoryId` vindo do formulário (`ActivityController.store` E `update`), sempre validar com `CategoryModel.findById(categoryId, userId)` antes de gravar — sem isso, um usuário pode associar sua atividade à categoria de outro usuário e vazar `nome`/`cor`/`valorLabel` dela nos próprios relatórios/listagens.
+- **`connect-flash` foi removido** (abandonado desde 2014, usa a API depreciada `util.isArray`) e substituído por `src/middlewares/flash.ts`, com a mesma assinatura (`req.flash(type, msg)` / `req.flash(type)`).
 
 ## Status do roadmap
 
@@ -73,4 +85,4 @@ App mobile nativo, dashboards customizáveis, anexos de arquivos, compartilhamen
 
 ## Credenciais de desenvolvimento
 
-Seed (`npm run db:seed`): usuário `demo@medidor.dev` / senha `senha12345`, com 3 categorias de exemplo.
+Seed (`npm run db:seed`): usuário `demo@medidor.dev` / senha `senha12345` (administrador — `isAdmin = true`, acessa `/docs`), com 5 categorias de exemplo.
