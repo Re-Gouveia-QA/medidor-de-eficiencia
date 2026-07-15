@@ -3,8 +3,11 @@ import express from 'express';
 import expressLayouts from 'express-ejs-layouts';
 import flash from 'connect-flash';
 import methodOverride from 'method-override';
+import swaggerUi from 'swagger-ui-express';
 import { sessionMiddleware } from './config/session';
+import { loadOpenApiDocument } from './config/openapi';
 import { routes } from './routes';
+import { requireAuth } from './middlewares/requireAuth';
 import { errorHandler, notFound } from './middlewares/errorHandler';
 
 export function createApp() {
@@ -32,6 +35,9 @@ export function createApp() {
       : null;
     next();
   });
+
+  // Documentação da API (Swagger/OpenAPI) — protegida por login
+  app.use('/docs', requireAuth, swaggerUi.serve, swaggerUi.setup(loadOpenApiDocument()));
 
   // Rotas (camada Controller)
   app.use(routes);

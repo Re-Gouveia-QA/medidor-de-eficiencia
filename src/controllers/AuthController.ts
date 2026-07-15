@@ -1,5 +1,7 @@
+import crypto from 'node:crypto';
 import { Request, Response } from 'express';
 import { UserModel } from '../models/UserModel';
+import { GoogleAuthService } from '../services/GoogleAuthService';
 import { loginSchema, registerSchema } from '../utils/validators';
 
 export const AuthController = {
@@ -53,9 +55,38 @@ export const AuthController = {
     res.redirect('/');
   },
 
-  /** RF03 — Fase 5 do roadmap (ver GoogleAuthService). */
-  googleCallback(_req: Request, res: Response) {
-    res.status(501).send('Login com Google será implementado na Fase 5.');
+  /** RF03 — inicia o fluxo OAuth 2.0 redirecionando ao consent screen do Google. */
+  googleLogin(req: Request, res: Response) {
+    if (!GoogleAuthService.isConfigured()) {
+      req.flash('error', 'Login com Google não está disponível no momento.');
+      return res.redirect('/login');
+    }
+    const state = crypto.randomBytes(16).toString('hex');
+    req.session.oauthState = state;
+    res.redirect(GoogleAuthService.getAuthUrl(state));
+  },
+
+  /** RF03 — troca o code por perfil e autentica, vinculando à conta local se o e-mail já existir (regra 3). */
+  async googleCallback(req: Request, res: Response) {
+    const { code, state, error } = req.query as Record<string, string | undefined>;
+    const expectedState = req.session.oauthState;
+    req.session.oauthState = undefined;
+
+    if (error || !code || !state || !expectedState || state !== expectedState) {
+      req.flash('error', 'Não foi possível autenticar com o Google. Tente novamente.');
+      return res.redirect('/login');
+    }
+
+    try {
+      const profile = await GoogleAuthService.handleCallback(code);
+      const user = await UserModel.findOrCreateFromGoogle(profile.googleId, profile.nome, profile.email);
+      req.session.userId = user.id;
+      req.session.userName = user.nome;
+      res.redirect('/');
+    } catch {
+      req.flash('error', 'Não foi possível autenticar com o Google. Tente novamente.');
+      res.redirect('/login');
+    }
   },
 
   logout(req: Request, res: Response) {

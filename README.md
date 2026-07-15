@@ -44,7 +44,7 @@ npm run dev               # http://localhost:3000 com hot reload (tsx watch)
 src/
 ├── controllers/   # Recebem requisições, validam entrada, acionam Models/Services
 ├── models/        # Regras de domínio + acesso a dados (via Prisma)
-├── services/      # ReportService (agregações), GoogleAuthService (Fase 5)
+├── services/      # ReportService (agregações), GoogleAuthService (OAuth 2.0 com google-auth-library)
 ├── middlewares/   # requireAuth (RNF02), errorHandler
 ├── routes/        # Mapeamento de rotas → Controller#ação (seção 4.5 da doc)
 ├── config/        # env (zod), database (Prisma singleton), session
@@ -62,7 +62,7 @@ tests/             # vitest
 - [x] **Fase 2 — Categorias:** CRUD completo
 - [x] **Fase 3 — Atividades:** CRUD com duração calculada e filtros
 - [x] **Fase 4 — Relatórios:** dias registrados, total de horas, tempo por categoria
-- [ ] **Fase 5 — Login Google:** OAuth 2.0 (stub em `GoogleAuthService`)
+- [x] **Fase 5 — Login Google:** OAuth 2.0 (`GET /auth/google` + `/auth/google/callback`; requer `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`/`GOOGLE_CALLBACK_URL` no `.env`)
 - [ ] **Fase 6 — Qualidade:** testes BDD completos, i18n en-US (RNF04), fuso do usuário (RNF05), revisão final
 
 ## Decisões técnicas

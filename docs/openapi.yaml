@@ -1,0 +1,559 @@
+openapi: 3.0.3
+info:
+  title: Medidor de Eficiência
+  description: >
+    Sistema web para registro de atividades diárias e análise de eficiência pessoal.
+    A aplicação é um MVC server-side renderizado (Express + EJS): a maioria das rotas
+    responde com HTML e usa redirects (302) após operações de escrita, seguindo o
+    padrão Post/Redirect/Get de formulários HTML tradicionais — não é uma API JSON.
+    Esta spec documenta a superfície de rotas para referência de desenvolvimento.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:3000
+    description: Ambiente de desenvolvimento
+
+tags:
+  - name: Auth
+    description: Cadastro, login, logout e login social (Google — Fase 5)
+  - name: Home
+    description: Página inicial
+  - name: Atividades
+    description: CRUD de atividades diárias (regras 4, 5, 9, 10)
+  - name: Categorias
+    description: CRUD de categorias (regras 6, 7, 9, 10)
+  - name: Relatórios
+    description: Relatórios de eficiência por período (regras 7, 8)
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: connect.sid
+      description: >
+        Sessão autenticada via express-session (RNF02). Rotas privadas sem sessão
+        válida redirecionam (302) para /login.
+
+  schemas:
+    Categoria:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+          example: Deslocamento
+        descricao:
+          type: string
+          nullable: true
+        cor:
+          type: string
+          pattern: '^#[0-9A-Fa-f]{6}$'
+          example: "#9333EA"
+        tempoDesejadoMin:
+          type: integer
+          nullable: true
+          description: Meta opcional de tempo desejado por dia, em minutos.
+        possuiValor:
+          type: boolean
+          description: Regra 9 — habilita um valor numérico de referência nas atividades desta categoria.
+        valorLabel:
+          type: string
+          nullable: true
+          example: Custo da passagem (R$)
+        valorPadrao:
+          type: number
+          format: double
+          nullable: true
+          description: Sugerido ao registrar uma atividade nesta categoria; pode ser alterado.
+        duracaoPadraoMin:
+          type: integer
+          nullable: true
+          description: Regra 10 — sugere a hora de fim (horaInicio + duracaoPadraoMin) no formulário de atividade.
+
+    Atividade:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nome:
+          type: string
+        categoryId:
+          type: string
+          format: uuid
+        data:
+          type: string
+          format: date
+        horaInicio:
+          type: string
+          format: date-time
+        horaFim:
+          type: string
+          format: date-time
+        duracaoMin:
+          type: integer
+          description: Regra 5 — sempre calculado pelo sistema a partir de horaInicio/horaFim.
+        valor:
+          type: number
+          format: double
+          nullable: true
+          description: Regra 9 — só é relevante quando a categoria tem possuiValor = true.
+        descricao:
+          type: string
+          nullable: true
+
+    ErroValidacao:
+      type: object
+      description: >
+        As respostas de erro de validação não retornam JSON: o servidor grava a mensagem
+        via flash message (sessão) e responde 302 redirecionando de volta ao formulário.
+      properties:
+        mensagem:
+          type: string
+          example: Cor deve estar em formato hexadecimal (#RRGGBB).
+
+  parameters:
+    CategoriaId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    AtividadeId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+paths:
+  /login:
+    get:
+      tags: [Auth]
+      summary: Exibe o formulário de login
+      responses:
+        "200":
+          description: Página de login renderizada (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Usuário já autenticado — redireciona para a página inicial (/)
+    post:
+      tags: [Auth]
+      summary: Autentica com e-mail e senha
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [email, senha]
+              properties:
+                email:
+                  type: string
+                  format: email
+                senha:
+                  type: string
+      responses:
+        "302":
+          description: >
+            Sucesso: redireciona para / com sessão criada (Set-Cookie).
+            Falha (credenciais inválidas ou payload inválido): redireciona de volta para /login
+            com mensagem de erro via flash.
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /
+
+  /register:
+    get:
+      tags: [Auth]
+      summary: Exibe o formulário de cadastro
+      responses:
+        "200":
+          description: Página de cadastro renderizada (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Usuário já autenticado — redireciona para a página inicial (/)
+    post:
+      tags: [Auth]
+      summary: Cria uma conta local (regra 1 — senha mínima de 8 caracteres, hash bcrypt)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [nome, email, senha]
+              properties:
+                nome:
+                  type: string
+                  minLength: 2
+                email:
+                  type: string
+                  format: email
+                senha:
+                  type: string
+                  minLength: 8
+      responses:
+        "302":
+          description: >
+            Sucesso: cria a conta, autentica e redireciona para /.
+            Falha (e-mail já cadastrado ou payload inválido): redireciona de volta para /register
+            com mensagem de erro via flash.
+
+  /auth/google:
+    get:
+      tags: [Auth]
+      summary: Inicia o login com Google (RF03)
+      description: >
+        Gera um "state" anti-CSRF (guardado na sessão) e redireciona ao consent screen do
+        Google (scope openid email profile). Requer GOOGLE_CLIENT_ID/SECRET/CALLBACK_URL
+        configurados no ambiente — caso contrário, redireciona para /login com erro via flash.
+      responses:
+        "302":
+          description: Redireciona para o consent screen do Google, ou para /login se não configurado/já autenticado.
+
+  /auth/google/callback:
+    get:
+      tags: [Auth]
+      summary: Callback do login com Google OAuth 2.0 (RF03)
+      description: >
+        Valida o "state" contra o guardado na sessão, troca o "code" por tokens, verifica o
+        id_token e autentica via UserModel.findOrCreateFromGoogle — vincula à conta local se
+        o e-mail já existir (regra 3/6).
+      parameters:
+        - name: code
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: error
+          in: query
+          schema:
+            type: string
+          description: Presente quando o usuário nega o consentimento no Google.
+      responses:
+        "302":
+          description: >
+            Sucesso: sessão criada — redireciona para /.
+            Falha (state inválido, code ausente, ou erro na troca/verificação do token):
+            redireciona para /login com mensagem de erro via flash.
+
+  /logout:
+    post:
+      tags: [Auth]
+      summary: Encerra a sessão autenticada
+      security:
+        - sessionAuth: []
+      responses:
+        "302":
+          description: Sessão destruída — redireciona para /login
+
+  /:
+    get:
+      tags: [Home]
+      summary: Página inicial (menu de atalhos)
+      security:
+        - sessionAuth: []
+      responses:
+        "200":
+          description: Página inicial renderizada (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Sem sessão — redireciona para /login
+
+  /activities:
+    get:
+      tags: [Atividades]
+      summary: Lista as atividades do usuário autenticado, com filtros opcionais
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: inicio
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filtra atividades a partir desta data (YYYY-MM-DD)
+        - name: fim
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Filtra atividades até esta data (YYYY-MM-DD)
+        - name: categoria
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filtra por categoria
+      responses:
+        "200":
+          description: Lista de atividades renderizada (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Sem sessão — redireciona para /login
+    post:
+      tags: [Atividades]
+      summary: Registra uma nova atividade
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [nome, categoryId, data, horaInicio, horaFim]
+              properties:
+                nome:
+                  type: string
+                categoryId:
+                  type: string
+                  format: uuid
+                data:
+                  type: string
+                  format: date
+                horaInicio:
+                  type: string
+                  example: "08:00"
+                horaFim:
+                  type: string
+                  example: "08:30"
+                descricao:
+                  type: string
+                valor:
+                  type: number
+                  format: double
+                  description: >
+                    Regra 9 — opcional. Se a categoria tiver possuiValor = true e o campo
+                    for deixado em branco, usa-se o valorPadrao da categoria.
+      responses:
+        "302":
+          description: >
+            Sucesso: redireciona para /activities.
+            Falha (validação, categoria inválida/de outro usuário, ou hora fim <= hora início —
+            regra 4): redireciona de volta para /activities/new com mensagem de erro via flash.
+
+  /activities/new:
+    get:
+      tags: [Atividades]
+      summary: Exibe o formulário de nova atividade
+      security:
+        - sessionAuth: []
+      responses:
+        "200":
+          description: Formulário renderizado (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: >
+            Sem sessão — redireciona para /login. Ou: usuário sem nenhuma categoria
+            cadastrada — redireciona para /categories/new.
+
+  /activities/{id}/edit:
+    get:
+      tags: [Atividades]
+      summary: Exibe o formulário de edição de uma atividade
+      security:
+        - sessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AtividadeId'
+      responses:
+        "200":
+          description: Formulário de edição renderizado (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Atividade não encontrada (ou não pertence ao usuário) — redireciona para /activities
+
+  /activities/{id}:
+    put:
+      tags: [Atividades]
+      summary: Atualiza uma atividade existente
+      security:
+        - sessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AtividadeId'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Atividade'
+      responses:
+        "302":
+          description: >
+            Sucesso: redireciona para /activities.
+            Falha (validação ou hora fim <= hora início): redireciona de volta para
+            /activities/{id}/edit com mensagem de erro via flash.
+    delete:
+      tags: [Atividades]
+      summary: Exclui uma atividade
+      security:
+        - sessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/AtividadeId'
+      responses:
+        "302":
+          description: Redireciona para /activities
+
+  /categories:
+    get:
+      tags: [Categorias]
+      summary: Lista as categorias do usuário autenticado
+      security:
+        - sessionAuth: []
+      responses:
+        "200":
+          description: Lista de categorias renderizada (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Sem sessão — redireciona para /login
+    post:
+      tags: [Categorias]
+      summary: Cria uma nova categoria
+      security:
+        - sessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [nome, cor]
+              properties:
+                nome:
+                  type: string
+                descricao:
+                  type: string
+                cor:
+                  type: string
+                  pattern: '^#[0-9A-Fa-f]{6}$'
+                tempoDesejadoMin:
+                  type: integer
+                possuiValor:
+                  type: string
+                  description: Checkbox HTML — enviado como "on" quando marcado, ausente quando desmarcado.
+                  example: "on"
+                valorLabel:
+                  type: string
+                valorPadrao:
+                  type: number
+                  format: double
+                duracaoPadraoMin:
+                  type: integer
+      responses:
+        "302":
+          description: >
+            Sucesso: redireciona para /categories.
+            Falha (validação ou nome duplicado — regra 6): redireciona de volta para
+            /categories/new com mensagem de erro via flash.
+
+  /categories/new:
+    get:
+      tags: [Categorias]
+      summary: Exibe o formulário de nova categoria
+      security:
+        - sessionAuth: []
+      responses:
+        "200":
+          description: Formulário renderizado (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Sem sessão — redireciona para /login
+
+  /categories/{id}/edit:
+    get:
+      tags: [Categorias]
+      summary: Exibe o formulário de edição de uma categoria
+      security:
+        - sessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CategoriaId'
+      responses:
+        "200":
+          description: Formulário de edição renderizado (HTML)
+          content:
+            text/html: {}
+        "302":
+          description: Categoria não encontrada (ou não pertence ao usuário) — redireciona para /categories
+
+  /categories/{id}:
+    put:
+      tags: [Categorias]
+      summary: Atualiza uma categoria existente
+      security:
+        - sessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CategoriaId'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Categoria'
+      responses:
+        "302":
+          description: >
+            Sucesso: redireciona para /categories.
+            Falha (validação ou nome duplicado): redireciona de volta para /categories/{id}/edit
+            com mensagem de erro via flash.
+    delete:
+      tags: [Categorias]
+      summary: Exclui uma categoria
+      description: "Regra 7 — bloqueada se houver atividades vinculadas (onDelete: Restrict no banco)."
+      security:
+        - sessionAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CategoriaId'
+      responses:
+        "302":
+          description: >
+            Redireciona para /categories. Se houver atividades vinculadas, a exclusão é
+            bloqueada e uma mensagem de erro é exibida via flash.
+
+  /reports:
+    get:
+      tags: [Relatórios]
+      summary: Relatório de eficiência por período
+      description: >
+        Regra 8 — sem parâmetros, usa o período padrão (mês corrente).
+        Regra 7 — "dia registrado" é um dia com ao menos uma atividade.
+      security:
+        - sessionAuth: []
+      parameters:
+        - name: inicio
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Início do período (YYYY-MM-DD). Deve ser informado junto com "fim".
+        - name: fim
+          in: query
+          schema:
+            type: string
+            format: date
+          description: Fim do período (YYYY-MM-DD). Deve ser informado junto com "inicio".
+      responses:
+        "200":
+          description: Relatório renderizado (HTML) com dias registrados, total de horas e distribuição por categoria
+          content:
+            text/html: {}
+        "302":
+          description: Sem sessão — redireciona para /login

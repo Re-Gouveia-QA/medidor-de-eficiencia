@@ -12,6 +12,7 @@ describe('requireAuth — proteção de rotas privadas (RNF02)', () => {
     '/categories',
     '/categories/new',
     '/reports',
+    '/docs',
   ];
 
   it.each(rotasProtegidas)('GET %s redireciona para /login quando não autenticado', async (rota) => {

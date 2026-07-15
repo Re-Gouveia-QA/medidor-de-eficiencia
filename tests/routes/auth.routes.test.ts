@@ -2,9 +2,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../../src/app';
 import { UserModel } from '../../src/models/UserModel';
+import { GoogleAuthService } from '../../src/services/GoogleAuthService';
 import { loginAgent, TEST_USER } from '../helpers/auth';
 
 vi.mock('../../src/models/UserModel');
+vi.mock('../../src/services/GoogleAuthService');
 
 describe('Rotas de autenticação', () => {
   const app = createApp();
@@ -122,9 +124,102 @@ describe('Rotas de autenticação', () => {
     expect(home.status).toBe(200);
   });
 
-  it('GET /auth/google/callback retorna 501 (stub — Fase 5)', async () => {
-    const res = await request(app).get('/auth/google/callback');
-    expect(res.status).toBe(501);
+  it('GET /auth/google redireciona ao consent screen do Google quando configurado (RF03)', async () => {
+    vi.mocked(GoogleAuthService.isConfigured).mockReturnValue(true);
+    vi.mocked(GoogleAuthService.getAuthUrl).mockImplementation((state) => `https://accounts.google.com/mock?state=${state}`);
+
+    const res = await request(app).get('/auth/google');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toMatch(/^https:\/\/accounts\.google\.com\/mock\?state=/);
+    expect(GoogleAuthService.getAuthUrl).toHaveBeenCalledWith(expect.any(String));
+  });
+
+  it('GET /auth/google redireciona para /login quando o Google não está configurado', async () => {
+    vi.mocked(GoogleAuthService.isConfigured).mockReturnValue(false);
+
+    const res = await request(app).get('/auth/google');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/login');
+    expect(GoogleAuthService.getAuthUrl).not.toHaveBeenCalled();
+  });
+
+  it('GET /auth/google/callback autentica e redireciona para a home quando o state confere (regra 3)', async () => {
+    vi.mocked(GoogleAuthService.isConfigured).mockReturnValue(true);
+    vi.mocked(GoogleAuthService.getAuthUrl).mockImplementation((state) => `https://accounts.google.com/mock?state=${state}`);
+    vi.mocked(GoogleAuthService.handleCallback).mockResolvedValue({
+      googleId: 'google-1',
+      nome: 'Demo Google',
+      email: 'demo@medidor.dev',
+    });
+    vi.mocked(UserModel.findOrCreateFromGoogle).mockResolvedValue({
+      id: 'user-3',
+      nome: 'Demo Google',
+      email: 'demo@medidor.dev',
+      senhaHash: null,
+      googleId: 'google-1',
+      criadoEm: new Date(),
+    } as never);
+
+    const agent = request.agent(app);
+    await agent.get('/auth/google');
+    const state = vi.mocked(GoogleAuthService.getAuthUrl).mock.calls[0][0];
+
+    const res = await agent.get('/auth/google/callback').query({ code: 'auth-code', state });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+    expect(GoogleAuthService.handleCallback).toHaveBeenCalledWith('auth-code');
+    expect(UserModel.findOrCreateFromGoogle).toHaveBeenCalledWith('google-1', 'Demo Google', 'demo@medidor.dev');
+
+    const home = await agent.get('/');
+    expect(home.status).toBe(200);
+  });
+
+  it('GET /auth/google/callback com state divergente redireciona para /login sem autenticar (CSRF)', async () => {
+    vi.mocked(GoogleAuthService.isConfigured).mockReturnValue(true);
+    vi.mocked(GoogleAuthService.getAuthUrl).mockImplementation((state) => `https://accounts.google.com/mock?state=${state}`);
+
+    const agent = request.agent(app);
+    await agent.get('/auth/google');
+
+    const res = await agent.get('/auth/google/callback').query({ code: 'auth-code', state: 'state-forjado' });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/login');
+    expect(GoogleAuthService.handleCallback).not.toHaveBeenCalled();
+  });
+
+  it('GET /auth/google/callback sem fluxo iniciado (sem state na sessão) redireciona para /login', async () => {
+    const res = await request(app).get('/auth/google/callback').query({ code: 'auth-code', state: 'qualquer' });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/login');
+    expect(GoogleAuthService.handleCallback).not.toHaveBeenCalled();
+  });
+
+  it('GET /auth/google/callback com erro do provedor (?error=access_denied) redireciona para /login', async () => {
+    vi.mocked(GoogleAuthService.isConfigured).mockReturnValue(true);
+    vi.mocked(GoogleAuthService.getAuthUrl).mockImplementation((state) => `https://accounts.google.com/mock?state=${state}`);
+
+    const agent = request.agent(app);
+    await agent.get('/auth/google');
+
+    const res = await agent.get('/auth/google/callback').query({ error: 'access_denied' });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/login');
+    expect(GoogleAuthService.handleCallback).not.toHaveBeenCalled();
+  });
+
+  it('GET /auth/google/callback redireciona para /login quando a troca do token falha', async () => {
+    vi.mocked(GoogleAuthService.isConfigured).mockReturnValue(true);
+    vi.mocked(GoogleAuthService.getAuthUrl).mockImplementation((state) => `https://accounts.google.com/mock?state=${state}`);
+    vi.mocked(GoogleAuthService.handleCallback).mockRejectedValue(new Error('token inválido'));
+
+    const agent = request.agent(app);
+    await agent.get('/auth/google');
+    const state = vi.mocked(GoogleAuthService.getAuthUrl).mock.calls[0][0];
+
+    const res = await agent.get('/auth/google/callback').query({ code: 'auth-code', state });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/login');
+    expect(UserModel.findOrCreateFromGoogle).not.toHaveBeenCalled();
   });
 
   it('POST /logout encerra a sessão e redireciona para /login', async () => {
