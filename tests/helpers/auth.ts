@@ -10,13 +10,14 @@ export const TEST_USER = { id: 'user-1', nome: 'Demo', email: 'demo@medidor.dev'
  * Faz login via POST /login (mockando UserModel) e retorna um agent do supertest
  * já autenticado, reutilizável para requisições subsequentes às rotas privadas.
  */
-export async function loginAgent(app: Express) {
+export async function loginAgent(app: Express, options: { isAdmin?: boolean } = {}) {
   vi.mocked(UserModel.findByEmail).mockResolvedValueOnce({
     id: TEST_USER.id,
     nome: TEST_USER.nome,
     email: TEST_USER.email,
     senhaHash: 'hash-fake',
     googleId: null,
+    isAdmin: options.isAdmin ?? false,
     criadoEm: new Date(),
   } as never);
   vi.mocked(UserModel.verifyPassword).mockResolvedValueOnce(true);

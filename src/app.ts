@@ -7,7 +7,7 @@ import swaggerUi from 'swagger-ui-express';
 import { sessionMiddleware } from './config/session';
 import { loadOpenApiDocument } from './config/openapi';
 import { routes } from './routes';
-import { requireAuth } from './middlewares/requireAuth';
+import { requireAdmin, requireAuth } from './middlewares/requireAuth';
 import { errorHandler, notFound } from './middlewares/errorHandler';
 
 export function createApp() {
@@ -31,13 +31,13 @@ export function createApp() {
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.currentUser = req.session.userId
-      ? { id: req.session.userId, nome: req.session.userName }
+      ? { id: req.session.userId, nome: req.session.userName, isAdmin: req.session.isAdmin ?? false }
       : null;
     next();
   });
 
-  // Documentação da API (Swagger/OpenAPI) — protegida por login
-  app.use('/docs', requireAuth, swaggerUi.serve, swaggerUi.setup(loadOpenApiDocument()));
+  // Documentação da API (Swagger/OpenAPI) — restrita a administradores (regra 11)
+  app.use('/docs', requireAuth, requireAdmin, swaggerUi.serve, swaggerUi.setup(loadOpenApiDocument()));
 
   // Rotas (camada Controller)
   app.use(routes);

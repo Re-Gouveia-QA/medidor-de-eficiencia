@@ -28,6 +28,7 @@ export const AuthController = {
 
     req.session.userId = user.id;
     req.session.userName = user.nome;
+    req.session.isAdmin = user.isAdmin;
     res.redirect('/');
   },
 
@@ -52,6 +53,7 @@ export const AuthController = {
     const user = await UserModel.createLocal(nome, email, senha);
     req.session.userId = user.id;
     req.session.userName = user.nome;
+    req.session.isAdmin = user.isAdmin;
     res.redirect('/');
   },
 
@@ -82,6 +84,7 @@ export const AuthController = {
       const user = await UserModel.findOrCreateFromGoogle(profile.googleId, profile.nome, profile.email);
       req.session.userId = user.id;
       req.session.userName = user.nome;
+      req.session.isAdmin = user.isAdmin;
       res.redirect('/');
     } catch {
       req.flash('error', 'Não foi possível autenticar com o Google. Tente novamente.');

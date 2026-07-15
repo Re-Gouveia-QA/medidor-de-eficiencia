@@ -16,6 +16,7 @@ model User {
   email      String     @unique
   senhaHash  String?    @map("senha_hash") // nulo para conta Google (regra 3)
   googleId   String?    @unique @map("google_id") // nulo para conta local
+  isAdmin    Boolean    @default(false) @map("is_admin") // regra 11: acesso à documentação de rotas (/docs)
   criadoEm   DateTime   @default(now()) @map("criado_em")
   categorias Category[]
   atividades Activity[]

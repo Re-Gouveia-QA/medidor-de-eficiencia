@@ -15,7 +15,7 @@
       <a href="/activities">Atividades</a>
       <a href="/categories">Categorias</a>
       <a href="/reports">Relatórios</a>
-      <a href="/docs">API Docs</a>
+      <% if (currentUser.isAdmin) { %><a href="/docs">API Docs</a><% } %>
       <form action="/logout" method="POST" class="inline">
         <button type="submit" class="link-button">Sair</button>
       </form>
