@@ -1,6 +1,7 @@
 <h1><%= atividade ? 'Editar Atividade' : 'Registrar Nova Atividade' %></h1>
 
-<form action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>" method="POST" class="form form-narrow">
+<form id="activityForm" action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>"
+      method="POST" class="form form-narrow" data-editing="<%= atividade ? 'true' : 'false' %>">
   <label for="nome">Nome da atividade</label>
   <input type="text" id="nome" name="nome" required value="<%= atividade?.nome ?? '' %>" />
 
@@ -45,52 +46,4 @@
   <button type="submit" class="btn btn-primary"><%= atividade ? 'Salvar' : 'Registrar' %></button>
 </form>
 
-<script>
-  (function () {
-    var categorySelect = document.getElementById('categoryId');
-    var horaInicio = document.getElementById('horaInicio');
-    var horaFim = document.getElementById('horaFim');
-    var valorField = document.getElementById('valorField');
-    var valorInput = document.getElementById('valor');
-    var valorLabelText = document.getElementById('valorLabelText');
-    var isEditing = <%= atividade ? 'true' : 'false' %>;
-
-    function selectedOption() {
-      return categorySelect.options[categorySelect.selectedIndex];
-    }
-
-    function addMinutes(hhmm, minutes) {
-      var parts = hhmm.split(':').map(Number);
-      var total = parts[0] * 60 + parts[1] + minutes;
-      total = ((total % 1440) + 1440) % 1440;
-      var h = Math.floor(total / 60).toString().padStart(2, '0');
-      var m = (total % 60).toString().padStart(2, '0');
-      return h + ':' + m;
-    }
-
-    function applyCategoryDefaults() {
-      var opt = selectedOption();
-      if (!opt) return;
-
-      var duracaoPadraoMin = opt.getAttribute('data-duracao-padrao-min');
-      if (duracaoPadraoMin && horaInicio.value && !horaFim.value) {
-        horaFim.value = addMinutes(horaInicio.value, Number(duracaoPadraoMin));
-      }
-
-      var possuiValor = opt.getAttribute('data-possui-valor') === 'true';
-      valorField.classList.toggle('hidden', !possuiValor);
-      valorLabelText.textContent = opt.getAttribute('data-valor-label') || 'Valor';
-      if (possuiValor && !isEditing && !valorInput.value) {
-        var valorPadrao = opt.getAttribute('data-valor-padrao');
-        if (valorPadrao) valorInput.value = valorPadrao;
-      }
-    }
-
-    categorySelect.addEventListener('change', applyCategoryDefaults);
-    horaInicio.addEventListener('change', function () {
-      if (!horaFim.value) applyCategoryDefaults();
-    });
-
-    applyCategoryDefaults();
-  })();
-</script>
+<script src="/js/activity-form.js"></script>

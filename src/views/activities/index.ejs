@@ -38,8 +38,8 @@
         </div>
         <div class="actions">
           <a class="btn btn-small" href="/activities/<%= a.id %>/edit">Editar</a>
-          <form action="/activities/<%= a.id %>?_method=DELETE" method="POST" class="inline"
-                onsubmit="return confirm('Excluir esta atividade?')">
+          <form action="/activities/<%= a.id %>?_method=DELETE" method="POST" class="inline js-confirm-submit"
+                data-confirm="Excluir esta atividade?">
             <button type="submit" class="btn btn-small btn-danger">Excluir</button>
           </form>
         </div>

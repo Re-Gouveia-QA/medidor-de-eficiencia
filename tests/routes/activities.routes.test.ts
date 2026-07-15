@@ -145,6 +145,7 @@ describe('Rotas de atividades', () => {
   });
 
   it('PUT /activities/:id atualiza a atividade e limpa o valor quando enviado em branco', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(fakeCategoria() as never);
     vi.mocked(ActivityModel.update).mockResolvedValue({ count: 1 } as never);
 
     const agent = await loginAgent(app);
@@ -156,6 +157,16 @@ describe('Rotas de atividades', () => {
       TEST_USER.id,
       expect.objectContaining({ valor: null }),
     );
+  });
+
+  it('PUT /activities/:id com categoria de outro usuário é rejeitado (RF12)', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(null);
+
+    const agent = await loginAgent(app);
+    const res = await agent.put('/activities/act-1').type('form').send(atividadeInput);
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/activities/act-1/edit');
+    expect(ActivityModel.update).not.toHaveBeenCalled();
   });
 
   it('DELETE /activities/:id exclui a atividade do usuário autenticado', async () => {

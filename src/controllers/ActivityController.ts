@@ -74,6 +74,12 @@ export const ActivityController = {
       req.flash('error', parsed.error.errors[0].message);
       return res.redirect(`/activities/${req.params.id}/edit`);
     }
+    // RF12: garante que a categoria pertence ao usuário (evita associar a atividade a categoria de outro usuário)
+    const categoria = await CategoryModel.findById(parsed.data.categoryId, req.currentUser!.id);
+    if (!categoria) {
+      req.flash('error', 'Categoria inválida.');
+      return res.redirect(`/activities/${req.params.id}/edit`);
+    }
     const valor = parsed.data.valor === '' || parsed.data.valor === undefined ? null : Number(parsed.data.valor);
     try {
       await ActivityModel.update(req.params.id, req.currentUser!.id, { ...parsed.data, valor });

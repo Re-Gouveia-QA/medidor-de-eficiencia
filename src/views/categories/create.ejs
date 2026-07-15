@@ -39,12 +39,4 @@
   <button type="submit" class="btn btn-primary"><%= categoria ? 'Salvar' : 'Registrar' %></button>
 </form>
 
-<script>
-  (function () {
-    var checkbox = document.getElementById('possuiValor');
-    var fields = document.getElementById('valorFields');
-    checkbox.addEventListener('change', function () {
-      fields.classList.toggle('hidden', !checkbox.checked);
-    });
-  })();
-</script>
+<script src="/js/category-form.js"></script>
