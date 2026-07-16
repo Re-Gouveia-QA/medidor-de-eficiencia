@@ -15,7 +15,7 @@
 }
 .brand { font-family: var(--font-display); font-size: var(--text-xl); color: var(--ink); text-decoration: none; }
 .brand:hover { color: var(--ink); }
-.topbar-actions { display: flex; align-items: center; gap: 8px; }
+.topbar-actions { display: flex; align-items: center; gap: 12px; }
 .topbar-actions form { display: contents; }
 
 /* Botão de docs: mantém a cor azul de link (herdada de "a", components.css) também no hover/focus —
