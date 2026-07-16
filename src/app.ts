@@ -1,6 +1,6 @@
 import 'express-async-errors'; // encaminha rejeições de handlers async para o errorHandler (evita crash do processo)
 import path from 'node:path';
-import express from 'express';
+import express, { Request } from 'express';
 import expressLayouts from 'express-ejs-layouts';
 import methodOverride from 'method-override';
 import helmet from 'helmet';
@@ -13,6 +13,19 @@ import { routes } from './routes';
 import { flash } from './middlewares/flash';
 import { requireAdmin, requireAuth } from './middlewares/requireAuth';
 import { errorHandler, notFound } from './middlewares/errorHandler';
+
+/**
+ * Lê o cookie "theme" (setado via JS por public/js/theme-toggle.js) sem precisar de
+ * cookie-parser — só esse valor importa aqui. Ler no servidor (em vez de só localStorage)
+ * garante que o <html> já nasce com o tema certo, sem depender de um script no <head>
+ * rodar a tempo em toda navegação.
+ */
+function readThemeCookie(req: Request): 'dark' | 'light' {
+  const header = req.headers.cookie;
+  if (!header) return 'light';
+  const match = header.split(';').map((part) => part.trim()).find((part) => part.startsWith('theme='));
+  return match?.slice('theme='.length) === 'dark' ? 'dark' : 'light';
+}
 
 export function createApp() {
   const app = express();
@@ -44,6 +57,8 @@ export function createApp() {
     res.locals.currentUser = req.session.userId
       ? { id: req.session.userId, nome: req.session.userName, isAdmin: req.session.isAdmin ?? false }
       : null;
+    res.locals.currentPath = req.path; // usado pela sidebar para destacar o item ativo
+    res.locals.theme = readThemeCookie(req);
     next();
   });
 
@@ -58,8 +73,19 @@ export function createApp() {
     swaggerUi.setup(loadOpenApiDocument()),
   );
 
-  // Cabeçalhos de segurança (CSP restritiva por padrão) para o restante da aplicação
-  app.use(helmet());
+  // Cabeçalhos de segurança (CSP restritiva por padrão) para o restante da aplicação.
+  // style-src ganha "data:" em relação ao padrão do helmet: a identidade visual (sketch-edge)
+  // usa um filtro SVG (feTurbulence/feDisplacementMap) referenciado via data URI no CSS.
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          'style-src': ["'self'", 'https:', "'unsafe-inline'", 'data:'],
+        },
+      },
+    }),
+  );
 
   // Rotas (camada Controller)
   app.use(routes);

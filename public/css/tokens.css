@@ -1,0 +1,109 @@
+/* Tokens de identidade visual — Medidor de Eficiência ("Caderno de Esboço")
+   Fonte: docs/design/kit-ui (design system oficial do produto). */
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Architects+Daughter&family=Kalam:wght@400;700&display=swap');
+
+:root {
+  /* Informa ao navegador qual esquema de cores a página usa em cada tema — sem isso, controles
+     nativos (calendário/relógio de input date/time, popup de <option> do select) são renderizados
+     sempre no esquema claro do SO, ficando ilegíveis (ex.: ícone de calendário preto) no tema escuro. */
+  color-scheme: light;
+
+  /* Cores — papel/tinta + 4 canetas de acento (mesma família oklch, variando o hue) */
+  --paper: oklch(97% 0.015 85);
+  --paper-grid: oklch(89% 0.03 250);
+  --ink: oklch(22% 0.03 260);
+  --ink-soft: oklch(42% 0.02 260);
+  --surface: oklch(99% 0.008 85);
+  --surface-alt: oklch(94% 0.02 85);
+  --accent-blue: oklch(55% 0.16 255);
+  --accent-blue-soft: oklch(90% 0.05 255);
+  --accent-red: oklch(55% 0.19 25);
+  --accent-red-soft: oklch(92% 0.05 25);
+  --accent-green: oklch(58% 0.15 145);
+  --accent-green-soft: oklch(92% 0.06 145);
+  --accent-yellow: oklch(80% 0.15 95);
+  --accent-yellow-soft: oklch(93% 0.06 95);
+  /* Texto/ícone sobre botão "sólido" (btn-primary/btn-danger) — sempre claro, independente do tema.
+     Não usar --paper aqui: no tema escuro --paper vira escuro (é o fundo da página), e um botão sólido
+     continua precisando de texto claro sobre a cor de acento (ver ajuste de --accent-* no tema escuro). */
+  --on-accent: oklch(98% 0.01 95);
+
+  /* Tipografia */
+  --font-body: 'Patrick Hand', cursive;
+  --font-display: 'Architects Daughter', cursive;
+  --font-accent: 'Kalam', cursive;
+  --text-xs: 13px;
+  --text-sm: 15px;
+  --text-base: 18px;
+  --text-lg: 22px;
+  --text-xl: 28px;
+  --text-2xl: 36px;
+  --text-3xl: 48px;
+
+  /* Espaçamento e formas */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --border-w: 2.5px;
+  --radius-blob: 14px 10px 16px 9px / 10px 16px 9px 14px;
+  --radius-pill: 999px 990px 999px 990px / 999px;
+  --radius-sm: 8px 6px 9px 6px / 6px 9px 6px 8px;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: oklch(24% 0.012 260);
+  --paper-grid: oklch(32% 0.02 260);
+  --ink: oklch(93% 0.02 90);
+  --ink-soft: oklch(76% 0.02 90);
+  --surface: oklch(29% 0.015 260);
+  --surface-alt: oklch(34% 0.02 260);
+  /* --accent-blue/red/green ficam mais escuras/saturadas que no tema claro (em vez de mais claras):
+     texto de botão sólido usa --on-accent (sempre claro) — um fundo já claro deixaria texto claro
+     sobre claro, contraste ruim. Mantendo o acento "cheio" (não a variante -soft) perto da mesma
+     faixa de luminosidade do tema claro garante contraste consistente contra --on-accent nos dois temas. */
+  --accent-blue: oklch(58% 0.17 255);
+  --accent-blue-soft: oklch(36% 0.07 255);
+  --accent-red: oklch(58% 0.20 25);
+  --accent-red-soft: oklch(38% 0.08 25);
+  --accent-green: oklch(60% 0.16 145);
+  --accent-green-soft: oklch(37% 0.07 145);
+  --accent-yellow: oklch(83% 0.13 95);
+  --accent-yellow-soft: oklch(40% 0.07 95);
+}
+
+/* Efeito "traço à mão" — usado por todo componente sketch-edge/sketch-hover.
+   Roda em loop (forward, sem alternate) enquanto o hover/focus durar — por isso
+   :hover precisa do "infinite": sem ele a animação termina em 0.5s e o elemento
+   volta a ficar reto mesmo com o mouse ainda em cima.
+   A rotação anima só o ::before (a "moldura" à mão) — nunca o elemento real, para o
+   texto/ícone real não rotacionar junto e borrar durante a animação. */
+@keyframes sketch-wobble {
+  0%, 100% { transform: rotate(var(--tilt, -1deg)); }
+  25% { transform: rotate(calc(var(--tilt, -1deg) * -1)); }
+  50% { transform: rotate(var(--tilt, -1deg)); }
+  75% { transform: rotate(calc(var(--tilt, -1deg) * -1)); }
+}
+@keyframes sketch-in {
+  from { opacity: 0; transform: scale(0.94) rotate(-1deg); }
+  to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.sketch-edge { position: relative; isolation: isolate; }
+.sketch-edge::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius, var(--radius-blob));
+  background: var(--surface);
+  z-index: -1;
+  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='r'><feTurbulence type='fractalNoise' baseFrequency='0.018 0.05' numOctaves='2' seed='7' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='3.2'/></filter></svg>%23r");
+}
+.sketch-hover:hover:not(:disabled)::before, .sketch-hover:focus-visible:not(:disabled)::before {
+  animation: sketch-wobble 0.5s ease-in-out infinite;
+}

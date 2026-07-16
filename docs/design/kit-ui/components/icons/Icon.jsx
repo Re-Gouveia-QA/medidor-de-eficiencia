@@ -1,0 +1,52 @@
+import React from 'react';
+
+const PATHS = {
+  'chevron-down': 'M5 8l7 7 7-7',
+  'chevron-right': 'M9 5l7 7-7 7',
+  'check': 'M4 12l6 6L20 6',
+  'x': 'M5 5l14 14M19 5L5 19',
+  'plus': 'M12 4v16M4 12h16',
+  'minus': 'M4 12h16',
+  'search': 'M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15zM21 21l-4.3-4.3',
+  'eye': 'M2 12s3.8-7 10-7 10 7 10 7-3.8 7-10 7-10-7-10-7z M12 15a3 3 0 100-6 3 3 0 000 6z',
+  'eye-off': 'M3 3l18 18M10.6 10.6a3 3 0 004.2 4.2M6.6 6.7C4.5 8 3 12 3 12s3.8 7 10 7c1.6 0 3-.4 4.2-1M17.5 15.4C19.8 13.6 21 12 21 12s-3.8-7-10-7c-.6 0-1.2.05-1.8.15',
+  'trash': 'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13',
+  'user': 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c1.2-4.2 4.5-6 8-6s6.8 1.8 8 6',
+  'mail': 'M3 6h18v13H3zM3 6l9 7 9-7',
+  'lock': 'M6 11V8a6 6 0 1112 0v3M5 11h14v10H5z',
+  'calendar': 'M4 5h16v16H4zM4 9h16M8 3v4M16 3v4',
+  'star': 'M12 3l2.7 6.2 6.3.5-4.8 4.3 1.5 6.4L12 17l-5.7 3.4 1.5-6.4-4.8-4.3 6.3-.5z',
+  'bell': 'M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6zM9.5 20a2.5 2.5 0 005 0',
+  'alert-triangle': 'M12 3l10 18H2zM12 10v4M12 17.5v.1',
+  'info': 'M12 21a9 9 0 100-18 9 9 0 000 18zM12 11v6M12 7.5v.1',
+  'arrow-right': 'M4 12h16M14 6l6 6-6 6',
+  'edit': 'M4 20h4L18 6l-4-4L4 16v4zM13 3l4 4',
+  'clock': 'M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 3',
+  'tag': 'M3 12l9 9 9-9-9-9H6L3 6v6z M8 8h.01',
+  'filter': 'M3 5h18l-7 8v6l-4 2v-8z',
+  'home': 'M3 11l9-8 9 8M5 10v10h14V10',
+  'logout': 'M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9',
+};
+
+export function Icon({ name, size = 20, color = 'currentColor', rough = true, ...rest }) {
+  const d = PATHS[name];
+  if (!d) return null;
+  return React.createElement(
+    'svg',
+    {
+      width: size,
+      height: size,
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: color,
+      strokeWidth: 1.8,
+      strokeLinecap: 'round',
+      strokeLinejoin: 'round',
+      style: rough
+        ? { filter: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='ir'><feTurbulence type='fractalNoise' baseFrequency='0.06 0.09' numOctaves='2' seed='4' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='1.6'/></filter></svg>%23ir\")" }
+        : undefined,
+      ...rest,
+    },
+    React.createElement('path', { d })
+  );
+}

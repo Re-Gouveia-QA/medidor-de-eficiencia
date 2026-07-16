@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR"<% if (theme === 'dark') { %> data-theme="dark"<% } %>>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,27 +7,40 @@
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="/">⏱ Medidor de Eficiência</a>
-    <% if (currentUser) { %>
-    <nav class="nav">
-      <a href="/activities/new">Registrar</a>
-      <a href="/activities">Atividades</a>
-      <a href="/categories">Categorias</a>
-      <a href="/reports">Relatórios</a>
-      <% if (currentUser.isAdmin) { %><a href="/docs">API Docs</a><% } %>
-      <form action="/logout" method="POST" class="inline">
-        <button type="submit" class="link-button">Sair</button>
-      </form>
-    </nav>
-    <% } %>
-  </header>
+  <% if (currentUser) { %>
+    <header class="topbar">
+      <a class="brand" href="/">Medidor</a>
+      <div class="topbar-actions">
+        <% if (currentUser.isAdmin) { %>
+          <a class="icon-btn sketch-edge sketch-hover btn-secondary docs-btn" href="/docs" aria-label="Documentação da API">
+            <%- include('../partials/icon', { name: 'info', size: 18 }) %>
+          </a>
+        <% } %>
+        <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="Alternar tema claro/escuro">
+          <span class="icon-sun"><%- include('../partials/icon', { name: 'sun', size: 18, color: 'var(--accent-yellow)' }) %></span>
+          <span class="icon-moon"><%- include('../partials/icon', { name: 'moon', size: 18, color: 'var(--ink-soft)' }) %></span>
+        </button>
+        <form action="/logout" method="POST">
+          <button type="submit" class="icon-btn sketch-edge sketch-hover btn-danger" aria-label="Sair">
+            <%- include('../partials/icon', { name: 'logout', size: 18 }) %>
+          </button>
+        </form>
+      </div>
+    </header>
 
-  <main class="container">
+    <main class="app-content">
+      <%- include('../partials/flash') %>
+      <%- body %>
+    </main>
+  <% } else { %>
     <%- include('../partials/flash') %>
     <%- body %>
-  </main>
+  <% } %>
+
+  <%- include('../partials/confirm-toast') %>
 
   <script src="/js/confirm-submit.js"></script>
+  <script src="/js/theme-toggle.js"></script>
+  <script src="/js/back-button.js"></script>
 </body>
 </html>

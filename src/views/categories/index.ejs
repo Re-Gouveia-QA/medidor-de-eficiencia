@@ -1,31 +1,43 @@
 <div class="page-header">
-  <h1>Visualizar Categorias</h1>
-  <a class="btn btn-primary" href="/categories/new">Nova categoria</a>
+  <%- include('../partials/page-header', { title: 'Categorias', backHref: '/' }) %>
+  <a class="btn btn-primary sketch-edge sketch-hover" href="/categories/new">
+    <%- include('../partials/icon', { name: 'plus', size: 16 }) %> Nova categoria
+  </a>
 </div>
 
 <% if (categorias.length === 0) { %>
   <p class="muted">Você ainda não tem categorias. Crie a primeira para começar a registrar atividades.</p>
 <% } else { %>
-  <ul class="list">
-    <% categorias.forEach((c) => { %>
-      <li class="list-item">
-        <span class="color-dot" style="background: <%= c.cor %>"></span>
-        <div class="list-item-body">
-          <strong><%= c.nome %></strong>
-          <% if (c.descricao) { %><span class="muted"><%= c.descricao %></span><% } %>
-          <% if (c.tempoDesejadoMin) { %><span class="muted">Meta: <%= c.tempoDesejadoMin %> min</span><% } %>
-          <% if (c.duracaoPadraoMin) { %><span class="muted">Duração padrão: <%= c.duracaoPadraoMin %> min</span><% } %>
-          <% if (c.possuiValor) { %><span class="muted"><%= c.valorLabel || 'Valor' %><% if (c.valorPadrao) { %> · padrão: <%= c.valorPadrao %><% } %></span><% } %>
-          <span class="muted"><%= c._count.atividades %> atividade(s)</span>
+  <div class="grid-menu">
+    <% categorias.forEach((c, i) => { %>
+      <div class="card sketch-edge" style="--tilt: <%= i % 2 ? '0.6deg' : '-0.6deg' %>; transform: rotate(var(--tilt));">
+        <div class="card-heading">
+          <span class="color-dot" style="background: <%= c.cor %>"></span>
+          <h3 class="card-title"><%= c.nome %></h3>
         </div>
-        <div class="actions">
-          <a class="btn btn-small" href="/categories/<%= c.id %>/edit">Editar</a>
+        <% if (c.descricao) { %><p class="muted"><%= c.descricao %></p><% } %>
+        <% if (c.tempoDesejadoMin || c.duracaoPadraoMin || c.possuiValor) { %>
+          <div class="badge-row">
+            <% if (c.tempoDesejadoMin) { %><span class="badge sketch-edge badge-blue">Meta: <%= c.tempoDesejadoMin %> min</span><% } %>
+            <% if (c.duracaoPadraoMin) { %><span class="badge sketch-edge badge-neutral">Duração: <%= c.duracaoPadraoMin %> min</span><% } %>
+            <% if (c.possuiValor) { %>
+              <span class="badge sketch-edge badge-yellow"><%= c.valorLabel || 'Valor' %><% if (c.valorPadrao) { %> · padrão: <%= formatNumber(c.valorPadrao) %><% } %></span>
+            <% } %>
+          </div>
+        <% } %>
+        <p class="muted"><%= c._count.atividades %> atividade(s)</p>
+        <div class="card-footer">
+          <a class="btn btn-secondary btn-sm sketch-edge sketch-hover" href="/categories/<%= c.id %>/edit">
+            <%- include('../partials/icon', { name: 'edit', size: 14 }) %> Editar
+          </a>
           <form action="/categories/<%= c.id %>?_method=DELETE" method="POST" class="inline js-confirm-submit"
                 data-confirm="Excluir a categoria <%= c.nome %>?">
-            <button type="submit" class="btn btn-small btn-danger">Excluir</button>
+            <button type="submit" class="btn btn-danger btn-sm sketch-edge sketch-hover">
+              <%- include('../partials/icon', { name: 'trash', size: 14 }) %> Excluir
+            </button>
           </form>
         </div>
-      </li>
+      </div>
     <% }) %>
-  </ul>
+  </div>
 <% } %>

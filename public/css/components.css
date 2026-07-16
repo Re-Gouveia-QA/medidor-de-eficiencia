@@ -1,0 +1,182 @@
+/* Componentes de UI — Medidor de Eficiência ("Caderno de Esboço")
+   Fonte: docs/design/kit-ui/components.css (classes portadas 1:1 do design system). */
+
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--paper-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--paper-grid) 1px, transparent 1px);
+  background-size: 26px 26px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  transition: background-color .25s ease, color .25s ease;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; margin: 0; }
+a { color: var(--accent-blue); }
+a:hover { color: var(--ink); }
+.muted { color: var(--ink-soft); font-size: var(--text-sm); }
+strong, b { letter-spacing: 0.03em; }
+
+/* Botões */
+.btn {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 10px 22px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.btn:hover { text-decoration: none; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+/* Texto/ícone sobre fundo sólido: --on-accent (sempre claro, ver tokens.css) — não usar --paper,
+   que no tema escuro passa a ser a cor de fundo da página (escura) em vez de "clara". */
+.btn-primary { color: var(--on-accent); }
+.btn-primary::before { background: var(--accent-blue); box-shadow: 4px 5px 0 0 transparent; transition: box-shadow .25s ease; }
+.btn-secondary::before { background: var(--surface); }
+.btn-ghost::before { background: transparent; border-style: dashed; }
+.btn-danger { color: var(--on-accent); }
+.btn-danger::before { background: var(--accent-red); }
+.btn-sm { padding: 6px 14px; font-size: var(--text-sm); }
+.btn-lg { padding: 14px 30px; font-size: var(--text-lg); }
+/* Especificidade maior que "a:hover" (cor de link) — sem isso, um <a class="btn-primary"> vira
+   texto escuro sobre fundo azul no hover (contraste ruim). */
+.btn-primary:hover, .btn-primary:focus-visible,
+.btn-danger:hover, .btn-danger:focus-visible {
+  color: var(--on-accent);
+}
+
+/* Hover "3D" do CTA principal: cresce (transition suave no elemento real, sem rotação — rotação
+   é só no ::before, ver tokens.css, para o texto não borrar) e ganha sombra sólida no ::before.
+   Sem wiggle: animation: none sobrescreve o balanço padrão de .sketch-hover (pedido explícito —
+   um botão de ação principal balançando o tempo todo distraía mais do que ajudava).
+   A sombra transiciona suavemente porque a base (acima) já declara o mesmo offset (4px 5px 0 0)
+   com cor transparente — só a cor anima no hover; ir de "sem box-shadow" pra um valor não
+   interpola (o navegador troca abruptamente), por isso o placeholder transparente. */
+.btn-primary { transition: transform .2s ease; }
+.btn-primary.sketch-hover:hover:not(:disabled), .btn-primary.sketch-hover:focus-visible:not(:disabled) {
+  transform: scale(1.03);
+}
+.btn-primary.sketch-hover:hover:not(:disabled)::before, .btn-primary.sketch-hover:focus-visible:not(:disabled)::before {
+  animation: none;
+  box-shadow: 4px 5px 0 0 var(--ink);
+}
+
+.icon-btn {
+  width: 48px; height: 48px; padding: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  --radius: var(--radius-pill);
+  transition: transform .2s ease;
+}
+.icon-btn.btn-sm { width: 36px; height: 36px; }
+/* Crescer no elemento real (crisp); o wobble do ::before (tokens.css) cuida do balanço. */
+.icon-btn.sketch-hover:hover:not(:disabled), .icon-btn.sketch-hover:focus-visible:not(:disabled) {
+  transform: scale(1.12);
+}
+
+/* Campos de formulário */
+.field { display: flex; flex-direction: column; gap: 6px; font-family: var(--font-body); }
+.field-label { font-size: var(--text-sm); color: var(--ink-soft); }
+.input-wrap { display: flex; align-items: center; gap: 8px; padding: 0 10px; }
+.input, .select {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  padding: 10px 4px;
+  background: transparent;
+  border: none;
+  color: var(--ink);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+textarea.input { padding: 10px 4px; resize: vertical; }
+.select { appearance: none; cursor: pointer; }
+/* color-scheme (tokens.css) já resolve isso na maioria dos navegadores (o popup nativo do select
+   passa a seguir o tema escuro); background/color explícitos em <option> cobrem os que respeitam
+   essas propriedades (Firefox e Chromium recente) para garantir texto legível em qualquer caso. */
+.select option { background: var(--surface); color: var(--ink); }
+.field-error .input-wrap::before { border-color: var(--accent-red); }
+.field-error-text { color: var(--accent-red); font-size: var(--text-sm); }
+.field-helper { color: var(--ink-soft); font-size: var(--text-sm); }
+.input:disabled, .select:disabled { opacity: .5; cursor: not-allowed; }
+
+.color-swatch { display: inline-flex; width: 64px; height: 44px; padding: 4px; --radius: var(--radius-sm); }
+.color-input { width: 100%; height: 100%; border: none; background: none; padding: 0; cursor: pointer; }
+
+.check-row { display: inline-flex; align-items: center; gap: 10px; font-size: var(--text-base); cursor: pointer; }
+.check-box {
+  width: 24px; height: 24px; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  --radius: var(--radius-sm); color: var(--accent-blue);
+}
+.check-box svg { visibility: hidden; }
+.check-row input:checked + .check-box svg { visibility: visible; }
+
+/* Card */
+.card { padding: 22px; --radius: var(--radius-blob); }
+.card-title { font-family: var(--font-display); font-size: var(--text-xl); margin: 0 0 8px; }
+.card-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.card-footer { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Badge — sombra sólida no ::before (onde vive o arredondamento) dá a impressão de um
+   adesivo com a base descolada do papel; não pode ir no elemento real (sem raio, sombra quadrada). */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px;
+  font-size: var(--text-sm); --radius: var(--radius-pill); position: relative; isolation: isolate;
+}
+.badge::before { box-shadow: 2px 3px 0 0 var(--ink); }
+.badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.badge-blue::before { background: var(--accent-blue-soft); }
+.badge-red::before { background: var(--accent-red-soft); }
+.badge-green::before { background: var(--accent-green-soft); }
+.badge-yellow::before { background: var(--accent-yellow-soft); }
+.badge-neutral::before { background: var(--surface-alt); }
+
+/* Alert (mensagens flash) */
+.alert { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; --radius: var(--radius-sm); margin-bottom: 16px; }
+.alert-title { font-family: var(--font-display); font-size: var(--text-lg); margin: 0 0 2px; }
+.alert-success::before { background: var(--accent-green-soft); border-color: var(--accent-green); }
+.alert-error::before { background: var(--accent-red-soft); border-color: var(--accent-red); }
+
+/* Alternância de tema (botão sol/lua no topbar) */
+.theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: inline-flex; }
+
+/* Paginação */
+.pagination { display: flex; align-items: center; gap: 6px; }
+.page-btn {
+  width: 38px; height: 38px; --radius: var(--radius-sm); display: inline-flex;
+  align-items: center; justify-content: center; font-size: var(--text-sm); cursor: pointer;
+  background: transparent; border: none; color: var(--ink);
+}
+.page-btn.is-active::before { background: var(--accent-blue-soft); border-color: var(--accent-blue); }
+.page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Toast de confirmação — substitui o window.confirm() nativo (sem identidade visual, bloqueante)
+   por um componente do próprio design system; ver public/js/confirm-submit.js. Único componente
+   fixo na página (um só, reutilizado por todos os formulários com data-confirm). */
+.confirm-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  width: min(420px, calc(100% - 32px));
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  z-index: 100;
+  transform: translate(-50%, 150%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease;
+}
+.confirm-toast.is-visible { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+.confirm-toast-icon { flex: none; color: var(--accent-yellow); margin-top: 2px; }
+.confirm-toast-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.confirm-toast-message { margin: 0; }
+.confirm-toast-actions { display: flex; justify-content: flex-end; gap: 10px; }

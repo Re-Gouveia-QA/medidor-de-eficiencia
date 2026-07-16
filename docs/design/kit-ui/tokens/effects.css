@@ -1,0 +1,22 @@
+@keyframes sketch-wobble {
+  0%, 100% { transform: rotate(var(--tilt, -0.8deg)); }
+  50% { transform: rotate(calc(var(--tilt, -0.8deg) * -1)); }
+}
+@keyframes sketch-in {
+  from { opacity: 0; transform: scale(0.94) rotate(-1deg); }
+  to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+.sketch-edge { position: relative; isolation: isolate; }
+.sketch-edge::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius, var(--radius-blob));
+  background: var(--surface);
+  z-index: -1;
+  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='r'><feTurbulence type='fractalNoise' baseFrequency='0.018 0.05' numOctaves='2' seed='7' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='3.2'/></filter></svg>%23r");
+}
+.sketch-hover:hover:not(:disabled), .sketch-hover:focus-visible:not(:disabled) {
+  animation: sketch-wobble 0.4s ease-in-out;
+}

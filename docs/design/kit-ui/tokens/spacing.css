@@ -1,0 +1,14 @@
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --border-w: 2.5px;
+  --radius-blob: 14px 10px 16px 9px / 10px 16px 9px 14px;
+  --radius-pill: 999px 990px 999px 990px / 999px;
+  --radius-sm: 8px 6px 9px 6px / 6px 9px 6px 8px;
+}

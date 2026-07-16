@@ -1,0 +1,32 @@
+<!-- @dsCard group="Components" viewport="700x360" name="Inputs" subtitle="Text, select, checkbox, radio, switch" -->
+<!DOCTYPE html>
+<html><head><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script></head>
+<body style="padding:20px">
+<div id="root"></div>
+<script type="text/babel">
+const { Input, Select, Checkbox, Radio, Switch } = window.DS;
+function App(){
+  const [remember, setRemember] = React.useState(true);
+  const [period, setPeriod] = React.useState('mes');
+  const [dark, setDark] = React.useState(false);
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:'16px',maxWidth:'420px'}}>
+      <Input label="E-mail" type="email" icon="mail" placeholder="voce@email.com" />
+      <Input label="Senha" type="password" icon="lock" error="Minimo de 8 caracteres" />
+      <Select label="Categoria" options={[{value:'estudo',label:'Estudo'},{value:'lazer',label:'Lazer'},{value:'trabalho',label:'Trabalho'}]} />
+      <div style={{display:'flex',gap:'20px',flexWrap:'wrap'}}>
+        <Checkbox label="Lembrar de mim" checked={remember} onChange={e=>setRemember(e.target.checked)} />
+        <Radio name="p" label="Este mes" checked={period==='mes'} onChange={()=>setPeriod('mes')} />
+        <Radio name="p" label="Este ano" checked={period==='ano'} onChange={()=>setPeriod('ano')} />
+        <Switch label="Tema escuro" checked={dark} onChange={e=>setDark(e.target.checked)} />
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

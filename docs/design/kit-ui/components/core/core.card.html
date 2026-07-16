@@ -1,0 +1,34 @@
+<!-- @dsCard group="Components" viewport="700x260" name="Card & Badge" subtitle="Content containers and tag labels" -->
+<!DOCTYPE html>
+<html><head><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script></head>
+<body style="padding:24px">
+<div id="root"></div>
+<script type="text/babel">
+const { Card, Badge, Button } = window.DS;
+function App(){
+  return (
+    <div style={{display:'flex',gap:'20px',flexWrap:'wrap',alignItems:'flex-start'}}>
+      <Card title="Estudo" tilt="left" footer={<Button size="sm" variant="secondary">Editar</Button>}>
+        <p style={{margin:'0 0 8px'}}>2h30 registradas hoje</p>
+        <Badge color="blue">Estudo</Badge>
+      </Card>
+      <Card title="Lazer" tilt="right">
+        <p style={{margin:0}}>Meta semanal: 5h</p>
+      </Card>
+      <div style={{display:'flex',gap:'10px',flexWrap:'wrap'}}>
+        <Badge color="blue">Estudo</Badge>
+        <Badge color="green">Concluida</Badge>
+        <Badge color="red">Atrasada</Badge>
+        <Badge color="yellow">Pendente</Badge>
+        <Badge color="neutral">Geral</Badge>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

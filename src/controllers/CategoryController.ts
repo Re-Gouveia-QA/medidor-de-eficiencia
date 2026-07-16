@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { CategoryModel } from '../models/CategoryModel';
 import { categorySchema } from '../utils/validators';
+import { formatNumber } from '../utils/format';
 
 function parseInput(body: unknown) {
   const parsed = categorySchema.safeParse(body);
@@ -25,7 +26,7 @@ function parseInput(body: unknown) {
 export const CategoryController = {
   async index(req: Request, res: Response) {
     const categorias = await CategoryModel.listByUser(req.currentUser!.id);
-    res.render('categories/index', { title: 'Categorias', categorias });
+    res.render('categories/index', { title: 'Categorias', categorias, formatNumber });
   },
 
   create(_req: Request, res: Response) {

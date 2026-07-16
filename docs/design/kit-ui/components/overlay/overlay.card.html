@@ -1,0 +1,26 @@
+<!-- @dsCard group="Components" viewport="700x320" name="Modal & Tooltip" subtitle="Dialogs and hover hints" -->
+<!DOCTYPE html>
+<html><head><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script></head>
+<body style="padding:24px">
+<div id="root"></div>
+<script type="text/babel">
+const { Modal, Tooltip, Button, IconButton, Input } = window.DS;
+function App(){
+  const [open, setOpen] = React.useState(true);
+  return (
+    <div style={{display:'flex',gap:'20px',alignItems:'center'}}>
+      <Button onClick={()=>setOpen(true)}>Abrir modal</Button>
+      <Tooltip content="Excluir atividade"><IconButton icon="trash" variant="danger" ariaLabel="Excluir" /></Tooltip>
+      <Modal open={open} title="Nova atividade" onClose={()=>setOpen(false)} footer={<><Button variant="secondary" onClick={()=>setOpen(false)}>Cancelar</Button><Button onClick={()=>setOpen(false)}>Salvar</Button></>}>
+        <Input label="Nome da atividade" placeholder="Ex: Leitura" />
+      </Modal>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

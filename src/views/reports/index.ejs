@@ -1,17 +1,27 @@
-<h1>Relatório</h1>
+<%- include('../partials/page-header', { title: 'Relatório', backHref: '/' }) %>
 
 <form method="GET" action="/reports" class="filters">
-  <label>De <input type="date" name="inicio" value="<%= filtros.inicio %>" required /></label>
-  <label>Até <input type="date" name="fim" value="<%= filtros.fim %>" required /></label>
-  <button type="submit" class="btn">Aplicar período</button>
+  <div class="field">
+    <label class="field-label" for="inicio">De</label>
+    <div class="sketch-edge input-wrap">
+      <input type="date" id="inicio" name="inicio" class="input" value="<%= filtros.inicio %>" required />
+    </div>
+  </div>
+  <div class="field">
+    <label class="field-label" for="fim">Até</label>
+    <div class="sketch-edge input-wrap">
+      <input type="date" id="fim" name="fim" class="input" value="<%= filtros.fim %>" required />
+    </div>
+  </div>
+  <button type="submit" class="btn btn-secondary sketch-edge sketch-hover">Aplicar período</button>
 </form>
 
 <div class="report-cards">
-  <div class="card report-card">
+  <div class="card sketch-edge report-card" style="--tilt: -0.6deg; transform: rotate(var(--tilt));">
     <span class="report-big"><%= relatorio.diasRegistrados %>/<%= relatorio.diasNoPeriodo %></span>
     <span class="muted">dias registrados</span>
   </div>
-  <div class="card report-card">
+  <div class="card sketch-edge report-card" style="--tilt: 0.6deg; transform: rotate(var(--tilt));">
     <span class="report-big"><%= relatorio.totalFormatado %></span>
     <span class="muted">total de horas registradas no período</span>
   </div>
@@ -21,17 +31,19 @@
 <% if (relatorio.distribuicao.length === 0) { %>
   <p class="muted">Nenhuma atividade registrada no período selecionado.</p>
 <% } else { %>
-  <ul class="bars">
-    <% relatorio.distribuicao.forEach((d) => { %>
-      <li>
-        <div class="bar-label">
-          <span><span class="color-dot" style="background: <%= d.cor %>"></span> <%= d.categoria %></span>
-          <span class="muted"><%= d.totalFormatado %> (<%= d.percentual %>%)</span>
-        </div>
-        <div class="bar-track">
-          <div class="bar-fill" style="width: <%= d.percentual %>%; background: <%= d.cor %>"></div>
-        </div>
-      </li>
-    <% }) %>
-  </ul>
+  <div class="card sketch-edge">
+    <ul class="bars">
+      <% relatorio.distribuicao.forEach((d) => { %>
+        <li>
+          <div class="bar-label">
+            <span><span class="color-dot" style="background: <%= d.cor %>"></span> <%= d.categoria %></span>
+            <span class="muted"><%= d.totalFormatado %> (<%= d.percentual %>%)</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: <%= d.percentual %>%; background: <%= d.cor %>"></div>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
 <% } %>

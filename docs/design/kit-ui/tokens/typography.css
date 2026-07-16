@@ -1,0 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Architects+Daughter&family=Kalam:wght@400;700&display=swap');
+:root {
+  --font-body: 'Patrick Hand', cursive;
+  --font-display: 'Architects Daughter', cursive;
+  --font-accent: 'Kalam', cursive;
+  --text-xs: 13px;
+  --text-sm: 15px;
+  --text-base: 18px;
+  --text-lg: 22px;
+  --text-xl: 28px;
+  --text-2xl: 36px;
+  --text-3xl: 48px;
+}

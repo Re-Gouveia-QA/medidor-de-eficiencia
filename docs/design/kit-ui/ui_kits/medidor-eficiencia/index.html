@@ -1,0 +1,168 @@
+<!-- @dsCard group="Medidor de Eficiencia" viewport="1200x720" name="Medidor de Eficiencia" subtitle="Login + dashboard walkthrough" -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Medidor de Eficiencia — UI Kit</title>
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+</head>
+<body style="margin:0">
+<div id="root"></div>
+<script type="text/babel" src="./Sidebar.jsx"></script>
+<script type="text/babel">
+const { Button, IconButton, Input, Select, Checkbox, Switch, Card, Badge, Modal, Alert, Pagination, Icon, Tooltip } = window.DS;
+
+const CATEGORIES = [
+  { id: 'estudo', label: 'Estudo', color: 'blue', meta: '10h / semana' },
+  { id: 'trabalho', label: 'Trabalho', color: 'green', meta: '30h / semana' },
+  { id: 'lazer', label: 'Lazer', color: 'yellow', meta: '5h / semana' },
+  { id: 'deslocamento', label: 'Deslocamento', color: 'neutral', meta: 'sem meta' },
+];
+
+const ACTIVITIES = [
+  { id: 1, name: 'Leitura de artigo', cat: 'estudo', date: '15/07', dur: '1h 20min' },
+  { id: 2, name: 'Reuniao de projeto', cat: 'trabalho', date: '15/07', dur: '2h 00min' },
+  { id: 3, name: 'Caminhada no parque', cat: 'lazer', date: '14/07', dur: '0h 45min' },
+  { id: 4, name: 'Trajeto casa-trabalho', cat: 'deslocamento', date: '14/07', dur: '0h 50min' },
+];
+
+function LoginScreen({ onLogin }) {
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Card title="Entrar" style={{ width: '360px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <Input label="E-mail" type="email" icon="mail" placeholder="voce@email.com" defaultValue="demo@medidor.dev" />
+          <Input label="Senha" type="password" icon="lock" placeholder="********" defaultValue="senha12345" />
+          <Checkbox label="Lembrar de mim" defaultChecked />
+          <Button variant="primary" onClick={onLogin}>Entrar</Button>
+          <Button variant="ghost" iconLeft="user" onClick={onLogin}>Entrar com Google</Button>
+          <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--ink-soft)' }}>Nao tem conta? <a href="#">Cadastre-se</a></p>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+function HomeTab() {
+  return (
+    <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+      <Card title="Dias registrados" tilt="left" style={{ width: '220px' }}><p style={{ fontSize: '32px', margin: 0, fontFamily: 'var(--font-display)' }}>18</p></Card>
+      <Card title="Total de horas" style={{ width: '220px' }}><p style={{ fontSize: '32px', margin: 0, fontFamily: 'var(--font-display)' }}>62h 40min</p></Card>
+      <Card title="Categoria em foco" tilt="right" style={{ width: '220px' }}><Badge color="green">Trabalho</Badge></Card>
+    </div>
+  );
+}
+
+function ActivitiesTab({ onAdd }) {
+  const [page, setPage] = React.useState(1);
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '26px' }}>Atividades</h2>
+        <Button iconLeft="plus" onClick={onAdd}>Nova atividade</Button>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {ACTIVITIES.map(a => {
+          const cat = CATEGORIES.find(c => c.id === a.cat);
+          return (
+            <div key={a.id} className="sketch-edge" style={{ display: 'flex', alignItems: 'center', gap: '14px', padding: '14px 18px' }}>
+              <Icon name="clock" size={18} color="var(--ink-soft)" />
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: '17px' }}>{a.name}</div>
+                <div style={{ fontSize: '13px', color: 'var(--ink-soft)' }}>{a.date} · {a.dur}</div>
+              </div>
+              <Badge color={cat.color}>{cat.label}</Badge>
+              <Tooltip content="Editar"><IconButton icon="edit" variant="ghost" size="sm" ariaLabel="Editar" /></Tooltip>
+              <Tooltip content="Excluir"><IconButton icon="trash" variant="ghost" size="sm" ariaLabel="Excluir" /></Tooltip>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ marginTop: '18px' }}><Pagination page={page} totalPages={5} onChange={setPage} /></div>
+    </div>
+  );
+}
+
+function CategoriesTab() {
+  return (
+    <div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '26px', marginBottom: '16px' }}>Categorias</h2>
+      <div style={{ display: 'flex', gap: '18px', flexWrap: 'wrap' }}>
+        {CATEGORIES.map((c, i) => (
+          <Card key={c.id} title={c.label} tilt={i % 2 ? 'right' : 'left'} style={{ width: '220px' }}>
+            <Badge color={c.color}>{c.meta}</Badge>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ReportsTab() {
+  return (
+    <div>
+      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '26px', marginBottom: '16px' }}>Relatorios — Julho</h2>
+      <div className="sketch-edge" style={{ padding: '20px', maxWidth: '480px' }}>
+        {CATEGORIES.map(c => (
+          <div key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+            <div style={{ width: '110px', fontSize: '15px' }}>{c.label}</div>
+            <div style={{ flex: 1, height: '14px', background: 'var(--surface-alt)', borderRadius: '999px', overflow: 'hidden' }}>
+              <div style={{ width: (20 + c.label.length * 6) + '%', height: '100%', background: 'var(--accent-' + c.color + ')' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [screen, setScreen] = React.useState('login');
+  const [theme, setTheme] = React.useState('light');
+  const [tab, setTab] = React.useState('home');
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [toast, setToast] = React.useState(null);
+
+  React.useEffect(() => {
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  const save = () => { setModalOpen(false); setToast('Atividade salva!'); setTimeout(() => setToast(null), 2500); };
+
+  if (screen === 'login') return <LoginScreen onLogin={() => setScreen('app')} />;
+
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <Sidebar tab={tab} setTab={setTab} onLogout={() => setScreen('login')} />
+      <div style={{ flex: 1, padding: '24px 32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+          <Switch label="Tema escuro" checked={theme === 'dark'} onChange={e => setTheme(e.target.checked ? 'dark' : 'light')} />
+        </div>
+        {tab === 'home' && <HomeTab />}
+        {tab === 'activities' && <ActivitiesTab onAdd={() => setModalOpen(true)} />}
+        {tab === 'categories' && <CategoriesTab />}
+        {tab === 'reports' && <ReportsTab />}
+      </div>
+      <Modal open={modalOpen} title="Nova atividade" onClose={() => setModalOpen(false)} footer={<><Button variant="secondary" onClick={() => setModalOpen(false)}>Cancelar</Button><Button onClick={save}>Salvar</Button></>}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <Input label="Nome" placeholder="Ex: Leitura" />
+          <Select label="Categoria" options={CATEGORIES.map(c => ({ value: c.id, label: c.label }))} />
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Input label="Inicio" type="time" defaultValue="09:00" />
+            <Input label="Fim" type="time" defaultValue="10:00" />
+          </div>
+        </div>
+      </Modal>
+      {toast && <div style={{ position: 'fixed', bottom: '24px', right: '24px', width: '300px' }}><Alert variant="success">{toast}</Alert></div>}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

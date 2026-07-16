@@ -1,49 +1,73 @@
-<h1><%= atividade ? 'Editar Atividade' : 'Registrar Nova Atividade' %></h1>
+<%- include('../partials/page-header', { title: atividade ? 'Editar Atividade' : 'Nova Atividade', backHref: '/activities' }) %>
 
 <form id="activityForm" action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>"
       method="POST" class="form form-narrow" data-editing="<%= atividade ? 'true' : 'false' %>">
-  <label for="nome">Nome da atividade</label>
-  <input type="text" id="nome" name="nome" required value="<%= atividade?.nome ?? '' %>" />
+  <div class="field">
+    <label class="field-label" for="nome">Nome da atividade</label>
+    <div class="sketch-edge input-wrap">
+      <input type="text" id="nome" name="nome" class="input" required value="<%= atividade?.nome ?? '' %>" />
+    </div>
+  </div>
 
-  <label for="categoryId">Categoria</label>
-  <select id="categoryId" name="categoryId" required>
-    <% categorias.forEach((c) => { %>
-      <option value="<%= c.id %>" <%= atividade?.categoryId === c.id ? 'selected' : '' %>
-        data-duracao-padrao-min="<%= c.duracaoPadraoMin ?? '' %>"
-        data-possui-valor="<%= c.possuiValor %>"
-        data-valor-label="<%= c.valorLabel ?? 'Valor' %>"
-        data-valor-padrao="<%= c.valorPadrao ?? '' %>"
-      ><%= c.nome %></option>
-    <% }) %>
-  </select>
+  <div class="field">
+    <label class="field-label" for="categoryId">Categoria</label>
+    <div class="sketch-edge input-wrap">
+      <select id="categoryId" name="categoryId" class="select" required>
+        <% categorias.forEach((c) => { %>
+          <option value="<%= c.id %>" <%= atividade?.categoryId === c.id ? 'selected' : '' %>
+            data-duracao-padrao-min="<%= c.duracaoPadraoMin ?? '' %>"
+            data-possui-valor="<%= c.possuiValor %>"
+            data-valor-label="<%= c.valorLabel ?? 'Valor' %>"
+            data-valor-padrao="<%= c.valorPadrao ?? '' %>"
+          ><%= c.nome %></option>
+        <% }) %>
+      </select>
+      <%- include('../partials/icon', { name: 'chevron-down', size: 16, color: 'var(--ink-soft)' }) %>
+    </div>
+  </div>
 
-  <label for="data">Data</label>
-  <input type="date" id="data" name="data" required
-         value="<%= atividade ? atividade.data.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>" />
+  <div class="field">
+    <label class="field-label" for="data">Data</label>
+    <div class="sketch-edge input-wrap">
+      <%- include('../partials/icon', { name: 'calendar', size: 17, color: 'var(--ink-soft)' }) %>
+      <input type="date" id="data" name="data" class="input" required
+             value="<%= atividade ? atividade.data.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>" />
+    </div>
+  </div>
 
   <div class="form-row">
-    <div>
-      <label for="horaInicio">Hora de início</label>
-      <input type="time" id="horaInicio" name="horaInicio" required
-             value="<%= atividade ? atividade.horaInicio.toISOString().slice(11, 16) : '' %>" />
+    <div class="field">
+      <label class="field-label" for="horaInicio">Hora de início</label>
+      <div class="sketch-edge input-wrap">
+        <input type="time" id="horaInicio" name="horaInicio" class="input" required
+               value="<%= atividade ? atividade.horaInicio.toISOString().slice(11, 16) : '' %>" />
+      </div>
     </div>
-    <div>
-      <label for="horaFim">Hora de fim</label>
-      <input type="time" id="horaFim" name="horaFim" required
-             value="<%= atividade ? atividade.horaFim.toISOString().slice(11, 16) : '' %>" />
+    <div class="field">
+      <label class="field-label" for="horaFim">Hora de fim</label>
+      <div class="sketch-edge input-wrap">
+        <input type="time" id="horaFim" name="horaFim" class="input" required
+               value="<%= atividade ? atividade.horaFim.toISOString().slice(11, 16) : '' %>" />
+      </div>
     </div>
   </div>
 
-  <div id="valorField" class="hidden">
-    <label for="valor" id="valorLabelText">Valor</label>
-    <input type="number" id="valor" name="valor" min="0.01" step="0.01"
-           value="<%= atividade?.valor ?? '' %>" />
+  <div id="valorField" class="field hidden">
+    <label class="field-label" for="valor" id="valorLabelText">Valor</label>
+    <div class="sketch-edge input-wrap">
+      <input type="number" id="valor" name="valor" class="input" min="0.01" step="0.01"
+             value="<%= atividade?.valor ?? '' %>" />
+    </div>
   </div>
 
-  <label for="descricao">Descrição / observações (opcional)</label>
-  <textarea id="descricao" name="descricao" rows="4"><%= atividade?.descricao ?? '' %></textarea>
+  <div class="field">
+    <label class="field-label" for="descricao">Descrição / observações (opcional)</label>
+    <div class="sketch-edge input-wrap">
+      <textarea id="descricao" name="descricao" class="input" rows="4"><%= atividade?.descricao ?? '' %></textarea>
+    </div>
+  </div>
 
-  <button type="submit" class="btn btn-primary"><%= atividade ? 'Salvar' : 'Registrar' %></button>
+  <button type="submit" class="btn btn-primary sketch-edge sketch-hover"><%= atividade ? 'Salvar' : 'Registrar' %></button>
 </form>
 
 <script src="/js/activity-form.js"></script>

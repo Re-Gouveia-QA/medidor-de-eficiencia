@@ -1,24 +1,24 @@
-<h1>Bem-vindo(a) de volta, <%= userName %> 👋</h1>
+<h1>Bem-vindo(a) de volta, <%= userName %></h1>
 <p class="muted">O que você quer fazer agora?</p>
 
 <div class="grid-menu">
-  <a class="card" href="/activities/new">
-    <span class="card-icon">➕</span>
+  <a class="card sketch-edge sketch-hover" href="/activities/new">
+    <%- include('../partials/icon', { name: 'plus', size: 26 }) %>
     <strong>Registrar atividade</strong>
     <span class="muted">Anote o que você acabou de fazer</span>
   </a>
-  <a class="card" href="/activities">
-    <span class="card-icon">📋</span>
+  <a class="card sketch-edge sketch-hover" href="/activities">
+    <%- include('../partials/icon', { name: 'clock', size: 26 }) %>
     <strong>Visualizar atividades</strong>
     <span class="muted">Liste e filtre seus registros</span>
   </a>
-  <a class="card" href="/reports">
-    <span class="card-icon">📊</span>
+  <a class="card sketch-edge sketch-hover" href="/reports">
+    <%- include('../partials/icon', { name: 'star', size: 26 }) %>
     <strong>Relatórios</strong>
     <span class="muted">Dias registrados e tempo por categoria</span>
   </a>
-  <a class="card" href="/categories">
-    <span class="card-icon">🏷️</span>
+  <a class="card sketch-edge sketch-hover" href="/categories">
+    <%- include('../partials/icon', { name: 'tag', size: 26 }) %>
     <strong>Categorias</strong>
     <span class="muted">Organize do seu jeito</span>
   </a>

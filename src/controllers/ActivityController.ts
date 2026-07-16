@@ -3,6 +3,7 @@ import { ActivityModel } from '../models/ActivityModel';
 import { CategoryModel } from '../models/CategoryModel';
 import { activitySchema } from '../utils/validators';
 import { formatMinutes } from '../utils/time';
+import { formatNumber } from '../utils/format';
 
 export const ActivityController = {
   async index(req: Request, res: Response) {
@@ -17,6 +18,7 @@ export const ActivityController = {
       categorias,
       filtros: { inicio: inicio ?? '', fim: fim ?? '', categoria: categoria ?? '' },
       formatMinutes,
+      formatNumber,
     });
   },
 

@@ -1,0 +1,24 @@
+<!-- @dsCard group="Components" viewport="700x320" name="Alert" subtitle="Success, error, warning, info" -->
+<!DOCTYPE html>
+<html><head><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script></head>
+<body style="padding:24px">
+<div id="root"></div>
+<script type="text/babel">
+const { Alert } = window.DS;
+function App(){
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:'14px',maxWidth:'420px'}}>
+      <Alert variant="success" title="Atividade salva!">Seu registro foi adicionado com sucesso.</Alert>
+      <Alert variant="error" title="Erro ao salvar" onClose={()=>{}}>A hora de fim deve ser depois do inicio.</Alert>
+      <Alert variant="warning" title="Categoria sem meta">Defina uma meta para acompanhar o progresso.</Alert>
+      <Alert variant="info">Seu relatorio considera o mes corrente.</Alert>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

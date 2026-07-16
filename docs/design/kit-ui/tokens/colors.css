@@ -1,0 +1,32 @@
+:root {
+  --paper: oklch(97% 0.015 85);
+  --paper-grid: oklch(89% 0.03 250);
+  --ink: oklch(22% 0.03 260);
+  --ink-soft: oklch(42% 0.02 260);
+  --surface: oklch(99% 0.008 85);
+  --surface-alt: oklch(94% 0.02 85);
+  --accent-blue: oklch(55% 0.16 255);
+  --accent-blue-soft: oklch(90% 0.05 255);
+  --accent-red: oklch(55% 0.19 25);
+  --accent-red-soft: oklch(92% 0.05 25);
+  --accent-green: oklch(58% 0.15 145);
+  --accent-green-soft: oklch(92% 0.06 145);
+  --accent-yellow: oklch(80% 0.15 95);
+  --accent-yellow-soft: oklch(93% 0.06 95);
+}
+[data-theme="dark"] {
+  --paper: oklch(24% 0.012 260);
+  --paper-grid: oklch(32% 0.02 260);
+  --ink: oklch(93% 0.02 90);
+  --ink-soft: oklch(76% 0.02 90);
+  --surface: oklch(29% 0.015 260);
+  --surface-alt: oklch(34% 0.02 260);
+  --accent-blue: oklch(76% 0.12 255);
+  --accent-blue-soft: oklch(36% 0.07 255);
+  --accent-red: oklch(74% 0.14 25);
+  --accent-red-soft: oklch(38% 0.08 25);
+  --accent-green: oklch(76% 0.13 145);
+  --accent-green-soft: oklch(37% 0.07 145);
+  --accent-yellow: oklch(83% 0.13 95);
+  --accent-yellow-soft: oklch(40% 0.07 95);
+}

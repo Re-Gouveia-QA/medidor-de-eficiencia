@@ -1,0 +1,39 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Buttons" subtitle="Primary, secondary, ghost, danger + icon buttons" -->
+<!DOCTYPE html>
+<html><head><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script></head>
+<body style="padding:20px">
+<div id="root"></div>
+<script type="text/babel">
+const { Button, IconButton } = window.DS;
+function App(){
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:'18px'}}>
+      <div style={{display:'flex',gap:'14px',flexWrap:'wrap',alignItems:'center'}}>
+        <Button variant="primary" iconLeft="check">Salvar</Button>
+        <Button variant="secondary">Cancelar</Button>
+        <Button variant="ghost">Ver mais</Button>
+        <Button variant="danger" iconLeft="trash">Excluir</Button>
+        <Button variant="primary" disabled>Desabilitado</Button>
+        <Button variant="primary" loading>Salvando</Button>
+      </div>
+      <div style={{display:'flex',gap:'14px',alignItems:'center'}}>
+        <Button size="sm" variant="primary">Pequeno</Button>
+        <Button size="md" variant="primary">Medio</Button>
+        <Button size="lg" variant="primary">Grande</Button>
+      </div>
+      <div style={{display:'flex',gap:'14px',alignItems:'center'}}>
+        <IconButton icon="plus" variant="primary" ariaLabel="Adicionar" />
+        <IconButton icon="edit" variant="secondary" ariaLabel="Editar" />
+        <IconButton icon="trash" variant="danger" ariaLabel="Excluir" />
+        <IconButton icon="filter" variant="ghost" ariaLabel="Filtrar" size="sm" />
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body></html>

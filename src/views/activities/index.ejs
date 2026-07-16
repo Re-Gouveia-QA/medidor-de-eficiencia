@@ -1,20 +1,38 @@
 <div class="page-header">
-  <h1>Visualizar Atividades</h1>
-  <a class="btn btn-primary" href="/activities/new">Registrar atividade</a>
+  <%- include('../partials/page-header', { title: 'Atividades', backHref: '/' }) %>
+  <a class="btn btn-primary sketch-edge sketch-hover" href="/activities/new">
+    <%- include('../partials/icon', { name: 'plus', size: 16 }) %> Registrar atividade
+  </a>
 </div>
 
 <form method="GET" action="/activities" class="filters">
-  <label>De <input type="date" name="inicio" value="<%= filtros.inicio %>" /></label>
-  <label>Até <input type="date" name="fim" value="<%= filtros.fim %>" /></label>
-  <label>Categoria
-    <select name="categoria">
-      <option value="">Todas</option>
-      <% categorias.forEach((c) => { %>
-        <option value="<%= c.id %>" <%= filtros.categoria === c.id ? 'selected' : '' %>><%= c.nome %></option>
-      <% }) %>
-    </select>
-  </label>
-  <button type="submit" class="btn">Filtrar</button>
+  <div class="field">
+    <label class="field-label" for="inicio">De</label>
+    <div class="sketch-edge input-wrap">
+      <input type="date" id="inicio" name="inicio" class="input" value="<%= filtros.inicio %>" />
+    </div>
+  </div>
+  <div class="field">
+    <label class="field-label" for="fim">Até</label>
+    <div class="sketch-edge input-wrap">
+      <input type="date" id="fim" name="fim" class="input" value="<%= filtros.fim %>" />
+    </div>
+  </div>
+  <div class="field">
+    <label class="field-label" for="categoria">Categoria</label>
+    <div class="sketch-edge input-wrap">
+      <select id="categoria" name="categoria" class="select">
+        <option value="">Todas</option>
+        <% categorias.forEach((c) => { %>
+          <option value="<%= c.id %>" <%= filtros.categoria === c.id ? 'selected' : '' %>><%= c.nome %></option>
+        <% }) %>
+      </select>
+      <%- include('../partials/icon', { name: 'chevron-down', size: 16, color: 'var(--ink-soft)' }) %>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-secondary sketch-edge sketch-hover">
+    <%- include('../partials/icon', { name: 'filter', size: 16 }) %> Filtrar
+  </button>
 </form>
 
 <% if (atividades.length === 0) { %>
@@ -22,7 +40,7 @@
 <% } else { %>
   <ul class="list">
     <% atividades.forEach((a) => { %>
-      <li class="list-item">
+      <li class="list-item sketch-edge">
         <span class="color-dot" style="background: <%= a.category.cor %>"></span>
         <div class="list-item-body">
           <strong><%= a.nome %></strong>
@@ -32,15 +50,19 @@
             <%= formatMinutes(a.duracaoMin) %> · <%= a.category.nome %>
           </span>
           <% if (a.category.possuiValor && a.valor != null) { %>
-            <span class="muted"><%= a.category.valorLabel || 'Valor' %>: <%= a.valor %></span>
+            <span class="muted"><%= a.category.valorLabel || 'Valor' %>: <%= formatNumber(a.valor) %></span>
           <% } %>
           <% if (a.descricao) { %><span class="muted"><%= a.descricao %></span><% } %>
         </div>
         <div class="actions">
-          <a class="btn btn-small" href="/activities/<%= a.id %>/edit">Editar</a>
+          <a class="icon-btn sketch-edge sketch-hover btn-secondary" href="/activities/<%= a.id %>/edit" aria-label="Editar">
+            <%- include('../partials/icon', { name: 'edit', size: 20 }) %>
+          </a>
           <form action="/activities/<%= a.id %>?_method=DELETE" method="POST" class="inline js-confirm-submit"
                 data-confirm="Excluir esta atividade?">
-            <button type="submit" class="btn btn-small btn-danger">Excluir</button>
+            <button type="submit" class="icon-btn sketch-edge sketch-hover btn-danger" aria-label="Excluir">
+              <%- include('../partials/icon', { name: 'trash', size: 20 }) %>
+            </button>
           </form>
         </div>
       </li>
