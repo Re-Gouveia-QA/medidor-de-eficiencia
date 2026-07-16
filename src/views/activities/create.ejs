@@ -5,7 +5,7 @@
   <div class="field">
     <label class="field-label" for="nome">Nome da atividade</label>
     <div class="sketch-edge input-wrap">
-      <input type="text" id="nome" name="nome" class="input" required value="<%= atividade?.nome ?? '' %>" />
+      <input type="text" id="nome" name="nome" class="input" required placeholder="Ex.: Leitura, Academia, Reunião de equipe" value="<%= atividade?.nome ?? '' %>" />
     </div>
   </div>
 
@@ -55,7 +55,7 @@
   <div id="valorField" class="field hidden">
     <label class="field-label" for="valor" id="valorLabelText">Valor</label>
     <div class="sketch-edge input-wrap">
-      <input type="number" id="valor" name="valor" class="input" min="0.01" step="0.01"
+      <input type="number" id="valor" name="valor" class="input" min="0.01" step="0.01" placeholder="0.00"
              value="<%= atividade?.valor ?? '' %>" />
     </div>
   </div>
@@ -63,7 +63,7 @@
   <div class="field">
     <label class="field-label" for="descricao">Descrição / observações (opcional)</label>
     <div class="sketch-edge input-wrap">
-      <textarea id="descricao" name="descricao" class="input" rows="4"><%= atividade?.descricao ?? '' %></textarea>
+      <textarea id="descricao" name="descricao" class="input" rows="4" placeholder="Alguma observação sobre esta atividade?"><%= atividade?.descricao ?? '' %></textarea>
     </div>
   </div>
 

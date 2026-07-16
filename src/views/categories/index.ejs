@@ -12,7 +12,7 @@
     <% categorias.forEach((c, i) => { %>
       <div class="card sketch-edge" style="--tilt: <%= i % 2 ? '0.6deg' : '-0.6deg' %>; transform: rotate(var(--tilt));">
         <div class="card-heading">
-          <span class="color-dot" style="background: <%= c.cor %>"></span>
+          <span class="color-dot" style="background: <%= c.cor %>" aria-hidden="true"></span>
           <h3 class="card-title"><%= c.nome %></h3>
         </div>
         <% if (c.descricao) { %><p class="muted"><%= c.descricao %></p><% } %>

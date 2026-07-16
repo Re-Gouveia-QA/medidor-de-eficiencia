@@ -9,6 +9,7 @@
     } else {
       document.documentElement.setAttribute('data-theme', 'dark');
     }
+    btn.setAttribute('aria-pressed', String(!isDark));
     // Cookie (não localStorage) é o que o servidor lê para renderizar o <html> já no tema certo
     // na próxima navegação — evita qualquer flash/reversão de tema ao trocar de página.
     document.cookie = 'theme=' + (isDark ? 'light' : 'dark') + '; path=/; max-age=31536000; samesite=lax';

@@ -40,7 +40,24 @@
     if (form) HTMLFormElement.prototype.submit.call(form);
   });
 
+  // Trap de foco: com o toast aberto (aria-modal="true"), Tab/Shift+Tab devem circular só entre
+  // os dois botões do toast — sem isso, o foco escaparia pro resto da página "por baixo" dela.
   document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape' && toast.classList.contains('is-visible')) hide();
+    if (!toast.classList.contains('is-visible')) return;
+
+    if (event.key === 'Escape') {
+      hide();
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      var focusable = [cancelBtn, confirmBtn];
+      var currentIndex = focusable.indexOf(document.activeElement);
+      var nextIndex = event.shiftKey
+        ? (currentIndex <= 0 ? focusable.length - 1 : currentIndex - 1)
+        : (currentIndex === focusable.length - 1 ? 0 : currentIndex + 1);
+      event.preventDefault();
+      focusable[nextIndex].focus();
+    }
   });
 })();

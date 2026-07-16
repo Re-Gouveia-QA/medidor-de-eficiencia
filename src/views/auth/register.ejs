@@ -12,7 +12,7 @@
     <label class="field-label" for="nome">Nome</label>
     <div class="sketch-edge input-wrap">
       <%- include('../partials/icon', { name: 'user', size: 17, color: 'var(--ink-soft)' }) %>
-      <input type="text" id="nome" name="nome" class="input" required autocomplete="name" />
+      <input type="text" id="nome" name="nome" class="input" required autocomplete="name" placeholder="Seu nome completo" />
     </div>
   </div>
 
@@ -20,7 +20,7 @@
     <label class="field-label" for="email">E-mail</label>
     <div class="sketch-edge input-wrap">
       <%- include('../partials/icon', { name: 'mail', size: 17, color: 'var(--ink-soft)' }) %>
-      <input type="email" id="email" name="email" class="input" required autocomplete="email" />
+      <input type="email" id="email" name="email" class="input" required autocomplete="email" placeholder="seu@email.com" />
     </div>
   </div>
 
@@ -28,7 +28,7 @@
     <label class="field-label" for="senha">Senha (mínimo 8 caracteres)</label>
     <div class="sketch-edge input-wrap">
       <%- include('../partials/icon', { name: 'lock', size: 17, color: 'var(--ink-soft)' }) %>
-      <input type="password" id="senha" name="senha" class="input" required minlength="8" autocomplete="new-password" />
+      <input type="password" id="senha" name="senha" class="input" required minlength="8" autocomplete="new-password" placeholder="Mínimo 8 caracteres" />
     </div>
   </div>
 

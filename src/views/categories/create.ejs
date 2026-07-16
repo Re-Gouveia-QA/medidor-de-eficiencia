@@ -4,14 +4,14 @@
   <div class="field">
     <label class="field-label" for="nome">Nome</label>
     <div class="sketch-edge input-wrap">
-      <input type="text" id="nome" name="nome" class="input" required value="<%= categoria?.nome ?? '' %>" />
+      <input type="text" id="nome" name="nome" class="input" required placeholder="Ex.: Trabalho, Estudos, Lazer" value="<%= categoria?.nome ?? '' %>" />
     </div>
   </div>
 
   <div class="field">
     <label class="field-label" for="descricao">Descrição</label>
     <div class="sketch-edge input-wrap">
-      <textarea id="descricao" name="descricao" class="input" rows="3"><%= categoria?.descricao ?? '' %></textarea>
+      <textarea id="descricao" name="descricao" class="input" rows="3" placeholder="Opcional"><%= categoria?.descricao ?? '' %></textarea>
     </div>
   </div>
 
@@ -25,7 +25,7 @@
   <div class="field">
     <label class="field-label" for="tempoDesejadoMin">Tempo desejado por dia (minutos, opcional)</label>
     <div class="sketch-edge input-wrap">
-      <input type="number" id="tempoDesejadoMin" name="tempoDesejadoMin" class="input" min="1"
+      <input type="number" id="tempoDesejadoMin" name="tempoDesejadoMin" class="input" min="1" placeholder="Ex.: 60"
              value="<%= categoria?.tempoDesejadoMin ?? '' %>" />
     </div>
   </div>
@@ -33,15 +33,17 @@
   <div class="field">
     <label class="field-label" for="duracaoPadraoMin">Duração padrão da atividade (minutos, opcional)</label>
     <div class="sketch-edge input-wrap">
-      <input type="number" id="duracaoPadraoMin" name="duracaoPadraoMin" class="input" min="1"
-             value="<%= categoria?.duracaoPadraoMin ?? '' %>" />
+      <input type="number" id="duracaoPadraoMin" name="duracaoPadraoMin" class="input" min="1" placeholder="Ex.: 60"
+             value="<%= categoria?.duracaoPadraoMin ?? '' %>" aria-describedby="duracaoPadraoMinHelp" />
     </div>
-    <span class="field-helper">Ao registrar uma atividade nesta categoria, a hora de fim será sugerida a partir deste valor.</span>
+    <span class="field-helper" id="duracaoPadraoMinHelp">Ao registrar uma atividade nesta categoria, a hora de fim será sugerida a partir deste valor.</span>
   </div>
 
   <label class="check-row">
-    <input type="checkbox" id="possuiValor" name="possuiValor" style="display:none" <%= categoria?.possuiValor ? 'checked' : '' %> />
-    <span class="check-box sketch-edge"><%- include('../partials/icon', { name: 'check', size: 14 }) %></span>
+    <span class="check-box-wrap">
+      <input type="checkbox" id="possuiValor" name="possuiValor" class="check-input" <%= categoria?.possuiValor ? 'checked' : '' %> />
+      <span class="check-box sketch-edge"><%- include('../partials/icon', { name: 'check', size: 14 }) %></span>
+    </span>
     Esta categoria possui um valor numérico associado (ex.: custo, valor de depósito)
   </label>
 
@@ -54,10 +56,10 @@
 
     <label class="field-label" for="valorPadrao">Valor padrão (opcional)</label>
     <div class="sketch-edge input-wrap">
-      <input type="number" id="valorPadrao" name="valorPadrao" class="input" min="0.01" step="0.01"
-             value="<%= categoria?.valorPadrao ?? '' %>" />
+      <input type="number" id="valorPadrao" name="valorPadrao" class="input" min="0.01" step="0.01" placeholder="0.00"
+             value="<%= categoria?.valorPadrao ?? '' %>" aria-describedby="valorPadraoHelp" />
     </div>
-    <span class="field-helper">Sugerido ao registrar uma atividade nesta categoria, mas pode ser alterado.</span>
+    <span class="field-helper" id="valorPadraoHelp">Sugerido ao registrar uma atividade nesta categoria, mas pode ser alterado.</span>
   </div>
 
   <button type="submit" class="btn btn-primary sketch-edge sketch-hover"><%= categoria ? 'Salvar' : 'Registrar' %></button>

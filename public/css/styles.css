@@ -22,6 +22,24 @@
    sem isso, a regra "a:hover" (mais específica) troca pra --ink, perdendo a cor no hover. */
 .docs-btn, .docs-btn:hover, .docs-btn:focus-visible { color: var(--accent-blue); }
 
+/* Skip link: invisível até ganhar foco (primeiro Tab da página) — permite pular os botões do
+   topbar e ir direto pro conteúdo, sem precisar tabular por eles a cada navegação de teclado. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 200;
+  padding: 10px 16px;
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+}
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+}
+
 .app-content { max-width: 640px; margin: 0 auto; padding: 12px 20px 64px; }
 
 /* Cabeçalho de página (título + botão Voltar) */

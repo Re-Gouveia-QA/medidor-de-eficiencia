@@ -8,6 +8,7 @@
 </head>
 <body>
   <% if (currentUser) { %>
+    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
     <header class="topbar">
       <a class="brand" href="/">Medidor</a>
       <div class="topbar-actions">
@@ -16,7 +17,7 @@
             <%- include('../partials/icon', { name: 'info', size: 18 }) %>
           </a>
         <% } %>
-        <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="Alternar tema claro/escuro">
+        <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="Alternar tema claro/escuro" aria-pressed="<%= theme === 'dark' ? 'true' : 'false' %>">
           <span class="icon-sun"><%- include('../partials/icon', { name: 'sun', size: 18, color: 'var(--accent-yellow)' }) %></span>
           <span class="icon-moon"><%- include('../partials/icon', { name: 'moon', size: 18, color: 'var(--ink-soft)' }) %></span>
         </button>
@@ -28,7 +29,7 @@
       </div>
     </header>
 
-    <main class="app-content">
+    <main id="main-content" class="app-content">
       <%- include('../partials/flash') %>
       <%- body %>
     </main>

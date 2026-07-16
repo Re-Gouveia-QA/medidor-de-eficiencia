@@ -36,7 +36,7 @@
       <% relatorio.distribuicao.forEach((d) => { %>
         <li>
           <div class="bar-label">
-            <span><span class="color-dot" style="background: <%= d.cor %>"></span> <%= d.categoria %></span>
+            <span><span class="color-dot" style="background: <%= d.cor %>" aria-hidden="true"></span> <%= d.categoria %></span>
             <span class="muted"><%= d.totalFormatado %> (<%= d.percentual %>%)</span>
           </div>
           <div class="bar-track">

@@ -41,7 +41,7 @@
   <ul class="list">
     <% atividades.forEach((a) => { %>
       <li class="list-item sketch-edge">
-        <span class="color-dot" style="background: <%= a.category.cor %>"></span>
+        <span class="color-dot" style="background: <%= a.category.cor %>" aria-hidden="true"></span>
         <div class="list-item-body">
           <strong><%= a.nome %></strong>
           <span class="muted">
