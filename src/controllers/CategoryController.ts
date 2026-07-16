@@ -67,6 +67,7 @@ export const CategoryController = {
     try {
       await CategoryModel.update(req.params.id, req.currentUser!.id, {
         ...result.data!,
+        descricao: result.data!.descricao ?? null,
         tempoDesejadoMin: result.data!.tempoDesejadoMin ?? null,
         valorLabel: result.data!.valorLabel ?? null,
         valorPadrao: result.data!.valorPadrao ?? null,
@@ -81,8 +82,15 @@ export const CategoryController = {
   },
 
   async destroy(req: Request, res: Response) {
+    // RF12: confirma que a categoria pertence ao usuário antes de revelar qualquer dado dela
+    // (contagem de atividades) ou tentar excluí-la.
+    const categoria = await CategoryModel.findById(req.params.id, req.currentUser!.id);
+    if (!categoria) {
+      req.flash('error', 'Categoria não encontrada.');
+      return res.redirect('/categories');
+    }
     // Regra 7: bloquear exclusão de categoria com atividades vinculadas
-    const total = await CategoryModel.countActivities(req.params.id);
+    const total = await CategoryModel.countActivities(categoria.id);
     if (total > 0) {
       req.flash(
         'error',
@@ -90,7 +98,11 @@ export const CategoryController = {
       );
       return res.redirect('/categories');
     }
-    await CategoryModel.destroy(req.params.id, req.currentUser!.id);
+    const deleted = await CategoryModel.destroy(categoria.id, req.currentUser!.id);
+    if (!deleted) {
+      req.flash('error', 'Categoria não encontrada.');
+      return res.redirect('/categories');
+    }
     req.flash('success', 'Categoria excluída.');
     res.redirect('/categories');
   },

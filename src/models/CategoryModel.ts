@@ -35,7 +35,7 @@ export const CategoryModel = {
     userId: string,
     data: {
       nome: string;
-      descricao?: string;
+      descricao?: string | null;
       cor: string;
       tempoDesejadoMin?: number | null;
       possuiValor?: boolean;

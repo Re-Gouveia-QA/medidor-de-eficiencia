@@ -178,4 +178,13 @@ describe('Rotas de atividades', () => {
     expect(res.headers.location).toBe('/activities');
     expect(ActivityModel.destroy).toHaveBeenCalledWith('act-1', TEST_USER.id);
   });
+
+  it('DELETE /activities/:id redireciona com erro quando nada é excluído (id inexistente ou de outro usuário)', async () => {
+    vi.mocked(ActivityModel.destroy).mockResolvedValue({ count: 0 } as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent.delete('/activities/inexistente');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/activities');
+  });
 });

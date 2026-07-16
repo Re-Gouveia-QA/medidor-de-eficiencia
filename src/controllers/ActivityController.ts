@@ -94,7 +94,11 @@ export const ActivityController = {
   },
 
   async destroy(req: Request, res: Response) {
-    await ActivityModel.destroy(req.params.id, req.currentUser!.id);
+    const { count } = await ActivityModel.destroy(req.params.id, req.currentUser!.id);
+    if (count === 0) {
+      req.flash('error', 'Atividade não encontrada.');
+      return res.redirect('/activities');
+    }
     req.flash('success', 'Atividade excluída.');
     res.redirect('/activities');
   },

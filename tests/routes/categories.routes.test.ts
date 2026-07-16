@@ -144,6 +144,7 @@ describe('Rotas de categorias', () => {
   });
 
   it('DELETE /categories/:id bloqueia exclusão quando há atividades vinculadas (regra 7)', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(fakeCategoria() as never);
     vi.mocked(CategoryModel.countActivities).mockResolvedValue(3);
 
     const agent = await loginAgent(app);
@@ -154,12 +155,24 @@ describe('Rotas de categorias', () => {
   });
 
   it('DELETE /categories/:id exclui quando não há atividades vinculadas', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(fakeCategoria() as never);
     vi.mocked(CategoryModel.countActivities).mockResolvedValue(0);
-    vi.mocked(CategoryModel.destroy).mockResolvedValue({} as never);
+    vi.mocked(CategoryModel.destroy).mockResolvedValue(fakeCategoria() as never);
 
     const agent = await loginAgent(app);
     const res = await agent.delete('/categories/cat-1');
     expect(res.status).toBe(302);
     expect(CategoryModel.destroy).toHaveBeenCalledWith('cat-1', TEST_USER.id);
+  });
+
+  it('DELETE /categories/:id redireciona quando a categoria não existe ou não pertence ao usuário', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(null);
+
+    const agent = await loginAgent(app);
+    const res = await agent.delete('/categories/inexistente');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/categories');
+    expect(CategoryModel.countActivities).not.toHaveBeenCalled();
+    expect(CategoryModel.destroy).not.toHaveBeenCalled();
   });
 });

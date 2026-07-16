@@ -86,7 +86,10 @@ export const AuthController = {
       req.session.userName = user.nome;
       req.session.isAdmin = user.isAdmin;
       res.redirect('/');
-    } catch {
+    } catch (err) {
+      // Log detalhado só no servidor — a flash pro usuário continua genérica de propósito
+      // (não expor detalhes de token/OAuth), mas sem isso a causa real fica invisível.
+      console.error('[GoogleAuth] Falha no callback:', err);
       req.flash('error', 'Não foi possível autenticar com o Google. Tente novamente.');
       res.redirect('/login');
     }

@@ -21,14 +21,19 @@ export const UserModel = {
 
   /** Regra 3: conta Google — vincula ao usuário local se o e-mail já existir. */
   async findOrCreateFromGoogle(googleId: string, nome: string, email: string) {
+    // Mesma normalização do cadastro/login local (registerSchema/loginSchema) — sem isso, uma conta
+    // Google com e-mail em capitalização diferente da conta local não seria reconhecida como a mesma
+    // (comparação de e-mail é case-sensitive no Postgres por padrão) e criaria uma conta duplicada.
+    const normalizedEmail = email.toLowerCase();
+
     const byGoogle = await prisma.user.findUnique({ where: { googleId } });
     if (byGoogle) return byGoogle;
 
-    const byEmail = await prisma.user.findUnique({ where: { email } });
+    const byEmail = await prisma.user.findUnique({ where: { email: normalizedEmail } });
     if (byEmail) {
       return prisma.user.update({ where: { id: byEmail.id }, data: { googleId } });
     }
-    return prisma.user.create({ data: { nome, email, googleId } });
+    return prisma.user.create({ data: { nome, email: normalizedEmail, googleId } });
   },
 
   async verifyPassword(senha: string, senhaHash: string | null): Promise<boolean> {
