@@ -102,7 +102,11 @@
   border-radius: var(--radius, var(--radius-blob));
   background: var(--surface);
   z-index: -1;
-  filter: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='r'><feTurbulence type='fractalNoise' baseFrequency='0.018 0.05' numOctaves='2' seed='7' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='3.2'/></filter></svg>%23r");
+  /* Referencia o <filter> real definido em partials/svg-filters.ejs (incluído uma vez por layout),
+     não mais um data URI inline — Safari/WebKit não resolve filtros SVG referenciados via data:
+     no CSS (o elemento simplesmente some, em vez de só ignorar o filtro), então precisa ser um
+     <filter> de verdade no HTML da página, referenciado por #id. */
+  filter: url(#sketch-rough-edge);
 }
 .sketch-hover:hover:not(:disabled)::before, .sketch-hover:focus-visible:not(:disabled)::before {
   animation: sketch-wobble 0.5s ease-in-out infinite;

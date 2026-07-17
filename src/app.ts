@@ -74,14 +74,12 @@ export function createApp() {
   );
 
   // Cabeçalhos de segurança (CSP restritiva por padrão) para o restante da aplicação.
-  // style-src ganha "data:" em relação ao padrão do helmet: a identidade visual (sketch-edge)
-  // usa um filtro SVG (feTurbulence/feDisplacementMap) referenciado via data URI no CSS.
   app.use(
     helmet({
       contentSecurityPolicy: {
         directives: {
           ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-          'style-src': ["'self'", 'https:', "'unsafe-inline'", 'data:'],
+          'style-src': ["'self'", 'https:', "'unsafe-inline'"],
         },
       },
     }),

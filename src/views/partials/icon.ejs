@@ -35,4 +35,4 @@ const iconSize = typeof size !== 'undefined' ? size : 20;
 const iconColor = typeof color !== 'undefined' ? color : 'currentColor';
 const iconRough = typeof rough !== 'undefined' ? rough : true;
 const d = ICON_PATHS[name];
-%><% if (d) { %><svg width="<%= iconSize %>" height="<%= iconSize %>" viewBox="0 0 24 24" fill="none" stroke="<%= iconColor %>" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"<% if (iconRough) { %> style="filter: url(&quot;data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg'&gt;&lt;filter id='ir'&gt;&lt;feTurbulence type='fractalNoise' baseFrequency='0.06 0.09' numOctaves='2' seed='4' result='n'/&gt;&lt;feDisplacementMap in='SourceGraphic' in2='n' scale='1.6'/&gt;&lt;/filter&gt;&lt;/svg&gt;%23ir&quot;)"<% } %>><path d="<%= d %>" /></svg><% } %>
+%><% if (d) { %><svg width="<%= iconSize %>" height="<%= iconSize %>" viewBox="0 0 24 24" fill="none" stroke="<%= iconColor %>" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"<% if (iconRough) { %> style="filter: url(#sketch-rough-icon)"<% } %>><path d="<%= d %>" /></svg><% } %>
