@@ -16,15 +16,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "baseUrl": "src",
-    "paths": {
-      "@controllers/*": ["controllers/*"],
-      "@models/*": ["models/*"],
-      "@services/*": ["services/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@config/*": ["config/*"],
-      "@utils/*": ["utils/*"]
-    }
+    "isolatedModules": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist", "tests"]

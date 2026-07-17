@@ -8,6 +8,8 @@ import { requireAuth } from '../middlewares/requireAuth';
 
 export const routes = Router();
 
+routes.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }));
+
 routes.use(authRoutes);
 routes.get('/', requireAuth, HomeController.index);
 routes.use('/activities', requireAuth, activityRoutes);

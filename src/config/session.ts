@@ -1,10 +1,21 @@
 import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
 import { env, isProd } from './env';
 
 // RNF02: sessões autenticadas protegem as rotas internas.
-// Em produção, trocar o MemoryStore padrão por um store persistente
-// (ex.: connect-pg-simple apontando para o mesmo PostgreSQL).
+// Em produção usa-se connect-pg-simple (mesmo PostgreSQL do Prisma) em vez do
+// MemoryStore padrão — sem isso, cada redeploy/restart do processo (ex.: Railway)
+// derrubaria todas as sessões ativas, e múltiplas instâncias não compartilhariam sessão.
+const PgSession = connectPgSimple(session);
+
 export const sessionMiddleware = session({
+  store: isProd
+    ? new PgSession({
+        conString: env.DATABASE_URL,
+        tableName: 'session',
+        createTableIfMissing: true,
+      })
+    : undefined,
   secret: env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
