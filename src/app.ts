@@ -6,6 +6,7 @@ import methodOverride from 'method-override';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
 import { isProd } from './config/env';
+import { DEFAULT_TIMEZONE } from './utils/time';
 import { sessionMiddleware } from './config/session';
 import { loadOpenApiDocument } from './config/openapi';
 import { globalLimiter } from './config/rateLimit';
@@ -25,6 +26,29 @@ function readThemeCookie(req: Request): 'dark' | 'light' {
   if (!header) return 'light';
   const match = header.split(';').map((part) => part.trim()).find((part) => part.startsWith('theme='));
   return match?.slice('theme='.length) === 'dark' ? 'dark' : 'light';
+}
+
+function isValidTimeZone(tz: string): boolean {
+  try {
+    Intl.DateTimeFormat(undefined, { timeZone: tz });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Lê o cookie "tz" (setado via JS por public/js/timezone.js, mesmo padrão do cookie "theme")
+ * usado para exibir horários no fuso do usuário (RNF05). Nunca confia no valor sem validar:
+ * é um cookie não-httpOnly (pode ser adulterado), e um fuso IANA inválido faria
+ * Intl.DateTimeFormat lançar exceção mais adiante, ao formatar/converter datas.
+ */
+function readTimezoneCookie(req: Request): string {
+  const header = req.headers.cookie;
+  if (!header) return DEFAULT_TIMEZONE;
+  const match = header.split(';').map((part) => part.trim()).find((part) => part.startsWith('tz='));
+  const candidate = match ? decodeURIComponent(match.slice('tz='.length)) : '';
+  return candidate && isValidTimeZone(candidate) ? candidate : DEFAULT_TIMEZONE;
 }
 
 export function createApp() {
@@ -59,6 +83,7 @@ export function createApp() {
       : null;
     res.locals.currentPath = req.path; // usado pela sidebar para destacar o item ativo
     res.locals.theme = readThemeCookie(req);
+    req.userTimezone = readTimezoneCookie(req);
     next();
   });
 

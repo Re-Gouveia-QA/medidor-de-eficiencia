@@ -5,10 +5,11 @@ export interface ActivityData {
   nome: string;
   categoryId: string;
   data: string; // YYYY-MM-DD
-  horaInicio: string; // HH:mm
-  horaFim: string; // HH:mm
+  horaInicio: string; // HH:mm, horário local no fuso abaixo
+  horaFim: string; // HH:mm, horário local no fuso abaixo
   descricao?: string;
   valor?: number | null; // regra 9 — só relevante se a categoria tiver possuiValor = true
+  timezone: string; // RNF05 — fuso IANA em que horaInicio/horaFim foram digitados
 }
 
 export interface ActivityFilters {
@@ -42,8 +43,8 @@ class ActivityModelImpl extends BaseModel {
   }
 
   create(userId: string, input: ActivityData) {
-    const horaInicio = combineDateTime(input.data, input.horaInicio);
-    const horaFim = combineDateTime(input.data, input.horaFim);
+    const horaInicio = combineDateTime(input.data, input.horaInicio, input.timezone);
+    const horaFim = combineDateTime(input.data, input.horaFim, input.timezone);
     const duracaoMin = calcDurationMin(horaInicio, horaFim); // valida fim > início (regra 4)
 
     return this.db.activity.create({
@@ -62,8 +63,8 @@ class ActivityModelImpl extends BaseModel {
   }
 
   update(id: string, userId: string, input: ActivityData) {
-    const horaInicio = combineDateTime(input.data, input.horaInicio);
-    const horaFim = combineDateTime(input.data, input.horaFim);
+    const horaInicio = combineDateTime(input.data, input.horaInicio, input.timezone);
+    const horaFim = combineDateTime(input.data, input.horaFim, input.timezone);
     const duracaoMin = calcDurationMin(horaInicio, horaFim);
 
     return this.db.activity.updateMany({

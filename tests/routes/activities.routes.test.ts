@@ -95,6 +95,40 @@ describe('Rotas de atividades', () => {
     );
   });
 
+  it('POST /activities repassa o fuso do cookie "tz" para o model (RNF05)', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(fakeCategoria({ possuiValor: false }) as never);
+    vi.mocked(ActivityModel.create).mockResolvedValue({} as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent
+      .post('/activities')
+      .set('Cookie', 'tz=America/Sao_Paulo')
+      .type('form')
+      .send(atividadeInput);
+    expect(res.status).toBe(302);
+    expect(ActivityModel.create).toHaveBeenCalledWith(
+      TEST_USER.id,
+      expect.objectContaining({ timezone: 'America/Sao_Paulo' }),
+    );
+  });
+
+  it('POST /activities cai para UTC quando o cookie "tz" é inválido (cookie não é httpOnly, pode ser adulterado)', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(fakeCategoria({ possuiValor: false }) as never);
+    vi.mocked(ActivityModel.create).mockResolvedValue({} as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent
+      .post('/activities')
+      .set('Cookie', 'tz=not-a-real-timezone')
+      .type('form')
+      .send(atividadeInput);
+    expect(res.status).toBe(302);
+    expect(ActivityModel.create).toHaveBeenCalledWith(
+      TEST_USER.id,
+      expect.objectContaining({ timezone: 'UTC' }),
+    );
+  });
+
   it('POST /activities usa o valor padrão da categoria quando o campo valor fica em branco (regra 9)', async () => {
     vi.mocked(CategoryModel.findById).mockResolvedValue(
       fakeCategoria({ possuiValor: true, valorPadrao: { toNumber: () => 4.4 } }) as never,

@@ -40,14 +40,14 @@
       <label class="field-label" for="horaInicio">Hora de início</label>
       <div class="sketch-edge input-wrap">
         <input type="time" id="horaInicio" name="horaInicio" class="input" required
-               value="<%= atividade ? atividade.horaInicio.toISOString().slice(11, 16) : '' %>" />
+               value="<%= atividade ? formatTime(atividade.horaInicio) : '' %>" />
       </div>
     </div>
     <div class="field">
       <label class="field-label" for="horaFim">Hora de fim</label>
       <div class="sketch-edge input-wrap">
         <input type="time" id="horaFim" name="horaFim" class="input" required
-               value="<%= atividade ? atividade.horaFim.toISOString().slice(11, 16) : '' %>" />
+               value="<%= atividade ? formatTime(atividade.horaFim) : '' %>" />
       </div>
     </div>
   </div>

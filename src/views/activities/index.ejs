@@ -46,7 +46,7 @@
           <strong><%= a.nome %></strong>
           <span class="muted">
             <%= a.data.toISOString().slice(0, 10).split('-').reverse().join('/') %> ·
-            <%= a.horaInicio.toISOString().slice(11, 16) %>–<%= a.horaFim.toISOString().slice(11, 16) %> ·
+            <%= formatTime(a.horaInicio) %>–<%= formatTime(a.horaFim) %> ·
             <%= formatMinutes(a.duracaoMin) %> · <%= a.category.nome %>
           </span>
           <% if (a.category.possuiValor && a.valor != null) { %>

@@ -3,7 +3,7 @@ import { BaseController } from './BaseController';
 import { ActivityModel } from '../models/ActivityModel';
 import { CategoryModel } from '../models/CategoryModel';
 import { activitySchema } from '../utils/validators';
-import { formatMinutes } from '../utils/time';
+import { formatMinutes, formatTimeInZone } from '../utils/time';
 import { formatNumber } from '../utils/format';
 
 /** RF12: garante que a categoria pertence ao usuário; se não, já envia o redirect de erro. */
@@ -36,6 +36,7 @@ class ActivityControllerImpl extends BaseController {
       filtros: { inicio: inicio ?? '', fim: fim ?? '', categoria: categoria ?? '' },
       formatMinutes,
       formatNumber,
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
     });
   };
 
@@ -45,7 +46,12 @@ class ActivityControllerImpl extends BaseController {
       req.flash('error', 'Cadastre ao menos uma categoria antes de registrar atividades.');
       return res.redirect('/categories/new');
     }
-    res.render('activities/create', { title: 'Registrar atividade', categorias, atividade: null });
+    res.render('activities/create', {
+      title: 'Registrar atividade',
+      categorias,
+      atividade: null,
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+    });
   };
 
   store = async (req: Request, res: Response) => {
@@ -58,7 +64,7 @@ class ActivityControllerImpl extends BaseController {
     const valor =
       valorInformado ?? (categoria.possuiValor && categoria.valorPadrao != null ? categoria.valorPadrao.toNumber() : undefined);
     try {
-      await ActivityModel.create(req.currentUser!.id, { ...data, valor });
+      await ActivityModel.create(req.currentUser!.id, { ...data, valor, timezone: req.userTimezone });
       req.flash('success', 'Atividade registrada com sucesso.');
       res.redirect('/activities');
     } catch (e) {
@@ -76,7 +82,12 @@ class ActivityControllerImpl extends BaseController {
       req.flash('error', 'Atividade não encontrada.');
       return res.redirect('/activities');
     }
-    res.render('activities/create', { title: 'Editar atividade', categorias, atividade });
+    res.render('activities/create', {
+      title: 'Editar atividade',
+      categorias,
+      atividade,
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+    });
   };
 
   update = async (req: Request, res: Response) => {
@@ -87,7 +98,7 @@ class ActivityControllerImpl extends BaseController {
     if (!categoria) return;
     const valor = parseValorInput(data.valor) ?? null;
     try {
-      await ActivityModel.update(req.params.id, req.currentUser!.id, { ...data, valor });
+      await ActivityModel.update(req.params.id, req.currentUser!.id, { ...data, valor, timezone: req.userTimezone });
       req.flash('success', 'Atividade atualizada.');
       res.redirect('/activities');
     } catch (e) {
