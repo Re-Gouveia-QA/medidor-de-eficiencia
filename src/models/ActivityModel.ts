@@ -1,4 +1,4 @@
-import { prisma } from '../config/database';
+import { BaseModel } from './BaseModel';
 import { calcDurationMin, combineDateTime } from '../utils/time';
 
 export interface ActivityData {
@@ -17,12 +17,11 @@ export interface ActivityFilters {
   categoryId?: string;
 }
 
-/** Model Activity — CRUD com cálculo automático de duração (regra 5). */
-export const ActivityModel = {
+/** Model Activity — CRUD escopado por usuário (RF12), com cálculo automático de duração (regra 5). */
+class ActivityModelImpl extends BaseModel {
   listByUser(userId: string, filters: ActivityFilters = {}) {
-    return prisma.activity.findMany({
-      where: {
-        userId,
+    return this.db.activity.findMany({
+      where: this.scopeToUser(userId, {
         ...(filters.categoryId ? { categoryId: filters.categoryId } : {}),
         ...(filters.inicio || filters.fim
           ? {
@@ -32,22 +31,22 @@ export const ActivityModel = {
               },
             }
           : {}),
-      },
+      }),
       orderBy: [{ data: 'desc' }, { horaInicio: 'desc' }],
       include: { category: { select: { nome: true, cor: true, possuiValor: true, valorLabel: true } } },
     });
-  },
+  }
 
   findById(id: string, userId: string) {
-    return prisma.activity.findFirst({ where: { id, userId } });
-  },
+    return this.db.activity.findFirst({ where: this.scopeToUser(userId, { id }) });
+  }
 
   create(userId: string, input: ActivityData) {
     const horaInicio = combineDateTime(input.data, input.horaInicio);
     const horaFim = combineDateTime(input.data, input.horaFim);
     const duracaoMin = calcDurationMin(horaInicio, horaFim); // valida fim > início (regra 4)
 
-    return prisma.activity.create({
+    return this.db.activity.create({
       data: {
         userId,
         categoryId: input.categoryId,
@@ -60,15 +59,15 @@ export const ActivityModel = {
         valor: input.valor ?? null,
       },
     });
-  },
+  }
 
   update(id: string, userId: string, input: ActivityData) {
     const horaInicio = combineDateTime(input.data, input.horaInicio);
     const horaFim = combineDateTime(input.data, input.horaFim);
     const duracaoMin = calcDurationMin(horaInicio, horaFim);
 
-    return prisma.activity.updateMany({
-      where: { id, userId },
+    return this.db.activity.updateMany({
+      where: this.scopeToUser(userId, { id }),
       data: {
         categoryId: input.categoryId,
         nome: input.nome,
@@ -80,9 +79,11 @@ export const ActivityModel = {
         valor: input.valor ?? null,
       },
     });
-  },
+  }
 
   destroy(id: string, userId: string) {
-    return prisma.activity.deleteMany({ where: { id, userId } });
-  },
-};
+    return this.db.activity.deleteMany({ where: this.scopeToUser(userId, { id }) });
+  }
+}
+
+export const ActivityModel = new ActivityModelImpl();
