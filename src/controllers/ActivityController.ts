@@ -5,6 +5,22 @@ import { activitySchema } from '../utils/validators';
 import { formatMinutes } from '../utils/time';
 import { formatNumber } from '../utils/format';
 
+/** RF12: garante que a categoria pertence ao usuário; se não, já envia o redirect de erro. */
+async function resolveOwnedCategory(req: Request, res: Response, categoryId: string, redirectTo: string) {
+  const categoria = await CategoryModel.findById(categoryId, req.currentUser!.id);
+  if (!categoria) {
+    req.flash('error', 'Categoria inválida.');
+    res.redirect(redirectTo);
+    return undefined;
+  }
+  return categoria;
+}
+
+/** Normaliza o campo de valor já coagido pelo Zod (número, '' ou undefined) para número ou undefined. */
+function parseValorInput(raw: number | '' | undefined): number | undefined {
+  return raw === '' || raw === undefined ? undefined : raw;
+}
+
 export const ActivityController = {
   async index(req: Request, res: Response) {
     const { inicio, fim, categoria } = req.query as Record<string, string | undefined>;
@@ -37,15 +53,10 @@ export const ActivityController = {
       req.flash('error', parsed.error.errors[0].message);
       return res.redirect('/activities/new');
     }
-    // RF12: garante que a categoria pertence ao usuário
-    const categoria = await CategoryModel.findById(parsed.data.categoryId, req.currentUser!.id);
-    if (!categoria) {
-      req.flash('error', 'Categoria inválida.');
-      return res.redirect('/activities/new');
-    }
+    const categoria = await resolveOwnedCategory(req, res, parsed.data.categoryId, '/activities/new');
+    if (!categoria) return;
     // Regra 9: se o valor não foi informado, usa o valor padrão da categoria (quando houver)
-    const valorInformado =
-      parsed.data.valor === '' || parsed.data.valor === undefined ? undefined : Number(parsed.data.valor);
+    const valorInformado = parseValorInput(parsed.data.valor);
     const valor =
       valorInformado ?? (categoria.possuiValor && categoria.valorPadrao != null ? categoria.valorPadrao.toNumber() : undefined);
     try {
@@ -76,13 +87,14 @@ export const ActivityController = {
       req.flash('error', parsed.error.errors[0].message);
       return res.redirect(`/activities/${req.params.id}/edit`);
     }
-    // RF12: garante que a categoria pertence ao usuário (evita associar a atividade a categoria de outro usuário)
-    const categoria = await CategoryModel.findById(parsed.data.categoryId, req.currentUser!.id);
-    if (!categoria) {
-      req.flash('error', 'Categoria inválida.');
-      return res.redirect(`/activities/${req.params.id}/edit`);
-    }
-    const valor = parsed.data.valor === '' || parsed.data.valor === undefined ? null : Number(parsed.data.valor);
+    const categoria = await resolveOwnedCategory(
+      req,
+      res,
+      parsed.data.categoryId,
+      `/activities/${req.params.id}/edit`,
+    );
+    if (!categoria) return;
+    const valor = parseValorInput(parsed.data.valor) ?? null;
     try {
       await ActivityModel.update(req.params.id, req.currentUser!.id, { ...parsed.data, valor });
       req.flash('success', 'Atividade atualizada.');
