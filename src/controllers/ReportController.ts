@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { BaseController } from './BaseController';
 import { ReportPeriod, ReportService } from '../services/ReportService';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -9,8 +10,14 @@ function parseDateParam(value: string): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export const ReportController = {
-  async index(req: Request, res: Response) {
+/**
+ * Estende BaseController por uniformidade de hierarquia com os demais
+ * controllers, ainda que esta rota não use parseOrRedirect: os filtros de
+ * período vêm de query string com parsing próprio (parseDateParam), não de
+ * um schema Zod de body.
+ */
+class ReportControllerImpl extends BaseController {
+  index = async (req: Request, res: Response) => {
     const { inicio, fim } = req.query as Record<string, string | undefined>;
 
     let periodo: ReportPeriod;
@@ -36,5 +43,7 @@ export const ReportController = {
         fim: periodo.fim.toISOString().slice(0, 10),
       },
     });
-  },
-};
+  };
+}
+
+export const ReportController = new ReportControllerImpl();

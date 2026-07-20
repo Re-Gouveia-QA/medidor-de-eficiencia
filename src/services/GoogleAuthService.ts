@@ -17,11 +17,18 @@ function createClient(): OAuth2Client {
   });
 }
 
-export const GoogleAuthService = {
+/**
+ * Não estende BaseModel nem BaseController: não acessa o banco (sem
+ * scopeToUser a herdar) e não é chamado como handler de rota do Express
+ * (sempre invocado como `GoogleAuthService.metodo(...)`, nunca destacado),
+ * então não há o risco de perda de `this` que justifica os class fields de
+ * arrow function nos controllers. Uma classe isolada é suficiente aqui.
+ */
+class GoogleAuthServiceImpl {
   /** RF03: só é possível fazer login com Google quando as credenciais estão no ambiente. */
   isConfigured(): boolean {
     return Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET && env.GOOGLE_CALLBACK_URL);
-  },
+  }
 
   /** Monta a URL do consent screen do Google. `state` protege contra CSRF. */
   getAuthUrl(state: string): string {
@@ -34,7 +41,7 @@ export const GoogleAuthService = {
       prompt: 'select_account',
       state,
     });
-  },
+  }
 
   /** Troca o "code" do callback por tokens e extrai o perfil do usuário (regra 3). */
   async handleCallback(code: string): Promise<GoogleProfile> {
@@ -61,5 +68,7 @@ export const GoogleAuthService = {
       nome: payload.name ?? payload.email,
       email: payload.email,
     };
-  },
-};
+  }
+}
+
+export const GoogleAuthService = new GoogleAuthServiceImpl();

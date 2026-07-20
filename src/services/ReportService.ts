@@ -1,4 +1,4 @@
-import { prisma } from '../config/database';
+import { BaseModel } from '../models/BaseModel';
 import { formatMinutes } from '../utils/time';
 
 export interface ReportPeriod {
@@ -27,17 +27,17 @@ export interface EfficiencyReport {
  * Regra 9: "dia registrado" = dia com ao menos uma atividade.
  * Regra 8: apenas dados do usuário autenticado no período.
  */
-export const ReportService = {
+class ReportServiceImpl extends BaseModel {
   /** Período padrão: mês corrente (regra 8). */
   defaultPeriod(now = new Date()): ReportPeriod {
     const inicio = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
     const fim = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0));
     return { inicio, fim };
-  },
+  }
 
   async build(userId: string, { inicio, fim }: ReportPeriod): Promise<EfficiencyReport> {
-    const atividades = await prisma.activity.findMany({
-      where: { userId, data: { gte: inicio, lte: fim } },
+    const atividades = await this.db.activity.findMany({
+      where: this.scopeToUser(userId, { data: { gte: inicio, lte: fim } }),
       select: { data: true, duracaoMin: true, category: { select: { nome: true, cor: true } } },
     });
 
@@ -69,5 +69,7 @@ export const ReportService = {
       totalFormatado: formatMinutes(totalMin),
       distribuicao,
     };
-  },
-};
+  }
+}
+
+export const ReportService = new ReportServiceImpl();
