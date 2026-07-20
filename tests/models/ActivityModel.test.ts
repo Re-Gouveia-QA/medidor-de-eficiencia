@@ -24,6 +24,7 @@ const INPUT = {
   data: '2026-07-15',
   horaInicio: '08:00',
   horaFim: '09:00',
+  timezone: 'UTC',
 };
 
 describe('ActivityModel (BaseModel — escopo por usuário, RF12)', () => {

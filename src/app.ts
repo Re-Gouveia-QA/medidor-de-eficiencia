@@ -47,7 +47,13 @@ function readTimezoneCookie(req: Request): string {
   const header = req.headers.cookie;
   if (!header) return DEFAULT_TIMEZONE;
   const match = header.split(';').map((part) => part.trim()).find((part) => part.startsWith('tz='));
-  const candidate = match ? decodeURIComponent(match.slice('tz='.length)) : '';
+  if (!match) return DEFAULT_TIMEZONE;
+  let candidate: string;
+  try {
+    candidate = decodeURIComponent(match.slice('tz='.length));
+  } catch {
+    return DEFAULT_TIMEZONE; // cookie malformado (ex.: "%" solto) — decodeURIComponent lançaria URIError
+  }
   return candidate && isValidTimeZone(candidate) ? candidate : DEFAULT_TIMEZONE;
 }
 

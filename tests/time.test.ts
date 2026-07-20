@@ -55,4 +55,16 @@ describe('combineDateTime + formatTimeInZone (RNF05: fuso do usuário)', () => {
     const d = combineDateTime('2026-07-15', '08:00');
     expect(formatTimeInZone(d)).toBe('08:00');
   });
+
+  it('não corrompe o ano para datas com "ano" formatado em 2 dígitos pelo Intl (ex.: ano 99)', () => {
+    // Date.UTC(99, ...) interpretaria 99 como 1999 (regra legada do JS) — setUTCFullYear não tem essa regra.
+    const d = combineDateTime('0099-01-01', '08:00', 'UTC');
+    expect(d.getUTCFullYear()).toBe(99);
+  });
+
+  it('horário dentro do "salto" de DST (horário inexistente) desliza pra depois da transição, sem corromper o ano/dia (limitação conhecida, ver docstring)', () => {
+    // America/New_York pula de 01:59:59 EST pra 03:00:00 EDT em 2026-03-08 — 02:30 não existe.
+    const d = combineDateTime('2026-03-08', '02:30', 'America/New_York');
+    expect(formatTimeInZone(d, 'America/New_York')).toBe('03:30');
+  });
 });

@@ -22,16 +22,30 @@ function timeZoneOffsetMs(instant: Date, timeZone: string): number {
     second: '2-digit',
   }).formatToParts(instant);
   const get = (type: string) => Number(parts.find((p) => p.type === type)!.value);
-  const asUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'), get('second'));
-  return asUtc - instant.getTime();
+  // setUTCFullYear (ao contrário de Date.UTC/do construtor Date) não tem a regra legada que
+  // interpreta ano de 0-99 como 1900+ano — importante porque activitySchema só valida 4 dígitos
+  // no ano, não um intervalo realista (ex.: "0099-01-01" passaria).
+  const asUtc = new Date(0);
+  asUtc.setUTCFullYear(get('year'), get('month') - 1, get('day'));
+  asUtc.setUTCHours(get('hour'), get('minute'), get('second'), 0);
+  return asUtc.getTime() - instant.getTime();
 }
 
 /**
  * Combina uma data (YYYY-MM-DD) e hora (HH:mm) — interpretadas como horário local no fuso
- * informado (RNF05) — no instante UTC correspondente. Calcula o offset do fuso num instante
- * aproximado e corrige uma vez; impreciso apenas na hora exata de uma transição de DST
- * (raríssimo, aceitável sem uma tzdb completa). Sem `timeZone`, equivale ao horário já em UTC
- * (offset zero) — mesmo comportamento de antes desta função existir.
+ * informado (RNF05) — no instante UTC correspondente. Calcula o offset do fuso a partir do
+ * instante ingênuo (tratando o horário digitado como se já fosse UTC) e corrige uma vez.
+ *
+ * Limitação conhecida: no fuso horário de verão (DST), há uma janela de ~1h, duas vezes por
+ * ano, em que essa correção única não é exata — a hora "de fim de semana" em que os relógios
+ * mudam. Para um horário inexistente (ex.: 02:30 numa zona que pula de 02:00 para 03:00), o
+ * resultado desliza para depois do salto (mesma convenção adotada por libs de fuso horário
+ * mais completas); para um horário ambíguo (a hora repetida no "voltar" do horário de verão),
+ * assume-se o offset anterior à transição. Confirmado experimentalmente: uma correção "dupla"
+ * (recalcular o offset no instante já corrigido) piora o resultado nesses casos em vez de
+ * melhorar, então não foi adotada — precisão total exigiria uma tzdb completa (ex.:
+ * IANA tzdata via alguma lib), fora de escopo aqui. Sem `timeZone`, equivale ao horário já em
+ * UTC (offset zero, sem essa limitação) — mesmo comportamento de antes desta função existir.
  */
 export function combineDateTime(dateISO: string, timeHHmm: string, timeZone: string = DEFAULT_TIMEZONE): Date {
   const naiveUtc = new Date(`${dateISO}T${timeHHmm}:00.000Z`);

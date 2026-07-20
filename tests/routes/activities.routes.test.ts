@@ -129,6 +129,15 @@ describe('Rotas de atividades', () => {
     );
   });
 
+  it('GET /activities não derruba a requisição quando o cookie "tz" tem um percent-encoding malformado', async () => {
+    vi.mocked(ActivityModel.listByUser).mockResolvedValue([] as never);
+    vi.mocked(CategoryModel.listByUser).mockResolvedValue([] as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent.get('/activities').set('Cookie', 'tz=%');
+    expect(res.status).toBe(200);
+  });
+
   it('POST /activities usa o valor padrão da categoria quando o campo valor fica em branco (regra 9)', async () => {
     vi.mocked(CategoryModel.findById).mockResolvedValue(
       fakeCategoria({ possuiValor: true, valorPadrao: { toNumber: () => 4.4 } }) as never,

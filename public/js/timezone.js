@@ -10,7 +10,12 @@
   var match = document.cookie.split(';').map(function (p) { return p.trim(); }).find(function (p) {
     return p.indexOf('tz=') === 0;
   });
-  var current = match ? decodeURIComponent(match.slice('tz='.length)) : '';
+  var current;
+  try {
+    current = match ? decodeURIComponent(match.slice('tz='.length)) : '';
+  } catch (e) {
+    current = ''; // cookie malformado — segue para reescrever com o valor correto abaixo
+  }
   if (current === tz) return; // já está correto — evita reescrever o cookie a cada navegação
 
   // Cookie (não localStorage) é o que o servidor lê para converter/exibir horários no fuso certo
