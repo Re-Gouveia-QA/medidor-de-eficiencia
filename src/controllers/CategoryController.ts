@@ -1,87 +1,91 @@
 import { Request, Response } from 'express';
+import { BaseController } from './BaseController';
 import { CategoryModel } from '../models/CategoryModel';
-import { categorySchema } from '../utils/validators';
+import { categorySchema, CategoryInput } from '../utils/validators';
 import { formatNumber } from '../utils/format';
 
-function parseInput(body: unknown) {
-  const parsed = categorySchema.safeParse(body);
-  if (!parsed.success) return { error: parsed.error.errors[0].message };
-  const { nome, descricao, cor, tempoDesejadoMin, possuiValor, valorLabel, valorPadrao, duracaoPadraoMin } =
-    parsed.data;
+interface CategoryFormData {
+  nome: string;
+  descricao?: string;
+  cor: string;
+  tempoDesejadoMin?: number;
+  possuiValor: boolean;
+  valorLabel?: string;
+  valorPadrao?: number;
+  duracaoPadraoMin?: number;
+}
+
+/** Deriva os campos gravados a partir do body já validado pelo Zod (checkbox → boolean, '' → undefined). */
+function toCategoryData(raw: CategoryInput): CategoryFormData {
+  const { nome, descricao, cor, tempoDesejadoMin, possuiValor, valorLabel, valorPadrao, duracaoPadraoMin } = raw;
   const habilitaValor = possuiValor === 'on';
   return {
-    data: {
-      nome,
-      descricao: descricao || undefined,
-      cor,
-      tempoDesejadoMin: tempoDesejadoMin === '' ? undefined : Number(tempoDesejadoMin) || undefined,
-      possuiValor: habilitaValor,
-      valorLabel: habilitaValor && valorLabel ? valorLabel : undefined,
-      valorPadrao: habilitaValor && valorPadrao !== '' ? Number(valorPadrao) : undefined,
-      duracaoPadraoMin: duracaoPadraoMin === '' ? undefined : Number(duracaoPadraoMin) || undefined,
-    },
+    nome,
+    descricao: descricao || undefined,
+    cor,
+    tempoDesejadoMin: tempoDesejadoMin === '' ? undefined : Number(tempoDesejadoMin) || undefined,
+    possuiValor: habilitaValor,
+    valorLabel: habilitaValor && valorLabel ? valorLabel : undefined,
+    valorPadrao: habilitaValor && valorPadrao !== '' ? Number(valorPadrao) : undefined,
+    duracaoPadraoMin: duracaoPadraoMin === '' ? undefined : Number(duracaoPadraoMin) || undefined,
   };
 }
 
-export const CategoryController = {
-  async index(req: Request, res: Response) {
+class CategoryControllerImpl extends BaseController {
+  index = async (req: Request, res: Response) => {
     const categorias = await CategoryModel.listByUser(req.currentUser!.id);
     res.render('categories/index', { title: 'Categorias', categorias, formatNumber });
-  },
+  };
 
-  create(_req: Request, res: Response) {
+  create = (_req: Request, res: Response) => {
     res.render('categories/create', { title: 'Nova categoria', categoria: null });
-  },
+  };
 
-  async store(req: Request, res: Response) {
-    const result = parseInput(req.body);
-    if ('error' in result) {
-      req.flash('error', result.error!);
-      return res.redirect('/categories/new');
-    }
+  store = async (req: Request, res: Response) => {
+    const raw = this.parseOrRedirect(req, res, categorySchema, '/categories/new');
+    if (!raw) return;
     try {
-      await CategoryModel.create(req.currentUser!.id, result.data!);
+      await CategoryModel.create(req.currentUser!.id, toCategoryData(raw));
       req.flash('success', 'Categoria criada com sucesso.');
       res.redirect('/categories');
     } catch {
       req.flash('error', 'Você já possui uma categoria com esse nome.'); // regra 6
       res.redirect('/categories/new');
     }
-  },
+  };
 
-  async edit(req: Request, res: Response) {
+  edit = async (req: Request, res: Response) => {
     const categoria = await CategoryModel.findById(req.params.id, req.currentUser!.id);
     if (!categoria) {
       req.flash('error', 'Categoria não encontrada.');
       return res.redirect('/categories');
     }
     res.render('categories/create', { title: 'Editar categoria', categoria });
-  },
+  };
 
-  async update(req: Request, res: Response) {
-    const result = parseInput(req.body);
-    if ('error' in result) {
-      req.flash('error', result.error!);
-      return res.redirect(`/categories/${req.params.id}/edit`);
-    }
+  update = async (req: Request, res: Response) => {
+    const redirectTo = `/categories/${req.params.id}/edit`;
+    const raw = this.parseOrRedirect(req, res, categorySchema, redirectTo);
+    if (!raw) return;
+    const data = toCategoryData(raw);
     try {
       await CategoryModel.update(req.params.id, req.currentUser!.id, {
-        ...result.data!,
-        descricao: result.data!.descricao ?? null,
-        tempoDesejadoMin: result.data!.tempoDesejadoMin ?? null,
-        valorLabel: result.data!.valorLabel ?? null,
-        valorPadrao: result.data!.valorPadrao ?? null,
-        duracaoPadraoMin: result.data!.duracaoPadraoMin ?? null,
+        ...data,
+        descricao: data.descricao ?? null,
+        tempoDesejadoMin: data.tempoDesejadoMin ?? null,
+        valorLabel: data.valorLabel ?? null,
+        valorPadrao: data.valorPadrao ?? null,
+        duracaoPadraoMin: data.duracaoPadraoMin ?? null,
       });
       req.flash('success', 'Categoria atualizada.');
       res.redirect('/categories');
     } catch {
       req.flash('error', 'Você já possui uma categoria com esse nome.');
-      res.redirect(`/categories/${req.params.id}/edit`);
+      res.redirect(redirectTo);
     }
-  },
+  };
 
-  async destroy(req: Request, res: Response) {
+  destroy = async (req: Request, res: Response) => {
     // RF12: confirma que a categoria pertence ao usuário antes de revelar qualquer dado dela
     // (contagem de atividades) ou tentar excluí-la.
     const categoria = await CategoryModel.findById(req.params.id, req.currentUser!.id);
@@ -105,5 +109,7 @@ export const CategoryController = {
     }
     req.flash('success', 'Categoria excluída.');
     res.redirect('/categories');
-  },
-};
+  };
+}
+
+export const CategoryController = new CategoryControllerImpl();

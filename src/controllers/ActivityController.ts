@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { BaseController } from './BaseController';
 import { ActivityModel } from '../models/ActivityModel';
 import { CategoryModel } from '../models/CategoryModel';
 import { activitySchema } from '../utils/validators';
@@ -21,8 +22,8 @@ function parseValorInput(raw: number | '' | undefined): number | undefined {
   return raw === '' || raw === undefined ? undefined : raw;
 }
 
-export const ActivityController = {
-  async index(req: Request, res: Response) {
+class ActivityControllerImpl extends BaseController {
+  index = async (req: Request, res: Response) => {
     const { inicio, fim, categoria } = req.query as Record<string, string | undefined>;
     const [atividades, categorias] = await Promise.all([
       ActivityModel.listByUser(req.currentUser!.id, { inicio, fim, categoryId: categoria }),
@@ -36,40 +37,37 @@ export const ActivityController = {
       formatMinutes,
       formatNumber,
     });
-  },
+  };
 
-  async create(req: Request, res: Response) {
+  create = async (req: Request, res: Response) => {
     const categorias = await CategoryModel.listByUser(req.currentUser!.id);
     if (categorias.length === 0) {
       req.flash('error', 'Cadastre ao menos uma categoria antes de registrar atividades.');
       return res.redirect('/categories/new');
     }
     res.render('activities/create', { title: 'Registrar atividade', categorias, atividade: null });
-  },
+  };
 
-  async store(req: Request, res: Response) {
-    const parsed = activitySchema.safeParse(req.body);
-    if (!parsed.success) {
-      req.flash('error', parsed.error.errors[0].message);
-      return res.redirect('/activities/new');
-    }
-    const categoria = await resolveOwnedCategory(req, res, parsed.data.categoryId, '/activities/new');
+  store = async (req: Request, res: Response) => {
+    const data = this.parseOrRedirect(req, res, activitySchema, '/activities/new');
+    if (!data) return;
+    const categoria = await resolveOwnedCategory(req, res, data.categoryId, '/activities/new');
     if (!categoria) return;
     // Regra 9: se o valor não foi informado, usa o valor padrão da categoria (quando houver)
-    const valorInformado = parseValorInput(parsed.data.valor);
+    const valorInformado = parseValorInput(data.valor);
     const valor =
       valorInformado ?? (categoria.possuiValor && categoria.valorPadrao != null ? categoria.valorPadrao.toNumber() : undefined);
     try {
-      await ActivityModel.create(req.currentUser!.id, { ...parsed.data, valor });
+      await ActivityModel.create(req.currentUser!.id, { ...data, valor });
       req.flash('success', 'Atividade registrada com sucesso.');
       res.redirect('/activities');
     } catch (e) {
       req.flash('error', e instanceof Error ? e.message : 'Erro ao registrar atividade.');
       res.redirect('/activities/new');
     }
-  },
+  };
 
-  async edit(req: Request, res: Response) {
+  edit = async (req: Request, res: Response) => {
     const [atividade, categorias] = await Promise.all([
       ActivityModel.findById(req.params.id, req.currentUser!.id),
       CategoryModel.listByUser(req.currentUser!.id),
@@ -79,33 +77,26 @@ export const ActivityController = {
       return res.redirect('/activities');
     }
     res.render('activities/create', { title: 'Editar atividade', categorias, atividade });
-  },
+  };
 
-  async update(req: Request, res: Response) {
-    const parsed = activitySchema.safeParse(req.body);
-    if (!parsed.success) {
-      req.flash('error', parsed.error.errors[0].message);
-      return res.redirect(`/activities/${req.params.id}/edit`);
-    }
-    const categoria = await resolveOwnedCategory(
-      req,
-      res,
-      parsed.data.categoryId,
-      `/activities/${req.params.id}/edit`,
-    );
+  update = async (req: Request, res: Response) => {
+    const redirectTo = `/activities/${req.params.id}/edit`;
+    const data = this.parseOrRedirect(req, res, activitySchema, redirectTo);
+    if (!data) return;
+    const categoria = await resolveOwnedCategory(req, res, data.categoryId, redirectTo);
     if (!categoria) return;
-    const valor = parseValorInput(parsed.data.valor) ?? null;
+    const valor = parseValorInput(data.valor) ?? null;
     try {
-      await ActivityModel.update(req.params.id, req.currentUser!.id, { ...parsed.data, valor });
+      await ActivityModel.update(req.params.id, req.currentUser!.id, { ...data, valor });
       req.flash('success', 'Atividade atualizada.');
       res.redirect('/activities');
     } catch (e) {
       req.flash('error', e instanceof Error ? e.message : 'Erro ao atualizar atividade.');
-      res.redirect(`/activities/${req.params.id}/edit`);
+      res.redirect(redirectTo);
     }
-  },
+  };
 
-  async destroy(req: Request, res: Response) {
+  destroy = async (req: Request, res: Response) => {
     const { count } = await ActivityModel.destroy(req.params.id, req.currentUser!.id);
     if (count === 0) {
       req.flash('error', 'Atividade não encontrada.');
@@ -113,5 +104,7 @@ export const ActivityController = {
     }
     req.flash('success', 'Atividade excluída.');
     res.redirect('/activities');
-  },
-};
+  };
+}
+
+export const ActivityController = new ActivityControllerImpl();

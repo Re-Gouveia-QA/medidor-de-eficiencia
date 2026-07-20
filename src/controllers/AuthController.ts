@@ -1,24 +1,21 @@
 import crypto from 'node:crypto';
 import { Request, Response } from 'express';
+import { BaseController } from './BaseController';
 import { UserModel } from '../models/UserModel';
 import { GoogleAuthService } from '../services/GoogleAuthService';
 import { loginSchema, registerSchema } from '../utils/validators';
 
-export const AuthController = {
-  showLogin(_req: Request, res: Response) {
+class AuthControllerImpl extends BaseController {
+  showLogin = (_req: Request, res: Response) => {
     res.render('auth/login', { title: 'Entrar', layout: 'layouts/auth' });
-  },
+  };
 
-  async login(req: Request, res: Response) {
-    const parsed = loginSchema.safeParse(req.body);
-    if (!parsed.success) {
-      req.flash('error', parsed.error.errors[0].message);
-      return res.redirect('/login');
-    }
+  login = async (req: Request, res: Response) => {
+    const data = this.parseOrRedirect(req, res, loginSchema, '/login');
+    if (!data) return;
 
-    const { email, senha } = parsed.data;
-    const user = await UserModel.findByEmail(email);
-    const ok = user && (await UserModel.verifyPassword(senha, user.senhaHash));
+    const user = await UserModel.findByEmail(data.email);
+    const ok = user && (await UserModel.verifyPassword(data.senha, user.senhaHash));
 
     if (!ok || !user) {
       // Mensagem genérica: não revelar se o e-mail existe
@@ -30,35 +27,31 @@ export const AuthController = {
     req.session.userName = user.nome;
     req.session.isAdmin = user.isAdmin;
     res.redirect('/');
-  },
+  };
 
-  showRegister(_req: Request, res: Response) {
+  showRegister = (_req: Request, res: Response) => {
     res.render('auth/register', { title: 'Criar conta', layout: 'layouts/auth' });
-  },
+  };
 
-  async register(req: Request, res: Response) {
-    const parsed = registerSchema.safeParse(req.body);
-    if (!parsed.success) {
-      req.flash('error', parsed.error.errors[0].message);
-      return res.redirect('/register');
-    }
+  register = async (req: Request, res: Response) => {
+    const data = this.parseOrRedirect(req, res, registerSchema, '/register');
+    if (!data) return;
 
-    const { nome, email, senha } = parsed.data;
-    const existing = await UserModel.findByEmail(email);
+    const existing = await UserModel.findByEmail(data.email);
     if (existing) {
       req.flash('error', 'Já existe uma conta com este e-mail.');
       return res.redirect('/register');
     }
 
-    const user = await UserModel.createLocal(nome, email, senha);
+    const user = await UserModel.createLocal(data.nome, data.email, data.senha);
     req.session.userId = user.id;
     req.session.userName = user.nome;
     req.session.isAdmin = user.isAdmin;
     res.redirect('/');
-  },
+  };
 
   /** RF03 — inicia o fluxo OAuth 2.0 redirecionando ao consent screen do Google. */
-  googleLogin(req: Request, res: Response) {
+  googleLogin = (req: Request, res: Response) => {
     if (!GoogleAuthService.isConfigured()) {
       req.flash('error', 'Login com Google não está disponível no momento.');
       return res.redirect('/login');
@@ -66,10 +59,10 @@ export const AuthController = {
     const state = crypto.randomBytes(16).toString('hex');
     req.session.oauthState = state;
     res.redirect(GoogleAuthService.getAuthUrl(state));
-  },
+  };
 
   /** RF03 — troca o code por perfil e autentica, vinculando à conta local se o e-mail já existir (regra 3). */
-  async googleCallback(req: Request, res: Response) {
+  googleCallback = async (req: Request, res: Response) => {
     const { code, state, error } = req.query as Record<string, string | undefined>;
     const expectedState = req.session.oauthState;
     req.session.oauthState = undefined;
@@ -93,9 +86,11 @@ export const AuthController = {
       req.flash('error', 'Não foi possível autenticar com o Google. Tente novamente.');
       res.redirect('/login');
     }
-  },
+  };
 
-  logout(req: Request, res: Response) {
+  logout = (req: Request, res: Response) => {
     req.session.destroy(() => res.redirect('/login'));
-  },
-};
+  };
+}
+
+export const AuthController = new AuthControllerImpl();
