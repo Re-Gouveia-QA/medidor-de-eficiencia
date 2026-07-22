@@ -110,10 +110,17 @@ class AuthControllerImpl extends BaseController {
 
     const user = await UserModel.findByEmail(data.email);
     if (user && user.senhaHash) {
-      const rawToken = await PasswordResetTokenModel.create(user.id);
-      const baseUrl = env.APP_URL ?? `http://localhost:${env.PORT}`;
-      const resetUrl = `${baseUrl}/reset-password/${rawToken}`;
-      await EmailService.sendPasswordResetEmail(user.email, resetUrl);
+      try {
+        const rawToken = await PasswordResetTokenModel.create(user.id);
+        const baseUrl = env.APP_URL ?? `http://localhost:${env.PORT}`;
+        const resetUrl = `${baseUrl}/reset-password/${rawToken}`;
+        await EmailService.sendPasswordResetEmail(user.email, resetUrl);
+      } catch (err) {
+        // Log detalhado só no servidor — a flash pro usuário continua genérica de propósito
+        // (mesmo padrão do googleCallback): uma falha de envio (SMTP fora do ar, IP não
+        // autorizado etc.) não pode virar 500 nem revelar se o e-mail existe na base.
+        console.error('[ForgotPassword] Falha ao gerar/enviar o e-mail de redefinição:', err);
+      }
     }
 
     req.flash('success', 'Se o e-mail informado estiver cadastrado, enviaremos instruções para redefinir a senha.');
