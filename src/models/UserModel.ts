@@ -42,6 +42,12 @@ class UserModelImpl extends BaseModel {
     if (!senhaHash) return false; // conta Google sem senha local
     return bcrypt.compare(senha, senhaHash);
   }
+
+  /** Recuperação de senha: grava o novo hash bcrypt (regra 1), nunca a senha em texto puro. */
+  async updatePassword(userId: string, senha: string) {
+    const senhaHash = await bcrypt.hash(senha, 10);
+    return this.db.user.update({ where: { id: userId }, data: { senhaHash } });
+  }
 }
 
 export const UserModel = new UserModelImpl();

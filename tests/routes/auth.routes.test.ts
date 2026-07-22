@@ -2,11 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../../src/app';
 import { UserModel } from '../../src/models/UserModel';
+import { PasswordResetTokenModel } from '../../src/models/PasswordResetTokenModel';
 import { GoogleAuthService } from '../../src/services/GoogleAuthService';
+import { EmailService } from '../../src/services/EmailService';
 import { loginAgent, TEST_USER } from '../helpers/auth';
 
 vi.mock('../../src/models/UserModel');
+vi.mock('../../src/models/PasswordResetTokenModel');
 vi.mock('../../src/services/GoogleAuthService');
+vi.mock('../../src/services/EmailService');
 
 describe('Rotas de autenticação', () => {
   const app = createApp();
@@ -232,5 +236,124 @@ describe('Rotas de autenticação', () => {
     const home = await agent.get('/');
     expect(home.status).toBe(302);
     expect(home.headers.location).toBe('/login');
+  });
+
+  describe('Recuperação de senha', () => {
+    it('GET /forgot-password retorna 200 para visitante não autenticado', async () => {
+      const res = await request(app).get('/forgot-password');
+      expect(res.status).toBe(200);
+    });
+
+    it('POST /forgot-password com e-mail cadastrado gera token e envia e-mail, com mensagem genérica', async () => {
+      vi.mocked(UserModel.findByEmail).mockResolvedValue({
+        id: TEST_USER.id,
+        nome: TEST_USER.nome,
+        email: TEST_USER.email,
+        senhaHash: 'hash-fake',
+        googleId: null,
+        criadoEm: new Date(),
+      } as never);
+      vi.mocked(PasswordResetTokenModel.create).mockResolvedValue('raw-token-123');
+
+      const res = await request(app).post('/forgot-password').type('form').send({ email: TEST_USER.email });
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/forgot-password');
+      expect(PasswordResetTokenModel.create).toHaveBeenCalledWith(TEST_USER.id);
+      expect(EmailService.sendPasswordResetEmail).toHaveBeenCalledWith(
+        TEST_USER.email,
+        expect.stringContaining('/reset-password/raw-token-123'),
+      );
+    });
+
+    it('POST /forgot-password com e-mail não cadastrado responde com a mesma mensagem genérica, sem gerar token (anti-enumeração)', async () => {
+      vi.mocked(UserModel.findByEmail).mockResolvedValue(null);
+
+      const res = await request(app).post('/forgot-password').type('form').send({ email: 'inexistente@medidor.dev' });
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/forgot-password');
+      expect(PasswordResetTokenModel.create).not.toHaveBeenCalled();
+      expect(EmailService.sendPasswordResetEmail).not.toHaveBeenCalled();
+    });
+
+    it('POST /forgot-password para conta Google (sem senha local) não gera token nem envia e-mail', async () => {
+      vi.mocked(UserModel.findByEmail).mockResolvedValue({
+        id: 'user-google',
+        nome: 'Conta Google',
+        email: 'google@medidor.dev',
+        senhaHash: null,
+        googleId: 'google-1',
+        criadoEm: new Date(),
+      } as never);
+
+      const res = await request(app).post('/forgot-password').type('form').send({ email: 'google@medidor.dev' });
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/forgot-password');
+      expect(PasswordResetTokenModel.create).not.toHaveBeenCalled();
+      expect(EmailService.sendPasswordResetEmail).not.toHaveBeenCalled();
+    });
+
+    it('GET /reset-password/:token redireciona para /forgot-password quando o token é inválido ou expirou', async () => {
+      vi.mocked(PasswordResetTokenModel.findValidByRawToken).mockResolvedValue(null);
+
+      const res = await request(app).get('/reset-password/token-invalido');
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/forgot-password');
+    });
+
+    it('GET /reset-password/:token retorna 200 quando o token é válido', async () => {
+      vi.mocked(PasswordResetTokenModel.findValidByRawToken).mockResolvedValue({
+        id: 'reset-1',
+        userId: TEST_USER.id,
+        tokenHash: 'hash',
+        expiresAt: new Date(Date.now() + 1000 * 60),
+        usedAt: null,
+        criadoEm: new Date(),
+      } as never);
+
+      const res = await request(app).get('/reset-password/token-valido');
+      expect(res.status).toBe(200);
+    });
+
+    it('POST /reset-password/:token com senhas divergentes redireciona de volta sem alterar a senha', async () => {
+      const res = await request(app)
+        .post('/reset-password/token-qualquer')
+        .type('form')
+        .send({ senha: 'novaSenha123', confirmarSenha: 'diferente' });
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/reset-password/token-qualquer');
+      expect(UserModel.updatePassword).not.toHaveBeenCalled();
+    });
+
+    it('POST /reset-password/:token com token inválido redireciona para /forgot-password sem alterar a senha', async () => {
+      vi.mocked(PasswordResetTokenModel.findValidByRawToken).mockResolvedValue(null);
+
+      const res = await request(app)
+        .post('/reset-password/token-invalido')
+        .type('form')
+        .send({ senha: 'novaSenha123', confirmarSenha: 'novaSenha123' });
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/forgot-password');
+      expect(UserModel.updatePassword).not.toHaveBeenCalled();
+    });
+
+    it('POST /reset-password/:token válido atualiza a senha, marca o token como usado e redireciona para /login', async () => {
+      vi.mocked(PasswordResetTokenModel.findValidByRawToken).mockResolvedValue({
+        id: 'reset-1',
+        userId: TEST_USER.id,
+        tokenHash: 'hash',
+        expiresAt: new Date(Date.now() + 1000 * 60),
+        usedAt: null,
+        criadoEm: new Date(),
+      } as never);
+
+      const res = await request(app)
+        .post('/reset-password/token-valido')
+        .type('form')
+        .send({ senha: 'novaSenha123', confirmarSenha: 'novaSenha123' });
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/login');
+      expect(UserModel.updatePassword).toHaveBeenCalledWith(TEST_USER.id, 'novaSenha123');
+      expect(PasswordResetTokenModel.markUsed).toHaveBeenCalledWith('reset-1');
+    });
   });
 });

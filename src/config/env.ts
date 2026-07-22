@@ -9,6 +9,14 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CALLBACK_URL: z.string().optional(),
+  // Recuperação de senha (envio de e-mail via SMTP genérico — sem vendor lock-in)
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
+  // URL pública da aplicação, usada para montar o link de redefinição de senha no e-mail.
+  APP_URL: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);
