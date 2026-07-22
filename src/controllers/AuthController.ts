@@ -2,8 +2,11 @@ import crypto from 'node:crypto';
 import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { UserModel } from '../models/UserModel';
+import { PasswordResetTokenModel } from '../models/PasswordResetTokenModel';
 import { GoogleAuthService } from '../services/GoogleAuthService';
-import { loginSchema, registerSchema } from '../utils/validators';
+import { EmailService } from '../services/EmailService';
+import { env } from '../config/env';
+import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '../utils/validators';
 
 class AuthControllerImpl extends BaseController {
   showLogin = (_req: Request, res: Response) => {
@@ -90,6 +93,58 @@ class AuthControllerImpl extends BaseController {
 
   logout = (req: Request, res: Response) => {
     req.session.destroy(() => res.redirect('/login'));
+  };
+
+  showForgotPassword = (_req: Request, res: Response) => {
+    res.render('auth/forgot-password', { title: 'Esqueceu a senha?', layout: 'layouts/auth' });
+  };
+
+  /**
+   * Mensagem de sucesso é sempre a mesma, exista ou não o e-mail (anti-enumeração de contas —
+   * mesmo cuidado do /login, que também usa mensagem genérica em vez de "e-mail não encontrado").
+   * Contas Google (senhaHash nulo) não recebem e-mail: não têm senha local para redefinir.
+   */
+  forgotPassword = async (req: Request, res: Response) => {
+    const data = this.parseOrRedirect(req, res, forgotPasswordSchema, '/forgot-password');
+    if (!data) return;
+
+    const user = await UserModel.findByEmail(data.email);
+    if (user && user.senhaHash) {
+      const rawToken = await PasswordResetTokenModel.create(user.id);
+      const baseUrl = env.APP_URL ?? `http://localhost:${env.PORT}`;
+      const resetUrl = `${baseUrl}/reset-password/${rawToken}`;
+      await EmailService.sendPasswordResetEmail(user.email, resetUrl);
+    }
+
+    req.flash('success', 'Se o e-mail informado estiver cadastrado, enviaremos instruções para redefinir a senha.');
+    res.redirect('/forgot-password');
+  };
+
+  showResetPassword = async (req: Request, res: Response) => {
+    const token = await PasswordResetTokenModel.findValidByRawToken(req.params.token);
+    if (!token) {
+      req.flash('error', 'Este link de redefinição de senha é inválido ou expirou.');
+      return res.redirect('/forgot-password');
+    }
+    res.render('auth/reset-password', { title: 'Redefinir senha', layout: 'layouts/auth', token: req.params.token });
+  };
+
+  resetPassword = async (req: Request, res: Response) => {
+    const rawToken = req.params.token;
+    const data = this.parseOrRedirect(req, res, resetPasswordSchema, `/reset-password/${rawToken}`);
+    if (!data) return;
+
+    const token = await PasswordResetTokenModel.findValidByRawToken(rawToken);
+    if (!token) {
+      req.flash('error', 'Este link de redefinição de senha é inválido ou expirou.');
+      return res.redirect('/forgot-password');
+    }
+
+    await UserModel.updatePassword(token.userId, data.senha);
+    await PasswordResetTokenModel.markUsed(token.id);
+
+    req.flash('success', 'Senha redefinida com sucesso. Faça login com sua nova senha.');
+    res.redirect('/login');
   };
 }
 

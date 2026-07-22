@@ -12,6 +12,21 @@ export const loginSchema = z.object({
   senha: z.string().min(1, 'Informe a senha.'),
 });
 
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().toLowerCase().email('E-mail inválido.'),
+});
+
+// Regra 1: mesma exigência de senha do cadastro (mínimo 8 caracteres).
+export const resetPasswordSchema = z
+  .object({
+    senha: z.string().min(8, 'A senha deve ter no mínimo 8 caracteres.'),
+    confirmarSenha: z.string(),
+  })
+  .refine((data) => data.senha === data.confirmarSenha, {
+    message: 'As senhas não coincidem.',
+    path: ['confirmarSenha'],
+  });
+
 // Regra 6: cor em hexadecimal, nome obrigatório
 // Regra 9: valor numérico opcional (custo, depósito, etc.) com rótulo próprio
 // Regra 10: duração padrão opcional para atividades da categoria
@@ -40,5 +55,7 @@ export const activitySchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type CategoryInput = z.infer<typeof categorySchema>;
 export type ActivityInput = z.infer<typeof activitySchema>;

@@ -57,6 +57,7 @@
 .auth-title { margin-bottom: 4px; }
 .auth-subtitle { color: var(--ink-soft); margin-bottom: 20px; font-size: var(--text-sm); }
 .auth-footer { margin-top: 20px; font-size: var(--text-sm); color: var(--ink-soft); }
+.field-hint { margin-top: 6px; font-size: var(--text-xs); color: var(--ink-soft); text-align: right; }
 .auth-card .form { text-align: left; }
 .divider { display: flex; align-items: center; gap: 10px; margin: 18px 0; color: var(--ink-soft); font-size: var(--text-xs); }
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--paper-grid); }
