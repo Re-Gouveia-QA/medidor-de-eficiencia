@@ -265,6 +265,23 @@ describe('Rotas de autenticação', () => {
       );
     });
 
+    it('POST /forgot-password não retorna 500 quando o envio de e-mail falha (SMTP fora do ar, IP não autorizado etc.)', async () => {
+      vi.mocked(UserModel.findByEmail).mockResolvedValue({
+        id: TEST_USER.id,
+        nome: TEST_USER.nome,
+        email: TEST_USER.email,
+        senhaHash: 'hash-fake',
+        googleId: null,
+        criadoEm: new Date(),
+      } as never);
+      vi.mocked(PasswordResetTokenModel.create).mockResolvedValue('raw-token-123');
+      vi.mocked(EmailService.sendPasswordResetEmail).mockRejectedValue(new Error('535 Authentication failed'));
+
+      const res = await request(app).post('/forgot-password').type('form').send({ email: TEST_USER.email });
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe('/forgot-password');
+    });
+
     it('POST /forgot-password com e-mail não cadastrado responde com a mesma mensagem genérica, sem gerar token (anti-enumeração)', async () => {
       vi.mocked(UserModel.findByEmail).mockResolvedValue(null);
 
