@@ -85,7 +85,7 @@ Design system **"Caderno de Esboço"** — interface com aparência de caderno d
 - [x] Fase 3 — Atividades (CRUD, duração calculada, filtros por período/categoria)
 - [x] Fase 4 — Relatórios (dias registrados, total de horas, tempo por categoria)
 - [x] Fase 5 — Login Google OAuth 2.0 (`GET /auth/google` inicia o consent screen, `GET /auth/google/callback` troca o code e autentica via `UserModel.findOrCreateFromGoogle`; requer `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`/`GOOGLE_CALLBACK_URL` configurados — sem isso, o botão "Entrar com Google" mostra erro amigável)
-- [ ] Fase 6 — Qualidade: [x] exibição no fuso do usuário (RNF05, ver regra 8), [x] revisão de responsividade · pendente: testes BDD da seção 6 da doc (obs.: `medidor_eficiencia.md` não está no repo — precisa ser localizado/reconstruído antes de escrever os testes), i18n en-US (RNF04)
+- [ ] Fase 6 — Qualidade: [x] exibição no fuso do usuário (RNF05, ver regra 8), [x] revisão de responsividade, [x] cobertura de teste das regras de negócio 1/3/6 (`tests/models/UserModel.test.ts` — hash bcrypt nunca em texto puro, `verifyPassword` sem senha local, `findOrCreateFromGoogle` vinculando por e-mail normalizado) · pendente: `medidor_eficiencia.md` (documento de referência original) nunca existiu no repo (confirmado via `git log --all --full-history`) — os cenários acima foram derivados direto das regras já documentadas neste arquivo, não reconstruídos do doc original; reconstruir o doc completo continua em aberto se for pedido, i18n en-US (RNF04)
 
 ## Convenções
 
