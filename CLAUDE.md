@@ -12,10 +12,11 @@ Sistema web para registro de atividades diárias e análise de eficiência pesso
 - **Web:** Express 4 + EJS server-side com `express-ejs-layouts` (MVC clássico, sem SPA)
 - **Banco:** PostgreSQL via Prisma (`prisma/schema.prisma` é a fonte de verdade dos Models)
 - **Validação:** Zod no servidor (`src/utils/validators.ts`) + atributos HTML5 no cliente (RNF06)
-- **Sessão:** `express-session` (memória em dev; produção deve migrar para `connect-pg-simple`)
+- **Sessão:** `express-session` (`MemoryStore` em dev; `connect-pg-simple` em produção — mesmo Postgres do Prisma, ver `src/config/session.ts`)
 - **Segurança:** `helmet` (cabeçalhos/CSP), `express-rate-limit` (rate limit), `express-async-errors` (encaminha erros de rotas async para o errorHandler)
 - **Testes:** Vitest (`tests/`)
 - **Dev:** `npm run dev` (tsx watch) · **Build:** `npm run build` · **Testes:** `npm test` · **Lint:** `npm run lint`
+- **Deploy (Railway/Nixpacks):** o build roda com `NODE_ENV=production`, e isso faz o `npm ci` **pular `devDependencies`** — mas o próprio `npm run build` precisa de `typescript`/`tsc` e `cpy-cli`/`cpy`, e o `tsc` precisa de TODOS os `@types/*` usados por `src/` (não só os de teste) pra type-checar sem erro. Por isso `typescript`, `cpy-cli` e os `@types/*` consumidos por `src/` (menos `@types/supertest`, só usado em `tests/`, que o `tsconfig` exclui do build) ficam em `dependencies`, não em `devDependencies` — mesmo sendo ferramentas de build. Já quebrou o deploy uma vez (`sh: 1: tsc: not found`) antes dessa correção; não mover de volta pra devDependencies sem replicar `NODE_ENV=production npm ci && npm run build` localmente primeiro.
 
 ## Arquitetura (MVC + Services)
 
