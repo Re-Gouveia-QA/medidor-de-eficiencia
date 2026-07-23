@@ -63,6 +63,75 @@
 .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--paper-grid); }
 .btn-google { width: 100%; justify-content: center; }
 
+/* Hero da tela de login — escopo próprio (login-hero-title), não altera .auth-title
+   (compartilhado com registro/esqueci-senha/redefinir-senha). Tamanho maior (--text-3xl) só
+   aqui, pra dar peso de "primeira impressão" à tela mais visitada do fluxo de auth. */
+.login-hero-title {
+  display: inline-block;
+  position: relative;
+  font-size: var(--text-3xl);
+  line-height: 1.15;
+}
+/* Sublinhado "marca-texto" desenhado à mão: o <path> usa pathLength="1" no markup (login.ejs) pra
+   normalizar o comprimento do traço, permitindo stroke-dasharray/dashoffset em unidades simples (1)
+   em vez de calcular o comprimento real do path a cada ajuste de curva. */
+.title-underline {
+  position: absolute;
+  left: 3%;
+  bottom: -8px;
+  width: 94%;
+  height: 16px;
+  overflow: visible;
+}
+.title-underline path {
+  fill: none;
+  stroke: var(--accent-yellow);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-underline 0.5s ease-out 0.5s forwards;
+}
+@keyframes draw-underline {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Fita adesiva decorativa "prendendo" o card ao papel — puramente ilustrativa (aria-hidden no
+   markup). Usa --accent-yellow-soft (já existe pros dois temas) em vez de opacity/color-mix, pra
+   não depender de suporte de navegador a color-mix() nem reinventar um tom transparente novo.
+   Filtro reaproveita #sketch-rough-icon (distorção mais sutil que #sketch-rough-edge, adequada
+   pro tamanho pequeno da fita). Sem z-index: como filho de .sketch-edge (isolation: isolate), já
+   renderiza acima do ::before (z-index: -1) da borda à mão do card, sem precisar disso explícito. */
+.washi-tape {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  width: 92px;
+  height: 30px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: var(--accent-yellow-soft);
+  border: 1px dashed var(--ink-soft);
+  filter: url(#sketch-rough-icon);
+}
+
+/* Ícone do botão "Entrar com Google": 4 pontos nas cores das "canetas" de acento do próprio
+   sistema (--accent-blue/green/yellow/red), no lugar de um ícone genérico de usuário — assinatura
+   visual específica do produto, mesma linguagem de .color-dot usada em categorias. */
+.google-mark {
+  display: inline-grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2px;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.google-mark span { border-radius: 50%; }
+.google-mark span:nth-child(1) { background: var(--accent-blue); }
+.google-mark span:nth-child(2) { background: var(--accent-green); }
+.google-mark span:nth-child(3) { background: var(--accent-yellow); }
+.google-mark span:nth-child(4) { background: var(--accent-red); }
+
 /* Formulários */
 .form { display: flex; flex-direction: column; gap: 14px; margin-top: 1rem; }
 .form-narrow { max-width: 480px; margin-left: auto; margin-right: auto; }
