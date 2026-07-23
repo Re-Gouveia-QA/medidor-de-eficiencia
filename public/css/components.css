@@ -34,6 +34,12 @@ strong, b { letter-spacing: 0.03em; }
 }
 .btn:hover { text-decoration: none; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
+/* Feedback de clique: encolhe rapidinho ao pressionar, volta ao soltar — dá a sensação de um
+   botão "de papel" reagindo ao toque, sem depender só do hover (que não existe em touch).
+   Especificidade igual à das regras de hover que já crescem no clique (btn-primary/btn-danger/
+   icon-btn abaixo) — sem isso, o hover (mouse ainda em cima durante o clique) venceria e o
+   encolhimento nunca apareceria. */
+.btn:active:not(:disabled) { transform: scale(0.95); transition: transform .08s ease; }
 /* Texto/ícone sobre fundo sólido: --on-accent (sempre claro, ver tokens.css) — não usar --paper,
    que no tema escuro passa a ser a cor de fundo da página (escura) em vez de "clara". */
 .btn-primary { color: var(--on-accent); }
@@ -66,6 +72,11 @@ strong, b { letter-spacing: 0.03em; }
   animation: none;
   box-shadow: 4px 5px 0 0 var(--ink);
 }
+/* Override do :active genérico acima (mesma especificidade: 2 classes + 2 pseudo-classes) —
+   encolhe a partir do estado já crescido do hover, em vez de "brigar" com ele. */
+.btn-primary.sketch-hover:active:not(:disabled), .btn-danger.sketch-hover:active:not(:disabled) {
+  transform: scale(0.97);
+}
 
 .icon-btn {
   width: 48px; height: 48px; padding: 0;
@@ -78,6 +89,7 @@ strong, b { letter-spacing: 0.03em; }
 .icon-btn.sketch-hover:hover:not(:disabled), .icon-btn.sketch-hover:focus-visible:not(:disabled) {
   transform: scale(1.12);
 }
+.icon-btn.sketch-hover:active:not(:disabled) { transform: scale(1); }
 
 /* Campos de formulário */
 .field { display: flex; flex-direction: column; gap: 6px; font-family: var(--font-body); }

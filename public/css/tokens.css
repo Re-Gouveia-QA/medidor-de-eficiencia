@@ -84,14 +84,21 @@
    A rotação anima só o ::before (a "moldura" à mão) — nunca o elemento real, para o
    texto/ícone real não rotacionar junto e borrar durante a animação. */
 @keyframes sketch-wobble {
-  0%, 100% { transform: rotate(var(--tilt, -1deg)); }
-  25% { transform: rotate(calc(var(--tilt, -1deg) * -1)); }
-  50% { transform: rotate(var(--tilt, -1deg)); }
-  75% { transform: rotate(calc(var(--tilt, -1deg) * -1)); }
+  0%, 100% { transform: rotate(var(--tilt, -0.65deg)); }
+  25% { transform: rotate(calc(var(--tilt, -0.65deg) * -1)); }
+  50% { transform: rotate(var(--tilt, -0.65deg)); }
+  75% { transform: rotate(calc(var(--tilt, -0.65deg) * -1)); }
 }
 @keyframes sketch-in {
   from { opacity: 0; transform: scale(0.94) rotate(-1deg); }
   to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+/* Entrada de cards/itens de lista — reaproveita @keyframes sketch-in (existia mas não era usado
+   em lugar nenhum). --stagger-index (setado inline por item na view) escalona a entrada; min()
+   limita o atraso máximo pra listas longas não demorarem uma eternidade pra terminar de entrar. */
+.sketch-in {
+  animation: sketch-in 0.35s ease-out backwards;
+  animation-delay: calc(min(var(--stagger-index, 0), 10) * 30ms);
 }
 .sketch-edge { position: relative; isolation: isolate; }
 .sketch-edge::before {
@@ -110,4 +117,16 @@
 }
 .sketch-hover:hover:not(:disabled)::before, .sketch-hover:focus-visible:not(:disabled)::before {
   animation: sketch-wobble 0.5s ease-in-out infinite;
+}
+
+/* Respeita a preferência de menos movimento do usuário — desliga/encolhe qualquer animação e
+   transição da página (tremor, entrada de card, crescimento de botão etc.) de uma vez, num só
+   lugar, em vez de cada componente novo ter que lembrar de tratar isso individualmente. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
