@@ -9,7 +9,7 @@
     </div>
     <strong class="in-progress-name"><%= emAndamento.nome %></strong>
     <span class="report-big-wrap">
-      <span class="report-big in-progress-timer" data-started-at="<%= emAndamento.horaInicio.toISOString() %>">0s</span>
+      <span class="report-big in-progress-timer" data-started-at="<%= emAndamento.horaInicio.toISOString() %>">00:00</span>
       <svg class="stat-underline" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
         <path d="M4 12 Q 50 3, 100 11 T 196 9" pathLength="1" />
       </svg>
@@ -24,20 +24,22 @@
 <% } else if (categorias.length > 0) { %>
   <form action="/activities/start" method="POST" class="card sketch-edge in-progress-card form">
     <h2>O que você está fazendo agora?</h2>
-    <div class="field">
-      <div class="sketch-edge input-wrap">
-        <input type="text" name="nome" class="input" required placeholder="Ex.: Reunião de equipe" autofocus />
+    <div class="form-row">
+      <div class="field">
+        <div class="sketch-edge input-wrap">
+          <input type="text" name="nome" class="input" required placeholder="Ex.: Reunião de equipe" autofocus />
+        </div>
       </div>
-    </div>
-    <div class="field">
-      <div class="sketch-edge input-wrap">
-        <select name="categoryId" class="select" required>
-          <option value="" disabled selected>Categoria</option>
-          <% categorias.forEach((c) => { %>
-            <option value="<%= c.id %>"><%= c.nome %></option>
-          <% }) %>
-        </select>
-        <%- include('../partials/icon', { name: 'chevron-down', size: 16, color: 'var(--accent-blue)' }) %>
+      <div class="field">
+        <div class="sketch-edge input-wrap">
+          <select name="categoryId" class="select" required>
+            <option value="" disabled selected>Categoria</option>
+            <% categorias.forEach((c) => { %>
+              <option value="<%= c.id %>"><%= c.nome %></option>
+            <% }) %>
+          </select>
+          <%- include('../partials/icon', { name: 'chevron-down', size: 16, color: 'var(--accent-blue)' }) %>
+        </div>
       </div>
     </div>
     <button type="submit" class="btn btn-primary sketch-edge sketch-hover">
