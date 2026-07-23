@@ -12,7 +12,9 @@ body {
   font-size: var(--text-base);
   transition: background-color .25s ease, color .25s ease;
 }
-h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; margin: 0; }
+/* line-height próprio (mais apertado que o 1.5 herdado do body, em reset.css) — títulos usam a
+   fonte de display em tamanho maior; 1.5 fica solto demais quando o título quebra em duas linhas. */
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.25; }
 a { color: var(--accent-blue); }
 a:hover { color: var(--ink); }
 .muted { color: var(--ink-soft); font-size: var(--text-sm); }
@@ -146,7 +148,7 @@ textarea.input { padding: 10px 4px; resize: vertical; }
 
 /* Alert (mensagens flash) */
 .alert { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; --radius: var(--radius-sm); margin-bottom: 16px; }
-.alert-title { font-family: var(--font-display); font-size: var(--text-lg); margin: 0 0 2px; }
+.alert-title { font-family: var(--font-display); font-size: var(--text-lg); margin: 0 0 2px; line-height: 1.25; }
 .alert-success::before { background: var(--accent-green-soft); border-color: var(--accent-green); }
 .alert-error::before { background: var(--accent-red-soft); border-color: var(--accent-red); }
 
