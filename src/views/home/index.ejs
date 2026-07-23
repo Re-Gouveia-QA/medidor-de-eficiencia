@@ -1,5 +1,38 @@
 <h1 class="home-greeting">Bem-vindo(a) de volta, <%= userName %></h1>
 <p class="muted home-date"><%= dataHoje %></p>
+
+<% if (emAndamento) { %>
+  <div class="card sketch-edge in-progress-card">
+    <span class="badge badge-blue">Em andamento</span>
+    <strong><%= emAndamento.nome %></strong>
+    <span class="muted"><%= emAndamento.category.nome %></span>
+    <form action="/activities/<%= emAndamento.id %>/finish" method="POST">
+      <button type="submit" class="btn btn-primary sketch-edge sketch-hover">Finalizar</button>
+    </form>
+  </div>
+<% } else if (categorias.length > 0) { %>
+  <form action="/activities/start" method="POST" class="card sketch-edge in-progress-card form">
+    <h2>O que você está fazendo agora?</h2>
+    <div class="field">
+      <div class="sketch-edge input-wrap">
+        <input type="text" name="nome" class="input" required placeholder="Ex.: Reunião de equipe" />
+      </div>
+    </div>
+    <div class="field">
+      <div class="sketch-edge input-wrap">
+        <select name="categoryId" class="select" required>
+          <option value="" disabled selected>Categoria</option>
+          <% categorias.forEach((c) => { %>
+            <option value="<%= c.id %>"><%= c.nome %></option>
+          <% }) %>
+        </select>
+        <%- include('../partials/icon', { name: 'chevron-down', size: 16, color: 'var(--accent-blue)' }) %>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary sketch-edge sketch-hover">Iniciar</button>
+  </form>
+<% } %>
+
 <p class="muted">O que você quer fazer agora?</p>
 
 <div class="grid-menu">

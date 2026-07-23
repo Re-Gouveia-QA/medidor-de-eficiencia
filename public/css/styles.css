@@ -164,6 +164,12 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .home-greeting { font-size: var(--text-2xl); line-height: 1.15; }
 .home-date { margin-top: 2px; margin-bottom: 4px; }
 
+/* Card de atividade em andamento (registro rápido) — mesma cor de seção do card "Registrar
+   atividade" logo abaixo (azul). align-items: flex-start evita que badge/botão esticem pra
+   largura toda do card (comportamento padrão de flex-column). */
+.in-progress-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 1.25rem 0; }
+.in-progress-card h2 { font-size: var(--text-lg); }
+
 /* Listas (atividades) */
 .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 18px; margin-top: 1rem; padding: 0; }
