@@ -17,11 +17,11 @@
 </form>
 
 <div class="report-cards">
-  <div class="card sketch-edge report-card" style="--tilt: -0.6deg; transform: rotate(var(--tilt));">
+  <div class="card sketch-edge report-card sketch-in" style="--tilt: -0.6deg; --stagger-index: 0; transform: rotate(var(--tilt));">
     <span class="report-big"><%= relatorio.diasRegistrados %>/<%= relatorio.diasNoPeriodo %></span>
     <span class="muted">dias registrados</span>
   </div>
-  <div class="card sketch-edge report-card" style="--tilt: 0.6deg; transform: rotate(var(--tilt));">
+  <div class="card sketch-edge report-card sketch-in" style="--tilt: 0.6deg; --stagger-index: 1; transform: rotate(var(--tilt));">
     <span class="report-big"><%= relatorio.totalFormatado %></span>
     <span class="muted">total de horas registradas no período</span>
   </div>
@@ -33,8 +33,8 @@
 <% } else { %>
   <div class="card sketch-edge">
     <ul class="bars">
-      <% relatorio.distribuicao.forEach((d) => { %>
-        <li>
+      <% relatorio.distribuicao.forEach((d, i) => { %>
+        <li class="sketch-in" style="--stagger-index: <%= i %>;">
           <div class="bar-label">
             <span><span class="color-dot" style="background: <%= d.cor %>" aria-hidden="true"></span> <%= d.categoria %></span>
             <span class="muted"><%= d.totalFormatado %> (<%= d.percentual %>%)</span>

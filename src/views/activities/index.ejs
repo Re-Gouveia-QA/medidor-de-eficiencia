@@ -39,8 +39,8 @@
   <p class="muted">Nenhuma atividade encontrada para os filtros selecionados.</p>
 <% } else { %>
   <ul class="list">
-    <% atividades.forEach((a) => { %>
-      <li class="list-item sketch-edge">
+    <% atividades.forEach((a, i) => { %>
+      <li class="list-item sketch-edge sketch-in" style="--stagger-index: <%= i %>;">
         <span class="color-dot" style="background: <%= a.category.cor %>" aria-hidden="true"></span>
         <div class="list-item-body">
           <strong><%= a.nome %></strong>
