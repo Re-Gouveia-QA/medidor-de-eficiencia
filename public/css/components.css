@@ -94,7 +94,7 @@ strong, b { letter-spacing: 0.03em; }
 .icon-btn.sketch-hover:active:not(:disabled) { transform: scale(1); }
 
 /* Campos de formulário */
-.field { display: flex; flex-direction: column; gap: 6px; font-family: var(--font-body); }
+.field { display: flex; flex-direction: column; gap: 8px; font-family: var(--font-body); }
 .field-label { font-size: var(--text-sm); color: var(--ink-soft); }
 .input-wrap { display: flex; align-items: center; gap: 8px; padding: 0 10px; }
 .input, .select {
@@ -139,10 +139,10 @@ textarea.input { padding: 10px 4px; resize: vertical; }
 .check-row .check-input:focus-visible + .check-box { outline: 2px solid var(--accent-blue); outline-offset: 2px; }
 
 /* Card */
-.card { padding: 22px; --radius: var(--radius-blob); }
+.card { padding: 26px; --radius: var(--radius-blob); }
 .card-title { font-family: var(--font-display); font-size: var(--text-xl); margin: 0 0 8px; }
-.card-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-.card-footer { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+.card-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.card-footer { margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
 
 /* Badge — sombra sólida no ::before (onde vive o arredondamento) dá a impressão de um
    adesivo com a base descolada do papel; não pode ir no elemento real (sem raio, sombra quadrada). */
@@ -151,7 +151,7 @@ textarea.input { padding: 10px 4px; resize: vertical; }
   font-size: var(--text-sm); --radius: var(--radius-pill); position: relative; isolation: isolate;
 }
 .badge::before { box-shadow: 2px 3px 0 0 var(--ink); }
-.badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 .badge-blue::before { background: var(--accent-blue-soft); }
 .badge-red::before { background: var(--accent-red-soft); }
 .badge-green::before { background: var(--accent-green-soft); }
