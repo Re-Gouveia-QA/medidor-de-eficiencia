@@ -53,9 +53,17 @@ export const activitySchema = z.object({
   valor: z.coerce.number().positive().optional().or(z.literal('')),
 });
 
+// Registro rápido de atividade "em andamento" (sem hora de fim ainda) — data/horaInicio são
+// implícitos (agora), só nome e categoria são pedidos ao usuário.
+export const startActivitySchema = z.object({
+  nome: z.string().trim().min(1, 'Informe o nome da atividade.'),
+  categoryId: z.string().uuid('Selecione uma categoria.'),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type CategoryInput = z.infer<typeof categorySchema>;
 export type ActivityInput = z.infer<typeof activitySchema>;
+export type StartActivityInput = z.infer<typeof startActivitySchema>;

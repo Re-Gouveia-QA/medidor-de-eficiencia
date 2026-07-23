@@ -26,6 +26,7 @@ describe('ReportService (BaseModel — escopo por usuário, RF12)', () => {
     expect(call.where).toEqual({
       userId: USER_ID,
       data: { gte: PERIODO.inicio, lte: PERIODO.fim },
+      horaFim: { not: null },
     });
   });
 });

@@ -46,8 +46,12 @@
           <strong><%= a.nome %></strong>
           <span class="muted">
             <%= a.data.toISOString().slice(0, 10).split('-').reverse().join('/') %> ·
-            <%= formatTime(a.horaInicio) %>–<%= formatTime(a.horaFim) %> ·
-            <%= formatMinutes(a.duracaoMin) %> · <%= a.category.nome %>
+            <% if (a.horaFim) { %>
+              <%= formatTime(a.horaInicio) %>–<%= formatTime(a.horaFim) %> · <%= formatMinutes(a.duracaoMin) %> ·
+            <% } else { %>
+              <span class="badge badge-blue">Em andamento</span> ·
+            <% } %>
+            <%= a.category.nome %>
           </span>
           <% if (a.category.possuiValor && a.valor != null) { %>
             <span class="muted"><%= a.category.valorLabel || 'Valor' %>: <%= formatNumber(a.valor) %></span>

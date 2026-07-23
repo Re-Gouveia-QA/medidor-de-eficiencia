@@ -47,7 +47,7 @@
       <label class="field-label" for="horaFim">Hora de fim</label>
       <div class="sketch-edge input-wrap">
         <input type="time" id="horaFim" name="horaFim" class="input" required
-               value="<%= atividade ? formatTime(atividade.horaFim) : '' %>" />
+               value="<%= atividade && atividade.horaFim ? formatTime(atividade.horaFim) : '' %>" />
       </div>
     </div>
   </div>

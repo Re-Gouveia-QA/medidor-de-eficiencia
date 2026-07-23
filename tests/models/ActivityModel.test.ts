@@ -69,4 +69,56 @@ describe('ActivityModel (BaseModel — escopo por usuário, RF12)', () => {
       where: { id: ACTIVITY_ID, userId: USER_ID },
     });
   });
+
+  it('findInProgress busca por userId + horaFim nulo', async () => {
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue(null);
+    await ActivityModel.findInProgress(USER_ID);
+    const call = vi.mocked(prisma.activity.findFirst).mock.calls[0][0];
+    expect(call.where).toEqual({ horaFim: null, userId: USER_ID });
+  });
+
+  it('startInProgress cria a atividade sem horaFim/duracaoMin quando não há uma em andamento', async () => {
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue(null);
+    vi.mocked(prisma.activity.create).mockResolvedValue({} as never);
+
+    await ActivityModel.startInProgress(USER_ID, { nome: 'Reunião', categoryId: 'cat-1' });
+
+    const call = vi.mocked(prisma.activity.create).mock.calls[0][0];
+    expect(call.data).toMatchObject({ userId: USER_ID, categoryId: 'cat-1', nome: 'Reunião', horaFim: null, duracaoMin: null });
+    expect(call.data.horaInicio).toBeInstanceOf(Date);
+  });
+
+  it('startInProgress lança erro e não cria quando já existe uma atividade em andamento', async () => {
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue({ id: 'existente' } as never);
+
+    await expect(ActivityModel.startInProgress(USER_ID, { nome: 'Reunião', categoryId: 'cat-1' })).rejects.toThrow(
+      /já tem uma atividade em andamento/,
+    );
+    expect(prisma.activity.create).not.toHaveBeenCalled();
+  });
+
+  it('finish calcula duracaoMin e atualiza horaFim quando a atividade está em andamento', async () => {
+    const horaInicio = new Date(Date.now() - 30 * 60_000); // 30min atrás
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue({ id: ACTIVITY_ID, horaInicio } as never);
+    vi.mocked(prisma.activity.updateMany).mockResolvedValue({ count: 1 });
+
+    const result = await ActivityModel.finish(ACTIVITY_ID, USER_ID);
+
+    const findCall = vi.mocked(prisma.activity.findFirst).mock.calls[0][0];
+    expect(findCall.where).toEqual({ id: ACTIVITY_ID, horaFim: null, userId: USER_ID });
+    const updateCall = vi.mocked(prisma.activity.updateMany).mock.calls[0][0];
+    expect(updateCall.where).toEqual({ id: ACTIVITY_ID, horaFim: null, userId: USER_ID });
+    expect(updateCall.data.duracaoMin).toBeGreaterThanOrEqual(29);
+    expect(updateCall.data.horaFim).toBeInstanceOf(Date);
+    expect(result).toEqual({ count: 1 });
+  });
+
+  it('finish retorna count 0 sem chamar updateMany quando a atividade não existe ou já foi finalizada', async () => {
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue(null);
+
+    const result = await ActivityModel.finish(ACTIVITY_ID, USER_ID);
+
+    expect(result).toEqual({ count: 0 });
+    expect(prisma.activity.updateMany).not.toHaveBeenCalled();
+  });
 });
