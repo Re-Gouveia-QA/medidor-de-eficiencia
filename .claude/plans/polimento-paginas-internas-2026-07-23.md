@@ -1,7 +1,10 @@
 # Plan: Polimento das páginas internas (home, atividades, categorias, relatórios)
 
 **Date:** 2026-07-23
-**Status:** em andamento
+**Status:** concluído — Fases 1-3 mescladas em `master` (junto com `ui/login-hero-redesign`,
+sessão anterior) para teste conjunto de todos os ajustes de UI. Build/testes/lint verdes
+(104/104); checagem visual claro/escuro em `/login`, `/register`, `/`, `/activities/new`,
+`/categories/new` e `/reports` sem regressão nem vazamento entre as páginas.
 
 ## Goal
 
