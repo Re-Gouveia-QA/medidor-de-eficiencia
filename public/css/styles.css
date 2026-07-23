@@ -143,6 +143,20 @@ a.card { display: flex; flex-direction: column; gap: 4px; color: var(--ink); }
 a.card:hover { text-decoration: none; }
 a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 
+/* Cor por seção — cada card da home usa uma das 4 "canetas" de acento (em vez de todos ficarem
+   azuis), repetida depois no ícone do page-header da página correspondente (fase 2 do plano de
+   polimento). Mais específico que "a.card svg" acima, então sobrescreve corretamente por card. */
+.card.section-blue svg { color: var(--accent-blue); }
+.card.section-green svg { color: var(--accent-green); }
+.card.section-yellow svg { color: var(--accent-yellow); }
+.card.section-red svg { color: var(--accent-red); }
+
+/* Saudação da home tratada como cabeçalho de página de diário — mesma ideia do hero da tela de
+   login (destaque maior que o h1 padrão), mas mais contida: aqui ainda há os 4 cards do menu
+   disputando espaço logo abaixo. */
+.home-greeting { font-size: var(--text-2xl); line-height: 1.15; }
+.home-date { margin-top: 2px; margin-bottom: 4px; }
+
 /* Listas (atividades) */
 .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 18px; margin-top: 1rem; padding: 0; }
