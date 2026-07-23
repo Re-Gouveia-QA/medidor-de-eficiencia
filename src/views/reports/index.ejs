@@ -18,11 +18,21 @@
 
 <div class="report-cards">
   <div class="card sketch-edge report-card sketch-in" style="--tilt: -0.6deg; --stagger-index: 0; transform: rotate(var(--tilt));">
-    <span class="report-big"><%= relatorio.diasRegistrados %>/<%= relatorio.diasNoPeriodo %></span>
+    <span class="report-big-wrap">
+      <span class="report-big"><%= relatorio.diasRegistrados %>/<%= relatorio.diasNoPeriodo %></span>
+      <svg class="stat-underline" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d="M4 12 Q 50 3, 100 11 T 196 9" pathLength="1" />
+      </svg>
+    </span>
     <span class="muted">dias registrados</span>
   </div>
   <div class="card sketch-edge report-card sketch-in" style="--tilt: 0.6deg; --stagger-index: 1; transform: rotate(var(--tilt));">
-    <span class="report-big"><%= relatorio.totalFormatado %></span>
+    <span class="report-big-wrap">
+      <span class="report-big"><%= relatorio.totalFormatado %></span>
+      <svg class="stat-underline" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d="M4 12 Q 50 3, 100 11 T 196 9" pathLength="1" />
+      </svg>
+    </span>
     <span class="muted">total de horas registradas no período</span>
   </div>
 </div>
@@ -40,7 +50,7 @@
             <span class="muted"><%= d.totalFormatado %> (<%= d.percentual %>%)</span>
           </div>
           <div class="bar-track">
-            <div class="bar-fill" style="width: <%= d.percentual %>%; background: <%= d.cor %>"></div>
+            <div class="bar-fill" style="--pct: <%= d.percentual / 100 %>; background: <%= d.cor %>"></div>
           </div>
         </li>
       <% }) %>
