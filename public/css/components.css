@@ -151,7 +151,10 @@ textarea.input { padding: 10px 4px; resize: vertical; }
   font-size: var(--text-sm); --radius: var(--radius-pill); position: relative; isolation: isolate;
 }
 .badge::before { box-shadow: 2px 3px 0 0 var(--ink); }
-.badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+/* Margem inferior maior que a superior de propósito: quando um badge é longo o bastante pra
+   quebrar em 2 linhas (ex.: valor padrão de categoria), 10px nos dois lados deixava a última linha
+   colada no texto seguinte ("N atividade(s)"). */
+.badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
 .badge-blue::before { background: var(--accent-blue-soft); }
 .badge-red::before { background: var(--accent-red-soft); }
 .badge-green::before { background: var(--accent-green-soft); }
