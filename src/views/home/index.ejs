@@ -1,23 +1,24 @@
-<h1>Bem-vindo(a) de volta, <%= userName %></h1>
+<h1 class="home-greeting">Bem-vindo(a) de volta, <%= userName %></h1>
+<p class="muted home-date"><%= dataHoje %></p>
 <p class="muted">O que você quer fazer agora?</p>
 
 <div class="grid-menu">
-  <a class="card sketch-edge sketch-hover" href="/activities/new">
+  <a class="card sketch-edge sketch-hover sketch-in section-blue" style="--stagger-index: 0;" href="/activities/new">
     <%- include('../partials/icon', { name: 'plus', size: 26 }) %>
     <strong>Registrar atividade</strong>
     <span class="muted">Anote o que você acabou de fazer</span>
   </a>
-  <a class="card sketch-edge sketch-hover" href="/activities">
+  <a class="card sketch-edge sketch-hover sketch-in section-green" style="--stagger-index: 1;" href="/activities">
     <%- include('../partials/icon', { name: 'clock', size: 26 }) %>
     <strong>Visualizar atividades</strong>
     <span class="muted">Liste e filtre seus registros</span>
   </a>
-  <a class="card sketch-edge sketch-hover" href="/reports">
+  <a class="card sketch-edge sketch-hover sketch-in section-yellow" style="--stagger-index: 2;" href="/reports">
     <%- include('../partials/icon', { name: 'star', size: 26 }) %>
     <strong>Relatórios</strong>
     <span class="muted">Dias registrados e tempo por categoria</span>
   </a>
-  <a class="card sketch-edge sketch-hover" href="/categories">
+  <a class="card sketch-edge sketch-hover sketch-in section-red" style="--stagger-index: 3;" href="/categories">
     <%- include('../partials/icon', { name: 'tag', size: 26 }) %>
     <strong>Categorias</strong>
     <span class="muted">Organize do seu jeito</span>
