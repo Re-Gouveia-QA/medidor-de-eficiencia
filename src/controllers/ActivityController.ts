@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { ActivityModel } from '../models/ActivityModel';
 import { CategoryModel } from '../models/CategoryModel';
-import { activitySchema } from '../utils/validators';
+import { activitySchema, startActivitySchema } from '../utils/validators';
 import { formatMinutes, formatTimeInZone } from '../utils/time';
 import { formatNumber } from '../utils/format';
 
@@ -115,6 +115,32 @@ class ActivityControllerImpl extends BaseController {
     }
     req.flash('success', 'Atividade excluída.');
     res.redirect('/activities');
+  };
+
+  /** Registro rápido de atividade "em andamento" (card na home) — nome + categoria apenas. */
+  startInProgress = async (req: Request, res: Response) => {
+    const data = this.parseOrRedirect(req, res, startActivitySchema, '/');
+    if (!data) return;
+    const categoria = await resolveOwnedCategory(req, res, data.categoryId, '/');
+    if (!categoria) return;
+    try {
+      await ActivityModel.startInProgress(req.currentUser!.id, data);
+      req.flash('success', 'Atividade iniciada.');
+    } catch (e) {
+      req.flash('error', e instanceof Error ? e.message : 'Erro ao iniciar atividade.');
+    }
+    res.redirect('/');
+  };
+
+  /** Finaliza a atividade em andamento a partir do card da home. */
+  finish = async (req: Request, res: Response) => {
+    const { count } = await ActivityModel.finish(req.params.id, req.currentUser!.id);
+    if (count === 0) {
+      req.flash('error', 'Atividade não encontrada ou já finalizada.');
+    } else {
+      req.flash('success', 'Atividade finalizada.');
+    }
+    res.redirect('/');
   };
 }
 

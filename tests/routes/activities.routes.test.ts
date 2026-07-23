@@ -230,4 +230,62 @@ describe('Rotas de atividades', () => {
     expect(res.status).toBe(302);
     expect(res.headers.location).toBe('/activities');
   });
+
+  it('POST /activities/start inicia a atividade e redireciona pra home', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(fakeCategoria() as never);
+    vi.mocked(ActivityModel.startInProgress).mockResolvedValue({} as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent.post('/activities/start').type('form').send({ nome: 'Reunião', categoryId: CATEGORY_ID });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+    expect(ActivityModel.startInProgress).toHaveBeenCalledWith(
+      TEST_USER.id,
+      expect.objectContaining({ nome: 'Reunião', categoryId: CATEGORY_ID }),
+    );
+  });
+
+  it('POST /activities/start com categoria de outro usuário é rejeitado (RF12) e não chama o model', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(null);
+
+    const agent = await loginAgent(app);
+    const res = await agent
+      .post('/activities/start')
+      .type('form')
+      .send({ nome: 'Reunião', categoryId: '11111111-1111-1111-1111-111111111111' });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+    expect(ActivityModel.startInProgress).not.toHaveBeenCalled();
+  });
+
+  it('POST /activities/start redireciona com erro quando já existe uma atividade em andamento', async () => {
+    vi.mocked(CategoryModel.findById).mockResolvedValue(fakeCategoria() as never);
+    vi.mocked(ActivityModel.startInProgress).mockRejectedValue(
+      new Error('Você já tem uma atividade em andamento. Finalize-a antes de iniciar outra.'),
+    );
+
+    const agent = await loginAgent(app);
+    const res = await agent.post('/activities/start').type('form').send({ nome: 'Reunião', categoryId: CATEGORY_ID });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+  });
+
+  it('POST /activities/:id/finish finaliza a atividade e redireciona pra home', async () => {
+    vi.mocked(ActivityModel.finish).mockResolvedValue({ count: 1 } as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent.post('/activities/act-1/finish');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+    expect(ActivityModel.finish).toHaveBeenCalledWith('act-1', TEST_USER.id);
+  });
+
+  it('POST /activities/:id/finish redireciona com erro quando não encontra a atividade em andamento', async () => {
+    vi.mocked(ActivityModel.finish).mockResolvedValue({ count: 0 } as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent.post('/activities/inexistente/finish');
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+  });
 });
