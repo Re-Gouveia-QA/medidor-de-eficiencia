@@ -43,12 +43,15 @@ class ReportServiceImpl extends BaseModel {
 
     const diasComRegistro = new Set(atividades.map((a) => a.data.toISOString().slice(0, 10)));
     const diasNoPeriodo = Math.floor((fim.getTime() - inicio.getTime()) / 86_400_000) + 1;
-    const totalMin = atividades.reduce((acc, a) => acc + a.duracaoMin, 0);
+    // duracaoMin é nulo enquanto a atividade está em andamento (ver plano da feature) — `?? 0` é só
+    // uma guarda de tipo aqui; a exclusão de fato dessas atividades do relatório é feita na query
+    // acima assim que a Fase 5 adicionar o filtro `horaFim: { not: null }`.
+    const totalMin = atividades.reduce((acc, a) => acc + (a.duracaoMin ?? 0), 0);
 
     const porCategoria = new Map<string, { cor: string; totalMin: number }>();
     for (const a of atividades) {
       const atual = porCategoria.get(a.category.nome) ?? { cor: a.category.cor, totalMin: 0 };
-      atual.totalMin += a.duracaoMin;
+      atual.totalMin += a.duracaoMin ?? 0;
       porCategoria.set(a.category.nome, atual);
     }
 

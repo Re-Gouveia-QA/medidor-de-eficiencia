@@ -69,9 +69,12 @@ model Activity {
   categoryId   String   @map("category_id")
   nome         String
   data         DateTime @db.Date
-  horaInicio   DateTime @map("hora_inicio") // armazenado em UTC (RNF05)
-  horaFim      DateTime @map("hora_fim")
-  duracaoMin   Int      @map("duracao_min") // sempre calculado pelo sistema (regra 5)
+  horaInicio   DateTime  @map("hora_inicio") // armazenado em UTC (RNF05)
+  // Nulo enquanto a atividade está "em andamento" (registrada sem hora de fim ainda) — ver
+  // ActivityModel.startInProgress/finish. No máximo 1 atividade por usuário fica nesse estado
+  // por vez (checado na aplicação, não por índice único parcial — ver plano da feature).
+  horaFim      DateTime? @map("hora_fim")
+  duracaoMin   Int?      @map("duracao_min") // sempre calculado pelo sistema (regra 5); nulo até finalizar
   // Regra 9: valor numérico de referência, só é relevante quando category.possuiValor = true
   valor        Decimal? @db.Decimal(12, 2)
   descricao    String?
