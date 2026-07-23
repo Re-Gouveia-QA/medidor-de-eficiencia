@@ -8,6 +8,7 @@ function createTransport() {
     host: env.SMTP_HOST,
     port: env.SMTP_PORT,
     auth: env.SMTP_USER && env.SMTP_PASS ? { user: env.SMTP_USER, pass: env.SMTP_PASS } : undefined,
+    connectionTimeout: 10_000, // falha rápido em vez de travar até o timeout default do nodemailer
   });
 }
 
