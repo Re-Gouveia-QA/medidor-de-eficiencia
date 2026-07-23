@@ -1,28 +1,28 @@
 <%- include('../partials/page-header', { title: categoria ? 'Editar Categoria' : 'Nova Categoria', backHref: '/categories' }) %>
 
-<form action="<%= categoria ? `/categories/${categoria.id}?_method=PUT` : '/categories' %>" method="POST" class="form form-narrow">
-  <div class="field">
+<form action="<%= categoria ? `/categories/${categoria.id}?_method=PUT` : '/categories' %>" method="POST" class="form form-narrow category-form">
+  <div class="field sketch-in" style="--stagger-index: 0;">
     <label class="field-label" for="nome">Nome</label>
     <div class="sketch-edge input-wrap">
       <input type="text" id="nome" name="nome" class="input" required placeholder="Ex.: Trabalho, Estudos, Lazer" value="<%= categoria?.nome ?? '' %>" />
     </div>
   </div>
 
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 1;">
     <label class="field-label" for="descricao">Descrição</label>
     <div class="sketch-edge input-wrap">
       <textarea id="descricao" name="descricao" class="input" rows="3" placeholder="Opcional"><%= categoria?.descricao ?? '' %></textarea>
     </div>
   </div>
 
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 2;">
     <label class="field-label" for="cor">Cor de identificação</label>
     <div class="sketch-edge color-swatch">
       <input type="color" id="cor" name="cor" class="color-input" value="<%= categoria?.cor ?? '#2563EB' %>" />
     </div>
   </div>
 
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 3;">
     <label class="field-label" for="tempoDesejadoMin">Tempo desejado por dia (minutos, opcional)</label>
     <div class="sketch-edge input-wrap">
       <input type="number" id="tempoDesejadoMin" name="tempoDesejadoMin" class="input" min="1" placeholder="Ex.: 60"
@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 4;">
     <label class="field-label" for="duracaoPadraoMin">Duração padrão da atividade (minutos, opcional)</label>
     <div class="sketch-edge input-wrap">
       <input type="number" id="duracaoPadraoMin" name="duracaoPadraoMin" class="input" min="1" placeholder="Ex.: 60"
@@ -39,7 +39,7 @@
     <span class="field-helper" id="duracaoPadraoMinHelp">Ao registrar uma atividade nesta categoria, a hora de fim será sugerida a partir deste valor.</span>
   </div>
 
-  <label class="check-row">
+  <label class="check-row sketch-in" style="--stagger-index: 5;">
     <span class="check-box-wrap">
       <input type="checkbox" id="possuiValor" name="possuiValor" class="check-input" <%= categoria?.possuiValor ? 'checked' : '' %> />
       <span class="check-box sketch-edge"><%- include('../partials/icon', { name: 'check', size: 14 }) %></span>
@@ -62,7 +62,7 @@
     <span class="field-helper" id="valorPadraoHelp">Sugerido ao registrar uma atividade nesta categoria, mas pode ser alterado.</span>
   </div>
 
-  <button type="submit" class="btn btn-primary sketch-edge sketch-hover"><%= categoria ? 'Salvar' : 'Registrar' %></button>
+  <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 6;"><%= categoria ? 'Salvar' : 'Registrar' %></button>
 </form>
 
 <script src="/js/category-form.js"></script>
