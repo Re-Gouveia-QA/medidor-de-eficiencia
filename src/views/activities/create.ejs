@@ -2,14 +2,14 @@
 
 <form id="activityForm" action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>"
       method="POST" class="form form-narrow" data-editing="<%= atividade ? 'true' : 'false' %>">
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 0;">
     <label class="field-label" for="nome">Nome da atividade</label>
     <div class="sketch-edge input-wrap">
       <input type="text" id="nome" name="nome" class="input" required placeholder="Ex.: Leitura, Academia, Reunião de equipe" value="<%= atividade?.nome ?? '' %>" />
     </div>
   </div>
 
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 1;">
     <label class="field-label" for="categoryId">Categoria</label>
     <div class="sketch-edge input-wrap">
       <select id="categoryId" name="categoryId" class="select" required>
@@ -22,20 +22,20 @@
           ><%= c.nome %></option>
         <% }) %>
       </select>
-      <%- include('../partials/icon', { name: 'chevron-down', size: 16, color: 'var(--ink-soft)' }) %>
+      <%- include('../partials/icon', { name: 'chevron-down', size: 16, color: 'var(--accent-green)' }) %>
     </div>
   </div>
 
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 2;">
     <label class="field-label" for="data">Data</label>
     <div class="sketch-edge input-wrap">
-      <%- include('../partials/icon', { name: 'calendar', size: 17, color: 'var(--ink-soft)' }) %>
+      <%- include('../partials/icon', { name: 'calendar', size: 17, color: 'var(--accent-green)' }) %>
       <input type="date" id="data" name="data" class="input" required
              value="<%= atividade ? atividade.data.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>" />
     </div>
   </div>
 
-  <div class="form-row">
+  <div class="form-row sketch-in" style="--stagger-index: 3;">
     <div class="field">
       <label class="field-label" for="horaInicio">Hora de início</label>
       <div class="sketch-edge input-wrap">
@@ -60,14 +60,14 @@
     </div>
   </div>
 
-  <div class="field">
+  <div class="field sketch-in" style="--stagger-index: 4;">
     <label class="field-label" for="descricao">Descrição / observações (opcional)</label>
     <div class="sketch-edge input-wrap">
       <textarea id="descricao" name="descricao" class="input" rows="4" placeholder="Alguma observação sobre esta atividade?"><%= atividade?.descricao ?? '' %></textarea>
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary sketch-edge sketch-hover"><%= atividade ? 'Salvar' : 'Registrar' %></button>
+  <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 5;"><%= atividade ? 'Salvar' : 'Registrar' %></button>
 </form>
 
 <script src="/js/activity-form.js"></script>
