@@ -1,7 +1,14 @@
 # Plan: Atividade em andamento (registro rápido + card na home)
 
 **Date:** 2026-07-23
-**Status:** draft
+**Status:** concluído — Fases 1-5 implementadas, cada uma em branch própria empilhada sobre a
+anterior (`feature/activity-in-progress-schema` → `-model` → `-controller` → `-views` →
+`-reports`), já que ao contrário do refino visual essas fases são sequenciais/dependentes (Fase 2
+não compila sem a migration da Fase 1, por exemplo). Build/testes/lint verdes em cada fase
+(114/114 ao final); fluxo completo testado contra o banco de dev real (iniciar → card na home →
+segunda tentativa bloqueada com flash → finalizar → aparece em `/activities` com duração
+calculada → relatório exclui a atividade em andamento dos totais e não quebra). Dados de teste
+removidos do banco após cada verificação. Branches aguardando decisão de merge.
 
 ## Goal
 

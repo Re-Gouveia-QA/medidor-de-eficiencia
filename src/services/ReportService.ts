@@ -36,16 +36,16 @@ class ReportServiceImpl extends BaseModel {
   }
 
   async build(userId: string, { inicio, fim }: ReportPeriod): Promise<EfficiencyReport> {
+    // horaFim: { not: null } exclui atividades ainda em andamento — duração desconhecida até
+    // finalizar, não deveriam contar nem pra "dia registrado" nem pros totais/distribuição.
     const atividades = await this.db.activity.findMany({
-      where: this.scopeToUser(userId, { data: { gte: inicio, lte: fim } }),
+      where: this.scopeToUser(userId, { data: { gte: inicio, lte: fim }, horaFim: { not: null } }),
       select: { data: true, duracaoMin: true, category: { select: { nome: true, cor: true } } },
     });
 
     const diasComRegistro = new Set(atividades.map((a) => a.data.toISOString().slice(0, 10)));
     const diasNoPeriodo = Math.floor((fim.getTime() - inicio.getTime()) / 86_400_000) + 1;
-    // duracaoMin é nulo enquanto a atividade está em andamento (ver plano da feature) — `?? 0` é só
-    // uma guarda de tipo aqui; a exclusão de fato dessas atividades do relatório é feita na query
-    // acima assim que a Fase 5 adicionar o filtro `horaFim: { not: null }`.
+    // `?? 0` é só uma guarda de tipo — o filtro acima já garante duracaoMin não-nulo em runtime.
     const totalMin = atividades.reduce((acc, a) => acc + (a.duracaoMin ?? 0), 0);
 
     const porCategoria = new Map<string, { cor: string; totalMin: number }>();
