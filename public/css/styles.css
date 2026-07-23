@@ -91,11 +91,41 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .report-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin: 1rem 0 1.5rem; }
 .report-card { align-items: center; text-align: center; padding: 1.75rem 1rem; }
 .report-big { font-family: var(--font-display); font-size: var(--text-2xl); }
+/* Destaque dos números-chave do relatório — mesma técnica do sublinhado "marca-texto" da tela de
+   login (path com pathLength="1" pra usar stroke-dasharray/dashoffset em unidades simples): o
+   wrapper inline-block encolhe pro tamanho do número, então o sublinhado (94% da largura do
+   wrapper) acompanha "2/31" ou "7h" sem precisar calcular a largura real do texto. Cor de seção
+   de Relatórios (amarelo) — igual à do card correspondente na home. */
+.report-big-wrap { display: inline-block; position: relative; }
+.stat-underline { position: absolute; left: 3%; bottom: -6px; width: 94%; height: 14px; overflow: visible; }
+.stat-underline path {
+  fill: none;
+  stroke: var(--accent-yellow);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-underline 0.5s ease-out 0.4s forwards;
+}
 .bars { list-style: none; display: flex; flex-direction: column; gap: 1rem; padding: 0; margin-top: 1rem; }
 .bar-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: var(--text-sm); align-items: center; gap: 8px; }
 .bar-label .color-dot { width: 12px; height: 12px; }
 .bar-track { background: var(--surface-alt); border-radius: 999px; height: 12px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 999px; }
+/* Preenchimento anima de 0 até o percentual real (--pct, 0 a 1) via scaleX em vez de animar
+   "width": não dispara reflow e funciona com stroke-dasharray-style var() dentro do keyframe.
+   transform-origin: left mantém o crescimento da esquerda pra direita (mesmo sentido do fill). */
+.bar-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  transform-origin: left;
+  transform: scaleX(var(--pct, 1));
+  animation: bar-fill-in 0.6s ease-out backwards;
+}
+@keyframes bar-fill-in {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(var(--pct, 1)); }
+}
 
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
