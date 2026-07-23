@@ -1,13 +1,21 @@
-<h1 class="auth-title">Entrar</h1>
-<p class="auth-subtitle">Registre seu dia. Entenda seu tempo.</p>
+<div class="washi-tape" aria-hidden="true"></div>
 
-<a class="btn btn-google sketch-edge sketch-hover" href="/auth/google">
-  <%- include('../partials/icon', { name: 'user', size: 16 }) %> Entrar com Google
+<h1 class="auth-title login-hero-title sketch-in" style="--stagger-index: 0;">
+  Entrar
+  <svg class="title-underline" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path d="M4 12 Q 50 3, 100 11 T 196 9" pathLength="1" />
+  </svg>
+</h1>
+<p class="auth-subtitle sketch-in" style="--stagger-index: 1;">Registre seu dia. Entenda seu tempo.</p>
+
+<a class="btn btn-google sketch-edge sketch-hover sketch-in" style="--stagger-index: 2;" href="/auth/google">
+  <span class="google-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+  Entrar com Google
 </a>
 
-<div class="divider"><span>ou</span></div>
+<div class="divider sketch-in" style="--stagger-index: 3;"><span>ou</span></div>
 
-<form action="/login" method="POST" class="form">
+<form action="/login" method="POST" class="form sketch-in" style="--stagger-index: 4;">
   <div class="field">
     <label class="field-label" for="email">E-mail</label>
     <div class="sketch-edge input-wrap">
@@ -28,4 +36,4 @@
   <button type="submit" class="btn btn-primary sketch-edge sketch-hover">Entrar</button>
 </form>
 
-<p class="auth-footer">Não tem conta? <a href="/register">Criar conta</a></p>
+<p class="auth-footer sketch-in" style="--stagger-index: 5;">Não tem conta? <a href="/register">Criar conta</a></p>
