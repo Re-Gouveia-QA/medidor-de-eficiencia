@@ -29,7 +29,6 @@
   <div class="field sketch-in" style="--stagger-index: 2;">
     <label class="field-label" for="data">Data</label>
     <div class="sketch-edge input-wrap">
-      <%- include('../partials/icon', { name: 'calendar', size: 17, color: 'var(--accent-green)' }) %>
       <input type="date" id="data" name="data" class="input" required
              value="<%= atividade ? atividade.data.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>" />
     </div>
