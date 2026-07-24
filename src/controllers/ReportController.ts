@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { ReportPeriod, ReportService } from '../services/ReportService';
+import { formatNumber } from '../utils/format';
+import { formatDateShortInZone, formatTimeInZone } from '../utils/time';
+import { buildLineChartGeometry } from '../utils/chart';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -33,11 +36,25 @@ class ReportControllerImpl extends BaseController {
       periodo = ReportService.defaultPeriod();
     }
 
-    const relatorio = await ReportService.build(req.currentUser!.id, periodo);
+    const [relatorio, seriesPorCategoria] = await Promise.all([
+      ReportService.build(req.currentUser!.id, periodo),
+      ReportService.buildValueSeries(req.currentUser!.id, periodo),
+    ]);
+
+    // Eixo X proporcional ao instante real (horaInicio), não ao índice do ponto — mais fiel ao
+    // "Tempo" do título do gráfico do que um espaçamento uniforme por atividade.
+    const seriesValor = seriesPorCategoria.map((serie) => ({
+      ...serie,
+      geometry: buildLineChartGeometry(serie.pontos.map((p) => ({ x: p.horaInicio.getTime(), y: p.valor }))),
+    }));
 
     res.render('reports/index', {
       title: 'Relatórios',
       relatorio,
+      seriesValor,
+      formatNumber,
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatDate: (d: Date) => formatDateShortInZone(d, req.userTimezone),
       filtros: {
         inicio: periodo.inicio.toISOString().slice(0, 10),
         fim: periodo.fim.toISOString().slice(0, 10),

@@ -60,6 +60,12 @@ export function formatTimeInZone(date: Date, timeZone: string = DEFAULT_TIMEZONE
   );
 }
 
+/** Formata um instante UTC como dd/MM no fuso do usuário (RNF05) — usado nas marcações de eixo
+ * do gráfico de linha (valor x tempo), onde o horário exato já fica disponível no tooltip. */
+export function formatDateShortInZone(date: Date, timeZone: string = DEFAULT_TIMEZONE): string {
+  return new Intl.DateTimeFormat('pt-BR', { timeZone, day: '2-digit', month: '2-digit' }).format(date);
+}
+
 /**
  * Calcula a duração em minutos entre início e fim.
  * Regra 4: hora de fim deve ser posterior à hora de início.

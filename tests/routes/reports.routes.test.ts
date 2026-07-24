@@ -19,6 +19,7 @@ describe('Rotas de relatórios', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(ReportService.buildValueSeries).mockResolvedValue([]);
   });
 
   it('GET /reports usa o período padrão (mês corrente) quando nenhum filtro é informado (regra 8)', async () => {
@@ -67,5 +68,61 @@ describe('Rotas de relatórios', () => {
     expect(res.status).toBe(200);
     expect(res.text).toContain('5h');
     expect(res.text).toContain('Trabalho');
+  });
+
+  it('GET /reports exibe o gráfico de linha de valor por categoria quando há série (regra 9)', async () => {
+    vi.mocked(ReportService.defaultPeriod).mockReturnValue({
+      inicio: new Date('2026-07-01T00:00:00.000Z'),
+      fim: new Date('2026-07-31T00:00:00.000Z'),
+    });
+    vi.mocked(ReportService.build).mockResolvedValue(relatorioVazio);
+    vi.mocked(ReportService.buildValueSeries).mockResolvedValue([
+      {
+        categoryId: 'cat-1',
+        categoria: 'Deslocamento',
+        cor: '#2563EB',
+        valorLabel: 'Custo (R$)',
+        pontos: [
+          { atividadeId: 'a1', nome: 'Ônibus', horaInicio: new Date('2026-07-01T12:00:00.000Z'), valor: 4.4 },
+          { atividadeId: 'a2', nome: 'Metrô', horaInicio: new Date('2026-07-02T12:00:00.000Z'), valor: 5.5 },
+        ],
+      },
+    ]);
+
+    const agent = await loginAgent(app);
+    const res = await agent.get('/reports');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Deslocamento');
+    expect(res.text).toContain('Custo (R$)');
+    expect(res.text).toContain('<polyline');
+    expect(res.text).toContain('<circle');
+    // Marcações de eixo X (dd/MM) — sem cookie `tz`, o fuso padrão é UTC (ver app.ts).
+    expect(res.text).toContain('line-chart-axis-label');
+    expect(res.text).toContain('01/07');
+    expect(res.text).toContain('02/07');
+    // Tooltip custom por ponto (botão HTML sobre o svg, não o <title> nativo do navegador).
+    expect(res.text).toContain('class="chart-point"');
+    expect(res.text).toContain('class="chart-tooltip sketch-edge"');
+    expect(res.text).toContain('aria-label="Ônibus: 4,40 em 01/07, 12:00"');
+    // Hierarquia nome / valor (destaque) / data-hora dentro do tooltip.
+    expect(res.text).toContain('<span class="chart-tooltip-name">Ônibus</span>');
+    expect(res.text).toContain('<span class="chart-tooltip-value">4,40</span>');
+    expect(res.text).toContain('<span class="chart-tooltip-meta">01/07 · 12:00</span>');
+    // Substitui o tooltip nativo do navegador — sem <title> dentro do svg (mantém o head da
+    // página, "<title>Relatórios</title>", intacto).
+    expect(res.text).not.toMatch(/<circle[^>]*>\s*<title>/);
+  });
+
+  it('GET /reports exibe mensagem vazia quando não há categoria com valor no período', async () => {
+    vi.mocked(ReportService.defaultPeriod).mockReturnValue({
+      inicio: new Date('2026-07-01T00:00:00.000Z'),
+      fim: new Date('2026-07-31T00:00:00.000Z'),
+    });
+    vi.mocked(ReportService.build).mockResolvedValue(relatorioVazio);
+
+    const agent = await loginAgent(app);
+    const res = await agent.get('/reports');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Nenhuma categoria com valor registrado no período selecionado.');
   });
 });

@@ -57,3 +57,44 @@
     </ul>
   </div>
 <% } %>
+
+<h2>Valor por categoria</h2>
+<% if (seriesValor.length === 0) { %>
+  <p class="muted">Nenhuma categoria com valor registrado no período selecionado.</p>
+<% } else { %>
+  <% seriesValor.forEach((serie, i) => { %>
+    <div class="card sketch-edge sketch-in line-chart-card" style="--stagger-index: <%= i %>;">
+      <div class="card-heading">
+        <span class="color-dot" style="background: <%= serie.cor %>" aria-hidden="true"></span>
+        <h3 class="card-title"><%= serie.categoria %> <span class="muted">— <%= serie.valorLabel %></span></h3>
+      </div>
+      <div class="line-chart-wrap">
+        <svg class="line-chart" viewBox="0 0 <%= serie.geometry.totalWidth %> <%= serie.geometry.totalHeight %>" preserveAspectRatio="none" role="img"
+             aria-label="Gráfico de linha de <%= serie.valorLabel %> ao longo do tempo para <%= serie.categoria %>, variando de <%= formatNumber(serie.geometry.minY) %> a <%= formatNumber(serie.geometry.maxY) %>">
+          <% if (serie.geometry.points) { %>
+            <polyline points="<%= serie.geometry.points %>" pathLength="1" style="stroke: <%= serie.cor %>" />
+          <% } %>
+          <% serie.pontos.forEach((p, j) => { %>
+            <circle cx="<%= serie.geometry.circles[j].x %>" cy="<%= serie.geometry.circles[j].y %>" r="5" style="fill: <%= serie.cor %>" aria-hidden="true"></circle>
+            <text class="line-chart-axis-label" x="<%= serie.geometry.circles[j].x %>" y="<%= serie.geometry.axisLabelY %>" text-anchor="middle" aria-hidden="true"><%= formatDate(p.horaInicio) %></text>
+          <% }) %>
+        </svg>
+        <% serie.pontos.forEach((p, j) => { %>
+          <button type="button" class="chart-point"
+                  style="left: <%= (serie.geometry.circles[j].x / serie.geometry.totalWidth * 100).toFixed(2) %>%; top: <%= (serie.geometry.circles[j].y / serie.geometry.totalHeight * 100).toFixed(2) %>%;"
+                  aria-label="<%= p.nome %>: <%= formatNumber(p.valor) %> em <%= formatDate(p.horaInicio) %>, <%= formatTime(p.horaInicio) %>">
+            <span class="chart-tooltip sketch-edge" aria-hidden="true">
+              <span class="chart-tooltip-name"><%= p.nome %></span>
+              <span class="chart-tooltip-value"><%= formatNumber(p.valor) %></span>
+              <span class="chart-tooltip-meta"><%= formatDate(p.horaInicio) %> · <%= formatTime(p.horaInicio) %></span>
+            </span>
+          </button>
+        <% }) %>
+      </div>
+      <div class="line-chart-meta">
+        <span>Mín.: <%= formatNumber(serie.geometry.minY) %></span>
+        <span>Máx.: <%= formatNumber(serie.geometry.maxY) %></span>
+      </div>
+    </div>
+  <% }) %>
+<% } %>
