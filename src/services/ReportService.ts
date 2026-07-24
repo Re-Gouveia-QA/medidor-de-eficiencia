@@ -22,6 +22,21 @@ export interface EfficiencyReport {
   distribuicao: CategoryDistribution[];
 }
 
+export interface ValueSeriesPoint {
+  atividadeId: string;
+  nome: string;
+  horaInicio: Date;
+  valor: number;
+}
+
+export interface CategoryValueSeries {
+  categoryId: string;
+  categoria: string;
+  cor: string;
+  valorLabel: string;
+  pontos: ValueSeriesPoint[];
+}
+
 /**
  * Service de relatórios (RF09/RF10) — mantém o ReportController fino.
  * Regra 9: "dia registrado" = dia com ao menos uma atividade.
@@ -72,6 +87,44 @@ class ReportServiceImpl extends BaseModel {
       totalFormatado: formatMinutes(totalMin),
       distribuicao,
     };
+  }
+
+  /** Regra 9: uma série (valor x tempo) por categoria com possuiValor=true — um ponto por
+   * atividade que tenha `valor` preenchido (valorPadrao é só sugestão de formulário, nunca é
+   * gravado automaticamente pelo ActivityModel). */
+  async buildValueSeries(userId: string, { inicio, fim }: ReportPeriod): Promise<CategoryValueSeries[]> {
+    const atividades = await this.db.activity.findMany({
+      where: this.scopeToUser(userId, {
+        data: { gte: inicio, lte: fim },
+        valor: { not: null },
+        category: { possuiValor: true },
+      }),
+      select: {
+        id: true,
+        nome: true,
+        horaInicio: true,
+        valor: true,
+        categoryId: true,
+        category: { select: { nome: true, cor: true, valorLabel: true } },
+      },
+      orderBy: [{ categoryId: 'asc' }, { horaInicio: 'asc' }],
+    });
+
+    const porCategoria = new Map<string, CategoryValueSeries>();
+    for (const a of atividades) {
+      const atual = porCategoria.get(a.categoryId) ?? {
+        categoryId: a.categoryId,
+        categoria: a.category.nome,
+        cor: a.category.cor,
+        valorLabel: a.category.valorLabel || 'Valor',
+        pontos: [],
+      };
+      // valor não é nulo aqui (filtrado no where acima); toNumber() é seguro.
+      atual.pontos.push({ atividadeId: a.id, nome: a.nome, horaInicio: a.horaInicio, valor: a.valor!.toNumber() });
+      porCategoria.set(a.categoryId, atual);
+    }
+
+    return [...porCategoria.values()].sort((a, b) => a.categoria.localeCompare(b.categoria));
   }
 }
 

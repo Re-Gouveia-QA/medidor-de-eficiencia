@@ -245,6 +245,25 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   to { transform: scaleX(var(--pct, 1)); }
 }
 
+/* Gráfico de linha (valor x tempo, regra 9) — geometria calculada em src/utils/chart.ts,
+   viewBox fixo 600x200 (ver ReportController). */
+.line-chart-card { margin-bottom: 1.25rem; }
+.line-chart { display: block; width: 100%; height: auto; margin-top: 8px; }
+.line-chart polyline {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Mesma técnica de "desenhar" o traço do .stat-underline: pathLength="1" no markup habilita
+     stroke-dasharray/dashoffset em unidades simples (0 a 1) em vez de calcular o comprimento
+     real do polyline. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-underline 0.6s ease-out 0.2s forwards;
+}
+.line-chart circle { stroke: var(--paper); stroke-width: 2; }
+.line-chart-meta { display: flex; justify-content: space-between; font-size: var(--text-sm); color: var(--ink-soft); margin-top: 4px; }
+
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
   .app-content { padding: 10px 16px 48px; }

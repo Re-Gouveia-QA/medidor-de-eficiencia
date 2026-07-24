@@ -57,3 +57,32 @@
     </ul>
   </div>
 <% } %>
+
+<h2>Valor por categoria</h2>
+<% if (seriesValor.length === 0) { %>
+  <p class="muted">Nenhuma categoria com valor registrado no período selecionado.</p>
+<% } else { %>
+  <% seriesValor.forEach((serie, i) => { %>
+    <div class="card sketch-edge sketch-in line-chart-card" style="--stagger-index: <%= i %>;">
+      <div class="card-heading">
+        <span class="color-dot" style="background: <%= serie.cor %>" aria-hidden="true"></span>
+        <h3 class="card-title"><%= serie.categoria %> <span class="muted">— <%= serie.valorLabel %></span></h3>
+      </div>
+      <svg class="line-chart" viewBox="0 0 600 200" preserveAspectRatio="none" role="img"
+           aria-label="Gráfico de linha de <%= serie.valorLabel %> ao longo do tempo para <%= serie.categoria %>, variando de <%= formatNumber(serie.geometry.minY) %> a <%= formatNumber(serie.geometry.maxY) %>">
+        <% if (serie.geometry.points) { %>
+          <polyline points="<%= serie.geometry.points %>" pathLength="1" style="stroke: <%= serie.cor %>" />
+        <% } %>
+        <% serie.pontos.forEach((p, j) => { %>
+          <circle cx="<%= serie.geometry.circles[j].x %>" cy="<%= serie.geometry.circles[j].y %>" r="5" style="fill: <%= serie.cor %>">
+            <title><%= p.nome %>: <%= formatNumber(p.valor) %> em <%= formatTime(p.horaInicio) %></title>
+          </circle>
+        <% }) %>
+      </svg>
+      <div class="line-chart-meta">
+        <span>Mín.: <%= formatNumber(serie.geometry.minY) %></span>
+        <span>Máx.: <%= formatNumber(serie.geometry.maxY) %></span>
+      </div>
+    </div>
+  <% }) %>
+<% } %>
