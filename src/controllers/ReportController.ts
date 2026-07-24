@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { ReportPeriod, ReportService } from '../services/ReportService';
 import { formatNumber } from '../utils/format';
-import { formatTimeInZone } from '../utils/time';
+import { formatDateShortInZone, formatTimeInZone } from '../utils/time';
 import { buildLineChartGeometry } from '../utils/chart';
 
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -54,6 +54,7 @@ class ReportControllerImpl extends BaseController {
       seriesValor,
       formatNumber,
       formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatDate: (d: Date) => formatDateShortInZone(d, req.userTimezone),
       filtros: {
         inicio: periodo.inicio.toISOString().slice(0, 10),
         fim: periodo.fim.toISOString().slice(0, 10),

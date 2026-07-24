@@ -15,23 +15,34 @@ export interface LineChartGeometry {
   circles: ChartPoint[];
   minY: number;
   maxY: number;
+  /** Altura total do viewBox (área do gráfico + faixa reservada pras marcações de eixo X). */
+  totalHeight: number;
+  /** Coordenada Y onde as marcações de eixo X (data de cada ponto) devem ser desenhadas. */
+  axisLabelY: number;
 }
 
 interface ChartOptions {
   width?: number;
   height?: number;
   padding?: number;
+  /** Faixa extra reservada abaixo da área do gráfico pras marcações de tempo (eixo X). */
+  labelHeight?: number;
 }
 
-/** Normaliza `x`/`y` para as coordenadas de um viewBox `0 0 width height`, com `padding` nas
- * bordas. Robusto a 0/1 ponto e a todos os valores de x (ou de y) iguais, casos em que uma
- * divisão pela amplitude (max - min) daria divisão por zero. */
+/** Normaliza `x`/`y` para as coordenadas de um viewBox `0 0 width (height + labelHeight)`, com
+ * `padding` nas bordas da área do gráfico. Robusto a 0/1 ponto e a todos os valores de x (ou de
+ * y) iguais, casos em que uma divisão pela amplitude (max - min) daria divisão por zero. */
 export function buildLineChartGeometry(
   pontos: ChartPoint[],
-  { width = 600, height = 200, padding = 20 }: ChartOptions = {},
+  { width = 600, height = 170, padding = 20, labelHeight = 30 }: ChartOptions = {},
 ): LineChartGeometry {
+  const totalHeight = height + labelHeight;
+  // Baseline do texto um pouco abaixo do topo da faixa reservada, com espaço pro texto não
+  // colar na borda inferior do viewBox.
+  const axisLabelY = height + labelHeight * 0.7;
+
   if (pontos.length === 0) {
-    return { points: '', circles: [], minY: 0, maxY: 0 };
+    return { points: '', circles: [], minY: 0, maxY: 0, totalHeight, axisLabelY };
   }
 
   const xs = pontos.map((p) => p.x);
@@ -60,5 +71,5 @@ export function buildLineChartGeometry(
 
   const points = circles.length < 2 ? '' : circles.map((c) => `${c.x},${c.y}`).join(' ');
 
-  return { points, circles, minY, maxY };
+  return { points, circles, minY, maxY, totalHeight, axisLabelY };
 }

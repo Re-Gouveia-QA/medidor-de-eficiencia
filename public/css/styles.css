@@ -262,6 +262,10 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   animation: draw-underline 0.6s ease-out 0.2s forwards;
 }
 .line-chart circle { stroke: var(--paper); stroke-width: 2; }
+/* Marcação de data (dd/MM) abaixo de cada ponto — SVG não herda fonte/cor da página, precisa
+   declarar explicitamente. Horário exato de cada ponto continua só no tooltip (<title>), a
+   marcação aqui é só orientação grosseira de "quando" no eixo X. */
+.line-chart-axis-label { font-family: var(--font-body); font-size: 13px; fill: var(--ink-soft); }
 .line-chart-meta { display: flex; justify-content: space-between; font-size: var(--text-sm); color: var(--ink-soft); margin-top: 4px; }
 
 @media (max-width: 560px) {

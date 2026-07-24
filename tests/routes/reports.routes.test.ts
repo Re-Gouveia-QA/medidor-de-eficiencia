@@ -96,6 +96,10 @@ describe('Rotas de relatórios', () => {
     expect(res.text).toContain('Custo (R$)');
     expect(res.text).toContain('<polyline');
     expect(res.text).toContain('<circle');
+    // Marcações de eixo X (dd/MM) — sem cookie `tz`, o fuso padrão é UTC (ver app.ts).
+    expect(res.text).toContain('line-chart-axis-label');
+    expect(res.text).toContain('01/07');
+    expect(res.text).toContain('02/07');
   });
 
   it('GET /reports exibe mensagem vazia quando não há categoria com valor no período', async () => {
