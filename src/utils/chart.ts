@@ -15,6 +15,9 @@ export interface LineChartGeometry {
   circles: ChartPoint[];
   minY: number;
   maxY: number;
+  /** Largura total do viewBox — exposta pra quem posiciona elementos HTML sobre o gráfico (ex.:
+   * botão de tooltip) converter x/y em porcentagem sem duplicar o valor de `width`. */
+  totalWidth: number;
   /** Altura total do viewBox (área do gráfico + faixa reservada pras marcações de eixo X). */
   totalHeight: number;
   /** Coordenada Y onde as marcações de eixo X (data de cada ponto) devem ser desenhadas. */
@@ -42,7 +45,7 @@ export function buildLineChartGeometry(
   const axisLabelY = height + labelHeight * 0.7;
 
   if (pontos.length === 0) {
-    return { points: '', circles: [], minY: 0, maxY: 0, totalHeight, axisLabelY };
+    return { points: '', circles: [], minY: 0, maxY: 0, totalWidth: width, totalHeight, axisLabelY };
   }
 
   const xs = pontos.map((p) => p.x);
@@ -71,5 +74,5 @@ export function buildLineChartGeometry(
 
   const points = circles.length < 2 ? '' : circles.map((c) => `${c.x},${c.y}`).join(' ');
 
-  return { points, circles, minY, maxY, totalHeight, axisLabelY };
+  return { points, circles, minY, maxY, totalWidth: width, totalHeight, axisLabelY };
 }

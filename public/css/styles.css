@@ -245,8 +245,8 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   to { transform: scaleX(var(--pct, 1)); }
 }
 
-/* Gráfico de linha (valor x tempo, regra 9) — geometria calculada em src/utils/chart.ts,
-   viewBox fixo 600x200 (ver ReportController). */
+/* Gráfico de linha (valor x tempo, regra 9) — geometria (incl. viewBox) calculada em
+   src/utils/chart.ts#buildLineChartGeometry. */
 .line-chart-card { margin-bottom: 1.25rem; }
 .line-chart { display: block; width: 100%; height: auto; margin-top: 8px; }
 .line-chart polyline {
@@ -263,10 +263,46 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 }
 .line-chart circle { stroke: var(--paper); stroke-width: 2; }
 /* Marcação de data (dd/MM) abaixo de cada ponto — SVG não herda fonte/cor da página, precisa
-   declarar explicitamente. Horário exato de cada ponto continua só no tooltip (<title>), a
-   marcação aqui é só orientação grosseira de "quando" no eixo X. */
+   declarar explicitamente. Horário exato de cada ponto continua só no tooltip de hover/foco
+   (.chart-point abaixo), a marcação aqui é só orientação grosseira de "quando" no eixo X. */
 .line-chart-axis-label { font-family: var(--font-body); font-size: 13px; fill: var(--ink-soft); }
 .line-chart-meta { display: flex; justify-content: space-between; font-size: var(--text-sm); color: var(--ink-soft); margin-top: 4px; }
+
+/* Ponto do gráfico como <button> HTML posicionado por porcentagem sobre o wrapper (mesma
+   proporção do viewBox do svg, ver ReportController/reports/index.ejs) — não como filho do svg,
+   porque um <circle> não é um alvo de toque/hover confortável (r=5 num viewBox de 600 de largura
+   fica minúsculo na tela) e um elemento HTML de verdade permite foco por teclado e um tooltip
+   com a identidade visual do app, em vez do <title> nativo do navegador (mesmo motivo do toast
+   de confirmação ter substituído o confirm() nativo). O círculo do svg continua só decorativo
+   (aria-hidden); o botão é que carrega o aria-label com os detalhes do ponto. */
+.line-chart-wrap { position: relative; }
+.chart-point {
+  position: absolute;
+  width: 22px; height: 22px;
+  transform: translate(-50%, -50%);
+  background: none; border: none; padding: 0; margin: 0; cursor: pointer;
+}
+.chart-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%) translateY(4px);
+  --radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: var(--text-sm);
+  color: var(--ink);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease;
+  z-index: 5;
+}
+/* Sombra sólida "adesivo" no ::before (onde vive o arredondamento) — mesma técnica do .badge. */
+.chart-tooltip::before { box-shadow: 2px 3px 0 0 var(--ink); }
+.chart-point:hover .chart-tooltip, .chart-point:focus-visible .chart-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }

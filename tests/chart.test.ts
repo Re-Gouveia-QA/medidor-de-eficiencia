@@ -3,8 +3,10 @@ import { buildLineChartGeometry } from '../src/utils/chart';
 
 describe('buildLineChartGeometry (relatório valor x tempo)', () => {
   it('retorna geometria vazia sem pontos', () => {
-    const geometry = buildLineChartGeometry([], { height: 100, labelHeight: 30 });
-    expect(geometry).toEqual({ points: '', circles: [], minY: 0, maxY: 0, totalHeight: 130, axisLabelY: 121 });
+    const geometry = buildLineChartGeometry([], { width: 600, height: 100, labelHeight: 30 });
+    expect(geometry).toEqual({
+      points: '', circles: [], minY: 0, maxY: 0, totalWidth: 600, totalHeight: 130, axisLabelY: 121,
+    });
   });
 
   it('ponto único: sem linha (points vazio), 1 círculo centralizado', () => {

@@ -100,6 +100,13 @@ describe('Rotas de relatórios', () => {
     expect(res.text).toContain('line-chart-axis-label');
     expect(res.text).toContain('01/07');
     expect(res.text).toContain('02/07');
+    // Tooltip custom por ponto (botão HTML sobre o svg, não o <title> nativo do navegador).
+    expect(res.text).toContain('class="chart-point"');
+    expect(res.text).toContain('class="chart-tooltip sketch-edge"');
+    expect(res.text).toContain('aria-label="Ônibus: 4,40 em 01/07, 12:00"');
+    // Substitui o tooltip nativo do navegador — sem <title> dentro do svg (mantém o head da
+    // página, "<title>Relatórios</title>", intacto).
+    expect(res.text).not.toMatch(/<circle[^>]*>\s*<title>/);
   });
 
   it('GET /reports exibe mensagem vazia quando não há categoria com valor no período', async () => {
