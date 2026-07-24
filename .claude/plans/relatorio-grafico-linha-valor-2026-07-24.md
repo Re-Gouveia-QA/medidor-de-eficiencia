@@ -1,7 +1,16 @@
 # Plan: Relatório — gráfico de linha (Valor x Tempo) por categoria
 
 **Date:** 2026-07-24
-**Status:** draft
+**Status:** concluído — Fases 1-4 implementadas em `feature/report-value-line-chart` e mescladas em
+`master` (commits `0853b79`, `8f5ead3`, `a78ccff`, `ed4dd6e`; merge `e7f6223`). Build/testes/lint
+verdes em cada etapa (123/123 testes na suíte completa). Duas iterações além do escopo original
+das 4 fases, a pedido do usuário, também na mesma branch: marcações de eixo X (dd/MM) e tooltip
+custom no estilo "Caderno de Esboço" no hover/foco de cada ponto (substituindo o `<title>` nativo
+do navegador cogitado na Fase 3). Security review (`/security-review`) no diff mesclado não
+encontrou vulnerabilidades. Checagem visual manual em navegador (claro/escuro, dados reais) segue
+pendente — não foi possível nas sessões em que isso foi implementado por indisponibilidade
+momentânea do Postgres local (Docker Desktop); recomendado antes de considerar a feature 100%
+validada, mas não bloqueia o que já foi mesclado.
 
 ## Goal
 
