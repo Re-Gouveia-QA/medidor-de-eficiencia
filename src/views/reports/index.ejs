@@ -84,8 +84,9 @@
                   style="left: <%= (serie.geometry.circles[j].x / serie.geometry.totalWidth * 100).toFixed(2) %>%; top: <%= (serie.geometry.circles[j].y / serie.geometry.totalHeight * 100).toFixed(2) %>%;"
                   aria-label="<%= p.nome %>: <%= formatNumber(p.valor) %> em <%= formatDate(p.horaInicio) %>, <%= formatTime(p.horaInicio) %>">
             <span class="chart-tooltip sketch-edge" aria-hidden="true">
-              <strong><%= p.nome %></strong>
-              <%= formatNumber(p.valor) %> · <%= formatDate(p.horaInicio) %> <%= formatTime(p.horaInicio) %>
+              <span class="chart-tooltip-name"><%= p.nome %></span>
+              <span class="chart-tooltip-value"><%= formatNumber(p.valor) %></span>
+              <span class="chart-tooltip-meta"><%= formatDate(p.horaInicio) %> · <%= formatTime(p.horaInicio) %></span>
             </span>
           </button>
         <% }) %>

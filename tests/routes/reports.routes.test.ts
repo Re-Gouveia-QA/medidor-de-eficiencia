@@ -104,6 +104,10 @@ describe('Rotas de relatórios', () => {
     expect(res.text).toContain('class="chart-point"');
     expect(res.text).toContain('class="chart-tooltip sketch-edge"');
     expect(res.text).toContain('aria-label="Ônibus: 4,40 em 01/07, 12:00"');
+    // Hierarquia nome / valor (destaque) / data-hora dentro do tooltip.
+    expect(res.text).toContain('<span class="chart-tooltip-name">Ônibus</span>');
+    expect(res.text).toContain('<span class="chart-tooltip-value">4,40</span>');
+    expect(res.text).toContain('<span class="chart-tooltip-meta">01/07 · 12:00</span>');
     // Substitui o tooltip nativo do navegador — sem <title> dentro do svg (mantém o head da
     // página, "<title>Relatórios</title>", intacto).
     expect(res.text).not.toMatch(/<circle[^>]*>\s*<title>/);

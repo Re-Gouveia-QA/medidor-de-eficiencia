@@ -288,10 +288,13 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   bottom: calc(100% + 10px);
   transform: translateX(-50%) translateY(4px);
   --radius: var(--radius-sm);
-  padding: 6px 12px;
-  font-size: var(--text-sm);
-  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 8px 14px;
   white-space: nowrap;
+  text-align: center;
   opacity: 0;
   pointer-events: none;
   transition: opacity .15s ease, transform .15s ease;
@@ -299,6 +302,16 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 }
 /* Sombra sólida "adesivo" no ::before (onde vive o arredondamento) — mesma técnica do .badge. */
 .chart-tooltip::before { box-shadow: 2px 3px 0 0 var(--ink); }
+/* Hierarquia dentro do tooltip: nome identifica o registro (regra 9 — "a que ponto aquele
+   registro se refere"), valor é o dado que o gráfico existe pra mostrar (destaque, por isso usa
+   --font-accent/Kalam — token já definido em tokens.css pra "destaques" mas sem nenhum uso real
+   ainda), data/hora é o contexto de quando. Cor do valor fica em --ink (não na cor da categoria):
+   a cor da categoria é livre/escolhida pelo usuário (ver CLAUDE.md, regra 6) e não tem garantia
+   de contraste como texto sobre --surface — por isso ela só aparece no dot/linha/círculo, nunca
+   em texto, mesma cautela já aplicada em .color-dot. */
+.chart-tooltip-name { font-size: var(--text-sm); color: var(--ink-soft); }
+.chart-tooltip-value { font-family: var(--font-accent); font-size: var(--text-lg); line-height: 1.1; }
+.chart-tooltip-meta { font-size: var(--text-sm); color: var(--ink-soft); }
 .chart-point:hover .chart-tooltip, .chart-point:focus-visible .chart-tooltip {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
