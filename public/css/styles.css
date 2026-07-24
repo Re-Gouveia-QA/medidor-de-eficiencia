@@ -15,7 +15,7 @@
 }
 .brand { font-family: var(--font-display); font-size: var(--text-xl); color: var(--ink); text-decoration: none; }
 .brand:hover { color: var(--ink); }
-.topbar-actions { display: flex; align-items: center; gap: 12px; }
+.topbar-actions { display: flex; align-items: center; gap: 16px; }
 .topbar-actions form { display: contents; }
 
 /* Botão de docs: mantém a cor azul de link (herdada de "a", components.css) também no hover/focus —
@@ -40,10 +40,10 @@
   top: 12px;
 }
 
-.app-content { max-width: 640px; margin: 0 auto; padding: 12px 20px 64px; }
+.app-content { max-width: 640px; margin: 0 auto; padding: 24px 20px 64px; }
 
 /* Cabeçalho de página (título + botão Voltar) */
-.page-title { display: flex; align-items: center; gap: 10px; }
+.page-title { display: flex; align-items: center; gap: 20px; }
 .back-btn {
   width: 40px; height: 40px; --radius: var(--radius-pill); display: inline-flex; align-items: center;
   justify-content: center; flex: none; color: var(--ink); transition: transform .15s ease;
@@ -167,7 +167,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* Card de atividade em andamento (registro rápido) — mesma cor de seção do card "Registrar
    atividade" logo abaixo (azul). align-items: flex-start evita que badge/botão esticem pra
    largura toda do card (comportamento padrão de flex-column). */
-.in-progress-card { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; margin: 1.25rem 0; }
+.in-progress-card { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; margin: 1.25rem 0; }
 .in-progress-card h2 { font-size: var(--text-lg); }
 
 /* Estado "ao vivo" (atividade em andamento): ponto pulsante + cronômetro que conta em tempo real
@@ -193,7 +193,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 18px; margin-top: 1rem; padding: 0; }
 .list-item { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
 .list-item-body { display: flex; flex-direction: column; flex: 1; gap: 2px; min-width: 0; }
-.actions { display: flex; gap: 10px; flex: none; }
+.actions { display: flex; gap: 14px; flex: none; }
 .color-dot { width: 16px; height: 16px; border-radius: 50%; display: inline-block; flex-shrink: 0; border: 2px solid var(--ink); }
 
 /* Filtros */
