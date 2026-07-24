@@ -11,7 +11,7 @@ import { CategoryModel } from '../models/CategoryModel';
  */
 class HomeControllerImpl extends BaseController {
   index = async (req: Request, res: Response) => {
-    const dataHojeRaw = new Date().toLocaleDateString('pt-BR', {
+    const dataHojeRaw = new Date().toLocaleDateString(req.userLocale, {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -22,7 +22,7 @@ class HomeControllerImpl extends BaseController {
       CategoryModel.listByUser(req.currentUser!.id),
     ]);
     res.render('home/index', {
-      title: 'Página inicial',
+      title: res.locals.t('home.title'),
       userName: req.currentUser?.nome ?? '',
       dataHoje: dataHojeRaw.charAt(0).toUpperCase() + dataHojeRaw.slice(1),
       emAndamento,

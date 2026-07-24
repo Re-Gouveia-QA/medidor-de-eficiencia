@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR"<% if (theme === 'dark') { %> data-theme="dark"<% } %>>
+<html lang="<%= locale %>"<% if (theme === 'dark') { %> data-theme="dark"<% } %>>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,21 +9,24 @@
 <body>
   <%- include('../partials/svg-filters') %>
   <% if (currentUser) { %>
-    <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+    <a class="skip-link" href="#main-content"><%= t('layout.skipLink') %></a>
     <header class="topbar">
       <a class="brand" href="/">Medidor</a>
       <div class="topbar-actions">
         <% if (currentUser.isAdmin) { %>
-          <a class="icon-btn sketch-edge sketch-hover btn-secondary docs-btn" href="/docs" aria-label="Documentação da API">
+          <a class="icon-btn sketch-edge sketch-hover btn-secondary docs-btn" href="/docs" aria-label="<%= t('layout.docsAriaLabel') %>">
             <%- include('../partials/icon', { name: 'info', size: 18 }) %>
           </a>
         <% } %>
-        <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="Alternar tema claro/escuro" aria-pressed="<%= theme === 'dark' ? 'true' : 'false' %>">
+        <button type="button" id="localeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary locale-toggle" aria-label="<%= t('layout.localeToggleAriaLabel') %>" data-next-locale="<%= locale === 'pt-BR' ? 'en-US' : 'pt-BR' %>">
+          <%= locale === 'pt-BR' ? 'EN' : 'PT' %>
+        </button>
+        <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="<%= t('layout.themeToggleAriaLabel') %>" aria-pressed="<%= theme === 'dark' ? 'true' : 'false' %>">
           <span class="icon-sun"><%- include('../partials/icon', { name: 'sun', size: 18, color: 'var(--accent-yellow)' }) %></span>
           <span class="icon-moon"><%- include('../partials/icon', { name: 'moon', size: 18, color: 'var(--ink-soft)' }) %></span>
         </button>
         <form action="/logout" method="POST">
-          <button type="submit" class="icon-btn sketch-edge sketch-hover btn-danger" aria-label="Sair">
+          <button type="submit" class="icon-btn sketch-edge sketch-hover btn-danger" aria-label="<%= t('layout.logoutAriaLabel') %>">
             <%- include('../partials/icon', { name: 'logout', size: 18 }) %>
           </button>
         </form>
@@ -43,6 +46,7 @@
 
   <script src="/js/confirm-submit.js"></script>
   <script src="/js/theme-toggle.js"></script>
+  <script src="/js/locale-toggle.js"></script>
   <script src="/js/timezone.js"></script>
   <script src="/js/back-button.js"></script>
 </body>
