@@ -511,7 +511,18 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   scroll-snap-type: x mandatory;
   gap: 20px;
   margin-top: 2rem;
-  padding: 4px max(20px, calc(50vw - 480px)) 16px;
+  padding-top: 4px;
+  padding-bottom: 16px;
+  padding-left: max(20px, calc(50vw - 480px));
+  /* padding-right é maior de propósito (não é o mesmo valor do padding-left): o card final só
+     consegue chegar ao centro do carrossel (rotateY/scale/opacity "neutros" do coverflow, ver
+     marketing-slider.js) se sobrar espaço de rolagem depois dele igual a metade da viewport menos
+     metade da largura do card (50vw - 130px, 130 = metade de 260px, a largura de .marketing-usecase).
+     Com o mesmo valor do padding-left (dimensionado só pra alinhar o PRIMEIRO card à coluna de
+     960px), o scroll máximo terminava bem antes desse ponto — o último card nunca saía do estado
+     girado/apagado do fim do carrossel, mesmo com a barra de rolagem "toda pra direita" (bug
+     reportado como "não consigo acessar o último card"). */
+  padding-right: max(20px, calc(50vw - 130px));
   width: 100vw;
   position: relative;
   left: 50%;
