@@ -164,5 +164,19 @@
   "flash.category.deleteBlocked": "Não é possível excluir: existem {{count}} atividade(s) vinculadas a esta categoria.",
   "flash.category.deleted": "Categoria excluída.",
 
-  "flash.report.invalidPeriod": "Período inválido: a data inicial deve ser anterior ou igual à final. Exibindo o mês corrente."
+  "flash.report.invalidPeriod": "Período inválido: a data inicial deve ser anterior ou igual à final. Exibindo o mês corrente.",
+
+  "validation.nameRequired": "Informe seu nome.",
+  "validation.emailInvalid": "E-mail inválido.",
+  "validation.passwordMinLength": "A senha deve ter no mínimo 8 caracteres.",
+  "validation.passwordRequired": "Informe a senha.",
+  "validation.passwordsMismatch": "As senhas não coincidem.",
+  "validation.categoryNameRequired": "Informe o nome da categoria.",
+  "validation.colorFormat": "Cor deve estar em formato hexadecimal (#RRGGBB).",
+  "validation.valueLabelMaxLength": "Rótulo do valor deve ter no máximo 80 caracteres.",
+  "validation.activityNameRequired": "Informe o nome da atividade.",
+  "validation.categoryRequired": "Selecione uma categoria.",
+  "validation.dateInvalid": "Data inválida.",
+  "validation.startTimeInvalid": "Hora de início inválida.",
+  "validation.endTimeInvalid": "Hora de fim inválida."
 }

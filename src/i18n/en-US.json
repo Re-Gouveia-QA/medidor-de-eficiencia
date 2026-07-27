@@ -164,5 +164,19 @@
   "flash.category.deleteBlocked": "Cannot delete: there are {{count}} activity(ies) linked to this category.",
   "flash.category.deleted": "Category deleted.",
 
-  "flash.report.invalidPeriod": "Invalid period: the start date must be before or equal to the end date. Showing the current month."
+  "flash.report.invalidPeriod": "Invalid period: the start date must be before or equal to the end date. Showing the current month.",
+
+  "validation.nameRequired": "Enter your name.",
+  "validation.emailInvalid": "Invalid email.",
+  "validation.passwordMinLength": "Password must be at least 8 characters.",
+  "validation.passwordRequired": "Enter your password.",
+  "validation.passwordsMismatch": "Passwords don't match.",
+  "validation.categoryNameRequired": "Enter the category name.",
+  "validation.colorFormat": "Color must be in hexadecimal format (#RRGGBB).",
+  "validation.valueLabelMaxLength": "Value label must be at most 80 characters.",
+  "validation.activityNameRequired": "Enter the activity name.",
+  "validation.categoryRequired": "Select a category.",
+  "validation.dateInvalid": "Invalid date.",
+  "validation.startTimeInvalid": "Invalid start time.",
+  "validation.endTimeInvalid": "Invalid end time."
 }
