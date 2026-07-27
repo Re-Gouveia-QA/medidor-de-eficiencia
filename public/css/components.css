@@ -44,7 +44,6 @@ strong, b { letter-spacing: 0.03em; }
 .btn:active:not(:disabled) { transform: scale(0.95); transition: transform .08s ease; }
 /* Texto/ícone sobre fundo sólido: --on-accent (sempre claro, ver tokens.css) — não usar --paper,
    que no tema escuro passa a ser a cor de fundo da página (escura) em vez de "clara". */
-.btn-primary { color: var(--on-accent); }
 .btn-primary::before { background: var(--accent-blue); box-shadow: 4px 5px 0 0 transparent; transition: box-shadow .25s ease; }
 .btn-secondary::before { background: var(--surface); }
 .btn-ghost::before { background: transparent; border-style: dashed; }
@@ -66,7 +65,7 @@ strong, b { letter-spacing: 0.03em; }
    A sombra transiciona suavemente porque a base (acima) já declara o mesmo offset (4px 5px 0 0)
    com cor transparente — só a cor anima no hover; ir de "sem box-shadow" pra um valor não
    interpola (o navegador troca abruptamente), por isso o placeholder transparente. */
-.btn-primary { transition: transform .2s ease; }
+.btn-primary { transition: transform .2s ease; color: var(--on-accent); }
 .btn-primary.sketch-hover:hover:not(:disabled), .btn-primary.sketch-hover:focus-visible:not(:disabled) {
   transform: scale(1.03);
 }
