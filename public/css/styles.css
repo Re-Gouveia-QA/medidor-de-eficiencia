@@ -501,10 +501,9 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* Maneiras criativas de usar — carrossel horizontal de "post-its" (redesign a partir de mockup
    de referência), 3ª composição distinta da página (hero centralizado, grade de features, e
    agora scroll horizontal) — variedade deliberada entre seções consecutivas. Full-bleed até a
-   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw),
-   com padding calculado pra alinhar o primeiro card com a coluna de 960px em telas largas, mas
-   ir até a borda real em mobile. scrollbar escondida (sem lib nova, só propriedades CSS) —
-   a "pista" de rolagem é visual (cards cortados na borda), não uma barra de scroll. */
+   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw).
+   scrollbar escondida (sem lib nova, só propriedades CSS) — a "pista" de rolagem é visual (cards
+   cortados na borda), não uma barra de scroll. */
 .marketing-usecases-grid {
   display: flex;
   overflow-x: auto;
@@ -513,15 +512,15 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   margin-top: 2rem;
   padding-top: 4px;
   padding-bottom: 16px;
-  padding-left: max(20px, calc(50vw - 480px));
-  /* padding-right é maior de propósito (não é o mesmo valor do padding-left): o card final só
-     consegue chegar ao centro do carrossel (rotateY/scale/opacity "neutros" do coverflow, ver
-     marketing-slider.js) se sobrar espaço de rolagem depois dele igual a metade da viewport menos
-     metade da largura do card (50vw - 130px, 130 = metade de 260px, a largura de .marketing-usecase).
-     Com o mesmo valor do padding-left (dimensionado só pra alinhar o PRIMEIRO card à coluna de
-     960px), o scroll máximo terminava bem antes desse ponto — o último card nunca saía do estado
-     girado/apagado do fim do carrossel, mesmo com a barra de rolagem "toda pra direita" (bug
-     reportado como "não consigo acessar o último card"). */
+  /* padding-left/right idênticos e calculados pra centralizar o PRIMEIRO e o ÚLTIMO card no
+     "coverflow" (rotateY/scale/opacity neutros do 3D, ver marketing-slider.js) logo na posição de
+     repouso/final de scroll, não só os cards do meio — precisa sobrar espaço de rolagem antes do
+     primeiro e depois do último igual a metade da viewport menos metade da largura do card
+     (50vw - 130px, 130 = metade de 260px, a largura de .marketing-usecase). Um valor menor aqui
+     (ex.: alinhado só à coluna de leitura de 960px, abordagem anterior) deixa o primeiro/último
+     card preso girado/apagado, nunca "em destaque" — era exatamente esse o bug reportado (card
+     inicial sem destaque, último card inacessível). */
+  padding-left: max(20px, calc(50vw - 130px));
   padding-right: max(20px, calc(50vw - 130px));
   width: 100vw;
   position: relative;
