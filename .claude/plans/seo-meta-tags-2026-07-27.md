@@ -1,7 +1,7 @@
 # Plan: Meta tags — SEO, redes sociais e divulgação
 
-**Date:** 2026-07-27 (Fases 1-2 concluídas em 2026-07-27)
-**Status:** ativo — Fases 1-2 concluídas em `feature/seo-meta-tags`, não mescladas em `master`
+**Date:** 2026-07-27 (Fases 1-3 concluídas em 2026-07-27)
+**Status:** ativo — Fases 1-3 concluídas em `feature/seo-meta-tags`, não mescladas em `master`
 ainda (mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: `src/views/partials/meta-tags.ejs` criado e incluído nos dois layouts —
@@ -41,6 +41,20 @@ Fase 4 do RNF04): as três descriptions renderizam corretas e diferentes entre s
 genérico.
 
 Build/lint verdes; testes 127/130 (mesmas 3 falhas de ambiente). 167/167 chaves em paridade.
+
+Fase 3: `public/favicon.svg` novo — quadrado de cantos assimétricos (`rx="8" ry="6"`, no espírito
+do `--radius-blob` do design system, sem precisar do filtro de turbulência SVG, fora de escopo pra
+um ícone tão pequeno) em `#FAF6ED` (aproximação hex de `--paper` claro — arquivo servido fora do
+CSS da página, `var(--paper)` não resolveria), monograma "M" em `#23262F` (aproximação de `--ink`)
+e um traço ondulado embaixo em `#2563EB` — mesmo hex já usado como cor padrão de categoria em
+`categories/create.ejs` (`value="<%= categoria?.cor ?? '#2563EB' %>"`), reaproveitado em vez de
+inventar um novo tom de azul. `<link rel="icon" href="/favicon.svg" type="image/svg+xml">`
+adicionado nos dois layouts. Verificado ao vivo: `GET /favicon.svg` retorna 200 com
+`Content-Type: image/svg+xml` correto (definido automaticamente pelo `express.static`) e o
+conteúdo bate com o arquivo local. Checagem visual real do ícone na aba do navegador continua
+pendente — sem ferramenta de browser neste ambiente de sessão (mesma limitação recorrente).
+
+Build/lint verdes; testes 127/130 (mesmas 3 falhas de ambiente).
 
 ## Goal
 
