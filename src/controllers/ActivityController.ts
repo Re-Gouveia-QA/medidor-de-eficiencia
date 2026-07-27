@@ -35,8 +35,8 @@ class ActivityControllerImpl extends BaseController {
       categorias,
       filtros: { inicio: inicio ?? '', fim: fim ?? '', categoria: categoria ?? '' },
       formatMinutes,
-      formatNumber,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatNumber: (v: Parameters<typeof formatNumber>[0]) => formatNumber(v, req.userLocale),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
     });
   };
 
@@ -50,7 +50,7 @@ class ActivityControllerImpl extends BaseController {
       title: res.locals.t('activities.newActivityLabel'),
       categorias,
       atividade: null,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
     });
   };
 
@@ -86,7 +86,7 @@ class ActivityControllerImpl extends BaseController {
       title: res.locals.t('activities.editActivityLabel'),
       categorias,
       atividade,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
     });
   };
 

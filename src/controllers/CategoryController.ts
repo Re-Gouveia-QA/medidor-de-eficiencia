@@ -34,7 +34,11 @@ function toCategoryData(raw: CategoryInput): CategoryFormData {
 class CategoryControllerImpl extends BaseController {
   index = async (req: Request, res: Response) => {
     const categorias = await CategoryModel.listByUser(req.currentUser!.id);
-    res.render('categories/index', { title: res.locals.t('categories.index.title'), categorias, formatNumber });
+    res.render('categories/index', {
+      title: res.locals.t('categories.index.title'),
+      categorias,
+      formatNumber: (v: Parameters<typeof formatNumber>[0]) => formatNumber(v, req.userLocale),
+    });
   };
 
   create = (_req: Request, res: Response) => {

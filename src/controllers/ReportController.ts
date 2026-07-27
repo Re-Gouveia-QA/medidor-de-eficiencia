@@ -52,9 +52,9 @@ class ReportControllerImpl extends BaseController {
       title: res.locals.t('reports.index.pageTitle'),
       relatorio,
       seriesValor,
-      formatNumber,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
-      formatDate: (d: Date) => formatDateShortInZone(d, req.userTimezone),
+      formatNumber: (v: Parameters<typeof formatNumber>[0]) => formatNumber(v, req.userLocale),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
+      formatDate: (d: Date) => formatDateShortInZone(d, req.userTimezone, req.userLocale),
       filtros: {
         inicio: periodo.inicio.toISOString().slice(0, 10),
         fim: periodo.fim.toISOString().slice(0, 10),
