@@ -88,28 +88,18 @@
      use cases abaixo): relatório (dias/horas/distribuição), duração calculada automaticamente,
      categoria com cor/meta/valor livres — não promessas genéricas de marketing. */
   const benefits = [
-    { color: 'section-blue', key: 'clarity' },
-    { color: 'section-green', key: 'simplicity' },
-    { color: 'section-yellow', key: 'flexibility' },
+    { icon: 'search', color: 'section-blue', key: 'clarity' },
+    { icon: 'check', color: 'section-green', key: 'simplicity' },
+    { icon: 'edit', color: 'section-yellow', key: 'flexibility' },
   ];
-  /* Ilustrações maiores (não ícones de 24px do catálogo de icon.ejs) — pedido explícito de
-     substituir ícones por imagens nesta seção. Ficam inline aqui (não em icon.ejs, que é o
-     catálogo de glifos pequenos reutilizados no app inteiro) porque são cenas específicas desta
-     seção, mesmo padrão já usado na seta de "comece por aqui" do hero. Mesma linguagem visual do
-     resto do app: stroke="currentColor" (herda a cor de .section-blue/green/yellow via
-     ".card.section-* svg" em styles.css) + filtro url(#sketch-rough-icon) pro mesmo tremor
-     "à mão" dos ícones normais. */
-  const benefitIllustrations = {
-    // Canvas maior (80, era 64) e traço um pouco mais grosso (2.6, era 2.4) — versão maior/mais
-    // presente das mesmas 3 cenas, com composição mais espaçada (barras/lupa/lápis não coladas
-    // nas bordas do viewBox) pra ler melhor no card de 130px.
-    clarity:
-      '<svg viewBox="0 0 80 80" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M14 64V48M28 64V36M42 64V24" /><circle cx="56" cy="28" r="15" /><path d="M67 39L76 48" /></svg>',
-    simplicity:
-      '<svg viewBox="0 0 80 80" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M4 20h26M4 34h20M4 48h12" /><circle cx="54" cy="36" r="20" /><path d="M44 36l7 7 15-16" /></svg>',
-    flexibility:
-      '<svg viewBox="0 0 80 80" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M8 66C20 44 34 30 50 26" /><path d="M50 26l12-12 7 7-12 12z" /><path d="M62 14l7 7" /><circle cx="8" cy="66" r="2.6" fill="currentColor" stroke="none" /></svg>',
-  };
+  /* Ícone único do catálogo de icon.ejs, bem maior que o resto do app (size 80, era 48) — não
+     as "cenas" com 2-3 elementos (gráfico+lupa, linhas+check, lápis+curva) testadas antes: feedback
+     explícito foi que a composição de vários elementos ficava confusa, não que o ícone único fosse
+     pequeno demais. Um símbolo só, maior, resolve isso sem abrir mão da linguagem visual já
+     validada do resto do app (mesmo path/proporções usados em qualquer outro lugar que usa
+     'search'/'check'/'edit') — o stroke-width do ícone escala junto com o viewBox de 24 unidades,
+     então só aumentar o size já deixa o traço proporcionalmente mais grosso, sem precisar de SVG
+     customizado. */
 %>
 <section class="marketing-section marketing-benefits">
   <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.benefits.heading') %></h2>
@@ -117,7 +107,7 @@
     <% benefits.forEach((benefit, i) => { %>
       <div class="marketing-benefit-row scroll-reveal" data-scroll-reveal style="--stagger-index: <%= i + 1 %>;">
         <div class="marketing-benefit-visual card sketch-edge <%= benefit.color %>" style="transform: rotate(<%= i % 2 ? '0.8deg' : '-0.8deg' %>);">
-          <%- benefitIllustrations[benefit.key] %>
+          <%- include('../partials/icon', { name: benefit.icon, size: 80 }) %>
         </div>
         <div class="marketing-benefit-text">
           <h3 class="card-title"><%= t(`marketing.benefits.${benefit.key}.title`) %></h3>
