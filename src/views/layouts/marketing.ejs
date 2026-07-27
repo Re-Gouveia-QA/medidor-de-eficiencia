@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %> · Medidor de Eficiência</title>
+  <title><%= title %> · Sketch your time</title>
   <%- include('../partials/meta-tags') %>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/css/styles.css" />
@@ -11,7 +11,7 @@
 <body class="marketing-page">
   <%- include('../partials/svg-filters') %>
   <header class="topbar marketing-topbar">
-    <a class="brand" href="/">Medidor</a>
+    <a class="brand" href="/">Sketch</a>
     <div class="topbar-actions">
       <button type="button" id="localeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary locale-toggle" aria-label="<%= t('layout.localeToggleAriaLabel') %>" data-next-locale="<%= locale === 'pt-BR' ? 'en-US' : 'pt-BR' %>">
         <%= locale === 'pt-BR' ? 'EN' : 'PT' %>
@@ -31,7 +31,7 @@
   </main>
 
   <footer class="marketing-footer">
-    <span class="brand">Medidor</span>
+    <span class="brand">Sketch</span>
     <p><%= t('marketing.footer.copyright', { year: new Date().getFullYear() }) %></p>
   </footer>
 

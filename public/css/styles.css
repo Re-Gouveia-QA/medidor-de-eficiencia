@@ -332,15 +332,20 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-content { margin: 0 auto; padding: 8px 20px 96px; }
 /* Topbar fixo ao rolar (redesign a partir de mockup de referência) — só na home pública; o
    .topbar autenticado (main.ejs) não ganha isso, a página logada não tem essa composição de
-   scroll longo. Fundo sólido (--paper), sem blur/transparência: evita depender de
-   backdrop-filter + cor semi-transparente (color-mix/oklch com alpha), que este projeto já
-   evita em outro lugar (ver comentário do .washi-tape) por cautela de suporte de navegador. */
+   scroll longo. Vidro fosco (glassmorphism): sem borda (pedido explícito — a linha reta de baixo
+   destoava do resto da identidade "traço à mão"), fundo semi-transparente via color-mix() +
+   backdrop-filter: blur() pra o conteúdo por baixo continuar visível/borrado ao rolar. Isso
+   reverte a cautela anterior (evitar color-mix/backdrop-filter por suporte de navegador, ver
+   .washi-tape) só aqui, a pedido — ambos têm suporte amplo em navegadores evergreen atuais
+   (Chrome/Edge/Firefox/Safari 16.4+), e sem prefixo -webkit- o efeito degrada de forma segura
+   pra um fundo sólido opaco (sem blur) em vez de quebrar. */
 .marketing-topbar {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--paper);
-  border-bottom: var(--border-w) solid var(--ink);
+  background: color-mix(in oklch, var(--paper) 80%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding-top: 12px;
   padding-bottom: 12px;
 }

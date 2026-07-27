@@ -28,9 +28,16 @@
   <p class="marketing-hero-subtitle sketch-in" style="--stagger-index: 1;"><%= t('marketing.hero.subtitle') %></p>
   <div class="marketing-hero-ctas sketch-in" style="--stagger-index: 2;">
     <span class="marketing-hero-cta-doodle" aria-hidden="true">
+      <%
+        /* Fix: a curva original ("M4 4 Q 10 30, 40 32 T 54 24") descia e depois voltava a SUBIR
+           no fim (o comando T espelha a curva anterior) — a ponta da seta acabava apontando pra
+           cima/direita, solta no ar, em vez de apontar pra baixo, pro botão logo abaixo. Curva
+           nova é monotônica (só desce, sem reverter), terminando perto do canto inferior direito
+           do viewBox — mais perto do botão — com a ponta da seta apontando de fato pra baixo. */
+      %>
       <svg viewBox="0 0 60 40" preserveAspectRatio="none" focusable="false">
-        <path d="M4 4 Q 10 30, 40 32 T 54 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
-        <path d="M46 18 L55 25 L44 28 Z" fill="currentColor" />
+        <path d="M6 4 Q 34 6, 54 34" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+        <path d="M42 24 L56 38 L48 20 Z" fill="currentColor" />
       </svg>
       <span><%= t('marketing.hero.ctaDoodle') %></span>
     </span>
