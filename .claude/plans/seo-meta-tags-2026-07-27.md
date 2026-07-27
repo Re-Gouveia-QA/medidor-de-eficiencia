@@ -1,8 +1,8 @@
 # Plan: Meta tags — SEO, redes sociais e divulgação
 
-**Date:** 2026-07-27 (Fase 1 concluída em 2026-07-27)
-**Status:** ativo — Fase 1 concluída em `feature/seo-meta-tags`, não mesclada em `master` ainda
-(mesma convenção: push/merge só mediante pedido explícito).
+**Date:** 2026-07-27 (Fases 1-2 concluídas em 2026-07-27)
+**Status:** ativo — Fases 1-2 concluídas em `feature/seo-meta-tags`, não mescladas em `master`
+ainda (mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: `src/views/partials/meta-tags.ejs` criado e incluído nos dois layouts —
 `main.ejs` sempre com `noindex: true` (hardcoded no include, não uma flag por controller, já que
@@ -30,6 +30,17 @@ recomenda-se uma checagem visual real assim que o Postgres local estiver dispon�
 
 Build/lint verdes; testes 127/130 (mesmas 3 falhas de `GET /` sem Postgres local acessível — não
 regressão, mesma causa documentada em todo o resto da sessão).
+
+Fase 2: chaves `auth.login.metaDescription`/`auth.register.metaDescription`/
+`auth.forgotPassword.metaDescription` novas nos dois dicionários (reset-password ficou de fora,
+por decisão já registrada na Fase 2 do plano — não é página de entrada por busca).
+`AuthController.showLogin/showRegister/showForgotPassword` passam `description: res.locals.t(...)`
+pro `res.render`. Verificado ao vivo (dev server + curl, matando antes um processo antigo que
+ainda estava de pé na porta 3000 com código desatualizado — mesma classe de percalço já visto na
+Fase 4 do RNF04): as três descriptions renderizam corretas e diferentes entre si e do fallback
+genérico.
+
+Build/lint verdes; testes 127/130 (mesmas 3 falhas de ambiente). 167/167 chaves em paridade.
 
 ## Goal
 

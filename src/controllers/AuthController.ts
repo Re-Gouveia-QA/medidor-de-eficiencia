@@ -10,7 +10,11 @@ import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema 
 
 class AuthControllerImpl extends BaseController {
   showLogin = (_req: Request, res: Response) => {
-    res.render('auth/login', { title: res.locals.t('auth.login.title'), layout: 'layouts/auth' });
+    res.render('auth/login', {
+      title: res.locals.t('auth.login.title'),
+      description: res.locals.t('auth.login.metaDescription'),
+      layout: 'layouts/auth',
+    });
   };
 
   login = async (req: Request, res: Response) => {
@@ -33,7 +37,11 @@ class AuthControllerImpl extends BaseController {
   };
 
   showRegister = (_req: Request, res: Response) => {
-    res.render('auth/register', { title: res.locals.t('auth.register.title'), layout: 'layouts/auth' });
+    res.render('auth/register', {
+      title: res.locals.t('auth.register.title'),
+      description: res.locals.t('auth.register.metaDescription'),
+      layout: 'layouts/auth',
+    });
   };
 
   register = async (req: Request, res: Response) => {
@@ -96,7 +104,11 @@ class AuthControllerImpl extends BaseController {
   };
 
   showForgotPassword = (_req: Request, res: Response) => {
-    res.render('auth/forgot-password', { title: res.locals.t('auth.forgotPassword.title'), layout: 'layouts/auth' });
+    res.render('auth/forgot-password', {
+      title: res.locals.t('auth.forgotPassword.title'),
+      description: res.locals.t('auth.forgotPassword.metaDescription'),
+      layout: 'layouts/auth',
+    });
   };
 
   /**
