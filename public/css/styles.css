@@ -441,6 +441,31 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-feature:nth-child(even) { transform: rotate(0.8deg); }
 .marketing-feature:hover { transform: rotate(0deg); }
 
+/* Benefícios — padrão "left-right": cada linha alterna o lado do visual (ícone grande num card
+   sketch-edge) e do texto via row-reverse nas linhas pares. 4ª composição distinta da página
+   (grade centralizada → esta → carrossel horizontal → ...), mesmo espírito de variedade das
+   seções vizinhas. */
+.marketing-benefits-list { display: flex; flex-direction: column; gap: 48px; margin-top: 2.5rem; }
+.marketing-benefit-row { display: flex; align-items: center; gap: 40px; }
+.marketing-benefit-row:nth-child(even) { flex-direction: row-reverse; }
+.marketing-benefit-visual {
+  flex: none;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marketing-benefit-text { flex: 1; min-width: 0; }
+.marketing-benefit-text .card-title { font-size: var(--text-xl); margin-bottom: 8px; }
+@media (max-width: 640px) {
+  .marketing-benefit-row, .marketing-benefit-row:nth-child(even) {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+}
+
 /* Linha de controle acima do carrossel: dica de arrastar (esquerda) + setas do slider (direita).
    Em telas estreitas quebra pra 2 linhas (wrap) e centraliza, já que não sobra largura pras duas
    coisas lado a lado sem espremer. */
@@ -531,16 +556,6 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-usecase:nth-child(6n+4)::before { background: var(--postit-green); }
 .marketing-usecase:nth-child(6n+5)::before { background: var(--surface-alt); }
 .marketing-usecase:nth-child(6n+6)::before { background: var(--paper); }
-
-/* Fecha a página como um "card" grande (--surface, mesma borda à mão dos demais cards) em vez de
-   mais uma seção plana igual às anteriores — dá peso de encerramento, ecoa o CTA do hero. */
-.marketing-final-cta {
-  background: var(--surface);
-  border-radius: var(--radius-blob);
-  text-align: center;
-  margin: 56px 0;
-  padding: 56px 32px;
-}
 
 /* Rodapé da home pública (redesign a partir de mockup de referência) — só marca + assinatura,
    sem links de Termos/Privacidade/Ajuda do mockup original: essas páginas não existem no app, e
