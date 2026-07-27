@@ -418,7 +418,11 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    marketing/landing.ejs); depois de revelado, a classe sai e sketch-in entra no lugar. */
 .scroll-reveal { opacity: 0; }
 .marketing-section { padding: 56px 0; }
-.marketing-section-heading { text-align: center; font-size: var(--text-2xl); margin-bottom: 8px; }
+/* font-weight: 700 aqui não troca de fonte (Architects Daughter só tem um peso, 400/regular no
+   Google Fonts) — o navegador sintetiza um negrito (contorno mais grosso) automaticamente pra
+   qualquer font-family sem a variante bold real, o que já basta pra dar mais presença ao título
+   sem precisar carregar um peso de fonte novo. */
+.marketing-section-heading { text-align: center; font-size: var(--text-2xl); font-weight: 700; margin-bottom: 8px; }
 /* Full-bleed: quebra o max-width:960px de .marketing-content pra criar uma "zona" com fundo
    próprio (--surface), diferente do papel do resto da página — ritmo visual entre seções em vez
    de um bloco único e monótono. width:100vw + left:50%/margin-left:-50vw é o truque clássico de
@@ -458,6 +462,10 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 }
 .marketing-benefit-text { flex: 1; min-width: 0; }
 .marketing-benefit-text .card-title { font-size: var(--text-xl); margin-bottom: 8px; }
+/* Descrição maior que o .muted padrão (--text-sm, 15px) — pedido explícito de mais destaque
+   pro parágrafo desta seção especificamente, não uma mudança geral em .muted (usado em vários
+   outros lugares da página/app que não pediram esse aumento). */
+.marketing-benefit-text p { font-size: var(--text-base); }
 @media (max-width: 640px) {
   .marketing-benefit-row, .marketing-benefit-row:nth-child(even) {
     flex-direction: column;
@@ -510,12 +518,20 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   margin-left: -50vw;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  /* Ponto de fuga único do "coverflow" (marketing-slider.js) — fica aqui no container, não
+     repetido no transform de cada card, pra todos os cards girarem em torno do MESMO eixo/cena
+     em vez de cada um ter sua própria perspectiva isolada. */
+  perspective: 1200px;
 }
 .marketing-usecases-grid::-webkit-scrollbar { display: none; }
 .marketing-usecase {
   flex: none;
   width: 260px;
   scroll-snap-align: center;
+  /* transform (rotateY/scale/translateZ) e opacity são recalculados a cada scroll por
+     marketing-slider.js — a transição aqui é só o que suaviza entre um recálculo e o outro
+     (ela NÃO anima o scroll em si, que já é suave via scrollBy(behavior:'smooth')). */
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
 }
 /* Chip empilhado ACIMA do título (não ao lado, como o .card-heading padrão de
    categories/index.ejs) — só nos cards do carrossel: dá o título largura cheia do card em vez de

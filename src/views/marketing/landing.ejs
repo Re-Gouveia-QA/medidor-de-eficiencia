@@ -115,17 +115,17 @@
      uma feature real e verificável no código (nunca uma promessa vazia de marketing): valor por
      categoria (freelancer/orçamento), tempoDesejadoMin (estudante), duracaoPadraoMin (exercício),
      "dias registrados" do relatório (hábito/streak), atividade em andamento (foco). Cores
-     cicladas pelas 4 "canetas" de acento. Tilt por item (não só i % 2 alternado) — valores
-     variados de propósito, não uma progressão regular, pra parecer notas espalhadas à mão em vez
-     de uma grade com leve inclinação uniforme; deliberadamente diferente da grade centralizada e
-     uniforme da seção anterior (variedade de composição entre seções). */
+     cicladas pelas 4 "canetas" de acento. Sem tilt fixo por item (removido): o efeito 3D
+     "coverflow" de marketing-slider.js já cuida da inclinação de cada card dinamicamente,
+     conforme a distância até o centro do carrossel — um tilt estático por cima ficaria
+     conflitando com o rotateY calculado no scroll. */
   const useCases = [
-    { icon: 'tag', color: 'section-blue', key: 'freelancer', tilt: '-0.8deg' },
-    { icon: 'calendar', color: 'section-green', key: 'student', tilt: '0.6deg' },
-    { icon: 'tag', color: 'section-yellow', key: 'budget', tilt: '-0.5deg' },
-    { icon: 'clock', color: 'section-red', key: 'exercise', tilt: '0.9deg' },
-    { icon: 'star', color: 'section-blue', key: 'habit', tilt: '-0.7deg' },
-    { icon: 'eye', color: 'section-green', key: 'focus', tilt: '0.5deg' },
+    { icon: 'tag', color: 'section-blue', key: 'freelancer' },
+    { icon: 'calendar', color: 'section-green', key: 'student' },
+    { icon: 'tag', color: 'section-yellow', key: 'budget' },
+    { icon: 'clock', color: 'section-red', key: 'exercise' },
+    { icon: 'star', color: 'section-blue', key: 'habit' },
+    { icon: 'eye', color: 'section-green', key: 'focus' },
   ];
 %>
 <section class="marketing-section marketing-usecases">
@@ -171,7 +171,7 @@
   <div class="marketing-usecases-grid">
     <% useCases.forEach((useCase, i) => { %>
       <div class="card sketch-edge <%= useCase.color %> marketing-usecase sketch-in"
-           style="--tilt: <%= useCase.tilt %>; --stagger-index: <%= i %>; transform: rotate(var(--tilt));">
+           style="--stagger-index: <%= i %>;">
         <div class="card-heading">
           <%
             /* Chip neutro (--paper) atrás do ícone: os cards agora têm fundo colorido (post-it,
