@@ -1,12 +1,12 @@
 <div class="page-header">
-  <%- include('../partials/page-header', { title: 'Categorias', backHref: '/' }) %>
+  <%- include('../partials/page-header', { title: t('categories.index.title'), backHref: '/' }) %>
   <a class="btn btn-primary sketch-edge sketch-hover" href="/categories/new">
-    <%- include('../partials/icon', { name: 'plus', size: 16 }) %> Nova categoria
+    <%- include('../partials/icon', { name: 'plus', size: 16 }) %> <%= t('categories.newCategoryLabel') %>
   </a>
 </div>
 
 <% if (categorias.length === 0) { %>
-  <p class="muted">Você ainda não tem categorias. Crie a primeira para começar a registrar atividades.</p>
+  <p class="muted"><%= t('categories.index.empty') %></p>
 <% } else { %>
   <div class="grid-menu">
     <% categorias.forEach((c, i) => { %>
@@ -18,22 +18,22 @@
         <% if (c.descricao) { %><p class="muted"><%= c.descricao %></p><% } %>
         <% if (c.tempoDesejadoMin || c.duracaoPadraoMin || c.possuiValor) { %>
           <div class="badge-row">
-            <% if (c.tempoDesejadoMin) { %><span class="badge sketch-edge badge-blue">Meta: <%= c.tempoDesejadoMin %> min</span><% } %>
-            <% if (c.duracaoPadraoMin) { %><span class="badge sketch-edge badge-neutral">Duração: <%= c.duracaoPadraoMin %> min</span><% } %>
+            <% if (c.tempoDesejadoMin) { %><span class="badge sketch-edge badge-blue"><%= t('categories.index.goalBadge', { min: c.tempoDesejadoMin }) %></span><% } %>
+            <% if (c.duracaoPadraoMin) { %><span class="badge sketch-edge badge-neutral"><%= t('categories.index.durationBadge', { min: c.duracaoPadraoMin }) %></span><% } %>
             <% if (c.possuiValor) { %>
-              <span class="badge sketch-edge badge-yellow"><%= c.valorLabel || 'Valor' %><% if (c.valorPadrao) { %> · padrão: <%= formatNumber(c.valorPadrao) %><% } %></span>
+              <span class="badge sketch-edge badge-yellow"><%= c.valorLabel || t('common.valueLabelDefault') %><% if (c.valorPadrao) { %><%= t('categories.index.defaultValuePrefix', { valor: formatNumber(c.valorPadrao) }) %><% } %></span>
             <% } %>
           </div>
         <% } %>
-        <p class="muted"><%= c._count.atividades %> atividade(s)</p>
+        <p class="muted"><%= t('categories.index.activityCount', { count: c._count.atividades }) %></p>
         <div class="card-footer">
           <a class="btn btn-secondary btn-sm sketch-edge sketch-hover" href="/categories/<%= c.id %>/edit">
-            <%- include('../partials/icon', { name: 'edit', size: 14 }) %> Editar
+            <%- include('../partials/icon', { name: 'edit', size: 14 }) %> <%= t('categories.index.editButton') %>
           </a>
           <form action="/categories/<%= c.id %>?_method=DELETE" method="POST" class="inline js-confirm-submit"
-                data-confirm="Excluir a categoria <%= c.nome %>?">
+                data-confirm="<%= t('categories.index.deleteConfirm', { nome: c.nome }) %>">
             <button type="submit" class="btn btn-danger btn-sm sketch-edge sketch-hover">
-              <%- include('../partials/icon', { name: 'trash', size: 14 }) %> Excluir
+              <%- include('../partials/icon', { name: 'trash', size: 14 }) %> <%= t('categories.index.deleteButton') %>
             </button>
           </form>
         </div>

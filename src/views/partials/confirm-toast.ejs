@@ -1,10 +1,10 @@
-<div id="confirmToast" class="confirm-toast card sketch-edge" role="alertdialog" aria-modal="true" aria-live="assertive" aria-label="Confirmação">
+<div id="confirmToast" class="confirm-toast card sketch-edge" role="alertdialog" aria-modal="true" aria-live="assertive" aria-label="<%= t('partials.confirmToast.ariaLabel') %>" data-default-message="<%= t('partials.confirmToast.defaultMessage') %>">
   <span class="confirm-toast-icon"><%- include('./icon', { name: 'alert-triangle', size: 22 }) %></span>
   <div class="confirm-toast-body">
     <p class="confirm-toast-message"></p>
     <div class="confirm-toast-actions">
-      <button type="button" class="btn btn-ghost btn-sm sketch-edge sketch-hover confirm-toast-cancel">Cancelar</button>
-      <button type="button" class="btn btn-danger btn-sm sketch-edge sketch-hover confirm-toast-confirm">Confirmar</button>
+      <button type="button" class="btn btn-ghost btn-sm sketch-edge sketch-hover confirm-toast-cancel"><%= t('partials.confirmToast.cancel') %></button>
+      <button type="button" class="btn btn-danger btn-sm sketch-edge sketch-hover confirm-toast-confirm"><%= t('partials.confirmToast.confirm') %></button>
     </div>
   </div>
 </div>

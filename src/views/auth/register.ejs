@@ -1,38 +1,38 @@
-<h1 class="auth-title">Criar conta</h1>
-<p class="auth-subtitle">Comece a registrar suas atividades hoje.</p>
+<h1 class="auth-title"><%= t('auth.register.title') %></h1>
+<p class="auth-subtitle"><%= t('auth.register.subtitle') %></p>
 
 <a class="btn btn-google sketch-edge sketch-hover" href="/auth/google">
-  <%- include('../partials/icon', { name: 'user', size: 16 }) %> Continuar com Google
+  <%- include('../partials/icon', { name: 'user', size: 16 }) %> <%= t('auth.register.googleButton') %>
 </a>
 
-<div class="divider"><span>ou</span></div>
+<div class="divider"><span><%= t('auth.common.divider') %></span></div>
 
 <form action="/register" method="POST" class="form">
   <div class="field">
-    <label class="field-label" for="nome">Nome</label>
+    <label class="field-label" for="nome"><%= t('auth.register.nameLabel') %></label>
     <div class="sketch-edge input-wrap">
       <%- include('../partials/icon', { name: 'user', size: 17, color: 'var(--ink-soft)' }) %>
-      <input type="text" id="nome" name="nome" class="input" required autocomplete="name" placeholder="Seu nome completo" />
+      <input type="text" id="nome" name="nome" class="input" required autocomplete="name" placeholder="<%= t('auth.register.namePlaceholder') %>" />
     </div>
   </div>
 
   <div class="field">
-    <label class="field-label" for="email">E-mail</label>
+    <label class="field-label" for="email"><%= t('auth.common.emailLabel') %></label>
     <div class="sketch-edge input-wrap">
       <%- include('../partials/icon', { name: 'mail', size: 17, color: 'var(--ink-soft)' }) %>
-      <input type="email" id="email" name="email" class="input" required autocomplete="email" placeholder="seu@email.com" />
+      <input type="email" id="email" name="email" class="input" required autocomplete="email" placeholder="<%= t('auth.common.emailPlaceholder') %>" />
     </div>
   </div>
 
   <div class="field">
-    <label class="field-label" for="senha">Senha (mínimo 8 caracteres)</label>
+    <label class="field-label" for="senha"><%= t('auth.register.passwordLabel') %></label>
     <div class="sketch-edge input-wrap">
       <%- include('../partials/icon', { name: 'lock', size: 17, color: 'var(--ink-soft)' }) %>
-      <input type="password" id="senha" name="senha" class="input" required minlength="8" autocomplete="new-password" placeholder="Mínimo 8 caracteres" />
+      <input type="password" id="senha" name="senha" class="input" required minlength="8" autocomplete="new-password" placeholder="<%= t('auth.common.minPasswordPlaceholder') %>" />
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary sketch-edge sketch-hover">Criar conta</button>
+  <button type="submit" class="btn btn-primary sketch-edge sketch-hover"><%= t('auth.register.submit') %></button>
 </form>
 
-<p class="auth-footer">Já tem conta? <a href="/login">Entrar</a></p>
+<p class="auth-footer"><%= t('auth.register.haveAccountText') %> <a href="/login"><%= t('auth.register.signInLink') %></a></p>
