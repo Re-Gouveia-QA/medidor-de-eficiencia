@@ -95,11 +95,31 @@
 %>
 <section class="marketing-section marketing-usecases">
   <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.useCases.heading') %></h2>
+  <%
+    /* Dica de rolagem sempre visível (não só um "peek" de card cortado na borda, que depende da
+       largura exata da viewport coincidir ou não com um número exato de cards — em várias larguras
+       o último card cabe perfeitamente e não sobra nenhuma pista visual de que há mais conteúdo à
+       direita). Simples e confiável em qualquer tamanho de tela, sem cálculo de layout. */
+  %>
+  <p class="marketing-usecases-hint muted scroll-reveal" data-scroll-reveal style="--stagger-index: 0.5;">
+    <%- include('../partials/icon', { name: 'arrow-right', size: 16 }) %>
+    <%= t('marketing.useCases.scrollHint') %>
+  </p>
+  <%
+    /* Carrossel horizontal (redesign a partir de mockup de referência): os cards entram direto
+       via sketch-in no carregamento (como o hero), NÃO por scroll-reveal.js. Motivo: scroll-reveal
+       observa a posição real do elemento na viewport (IntersectionObserver), e num carrossel
+       horizontal a maioria dos cards nasce fora da área visível NO EIXO X (cortada pelo
+       overflow-x do carrossel), não no eixo Y — só entrariam em interseção quando o usuário
+       arrastasse o carrossel horizontalmente. Muita gente nunca descobre esse gesto rolando só a
+       página verticalmente, e os cards ficariam presos em opacity:0 pra sempre. sketch-in direto
+       evita esse buraco de conteúdo invisível: a animação roda fora de tela (a seção ainda nem
+       apareceu), então quando o usuário chega até aqui os cards já estão parados, visíveis. */
+  %>
   <div class="marketing-usecases-grid">
     <% useCases.forEach((useCase, i) => { %>
-      <div class="card sketch-edge <%= useCase.color %> marketing-usecase scroll-reveal"
-           data-scroll-reveal
-           style="--tilt: <%= useCase.tilt %>; --stagger-index: <%= i + 1 %>; transform: rotate(var(--tilt));">
+      <div class="card sketch-edge <%= useCase.color %> marketing-usecase sketch-in"
+           style="--tilt: <%= useCase.tilt %>; --stagger-index: <%= i %>; transform: rotate(var(--tilt));">
         <div class="card-heading">
           <%- include('../partials/icon', { name: useCase.icon, size: 22 }) %>
           <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>

@@ -322,6 +322,20 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    resto do app (ver CLAUDE.md, "Layout — sem sidebar"). Ver .claude/plans/home-landing-page-2026-07-27.md. */
 .marketing-topbar, .marketing-content { max-width: 960px; }
 .marketing-content { margin: 0 auto; padding: 8px 20px 96px; }
+/* Topbar fixo ao rolar (redesign a partir de mockup de referência) — só na home pública; o
+   .topbar autenticado (main.ejs) não ganha isso, a página logada não tem essa composição de
+   scroll longo. Fundo sólido (--paper), sem blur/transparência: evita depender de
+   backdrop-filter + cor semi-transparente (color-mix/oklch com alpha), que este projeto já
+   evita em outro lugar (ver comentário do .washi-tape) por cautela de suporte de navegador. */
+.marketing-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--paper);
+  border-bottom: var(--border-w) solid var(--ink);
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
 
 .marketing-hero { padding: 72px 0 56px; text-align: center; position: relative; overflow: hidden; }
 /* Marca d'água atmosférica — bem apagada (0.05), gigante, cortada na borda de propósito
@@ -403,15 +417,64 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-whatis { background: var(--surface); width: 100vw; position: relative; left: 50%; margin-left: -50vw; padding: 56px 20px; }
 .marketing-whatis-inner { max-width: 960px; margin: 0 auto; }
 .marketing-features { margin-top: 2rem; }
-.marketing-feature { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.marketing-feature { display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s ease; }
 .marketing-feature svg { margin-bottom: 10px; }
 .marketing-feature .card-title { font-size: var(--text-lg); }
+/* Leve inclinação alternada que endireita no hover (redesign a partir de mockup de referência) —
+   diferente do .sketch-hover padrão (tremor em loop no ::before): aqui é o cartão inteiro que
+   "se ajeita" ao passar o mouse, uma única vez, sem loop. */
+.marketing-feature:nth-child(odd) { transform: rotate(-0.8deg); }
+.marketing-feature:nth-child(even) { transform: rotate(0.8deg); }
+.marketing-feature:hover { transform: rotate(0deg); }
 
-/* Maneiras criativas de usar — cards left-aligned com ícone+título lado a lado (.card-heading,
-   mesmo padrão de categories/index.ejs), de propósito diferente do centralizado de
-   .marketing-feature acima: variedade de composição entre seções consecutivas. */
-.marketing-usecases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; margin-top: 2rem; }
+.marketing-usecases-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  margin-top: -8px;
+}
+.marketing-usecases-hint svg { color: var(--ink-soft); }
+
+/* Maneiras criativas de usar — carrossel horizontal de "post-its" (redesign a partir de mockup
+   de referência), 3ª composição distinta da página (hero centralizado, grade de features, e
+   agora scroll horizontal) — variedade deliberada entre seções consecutivas. Full-bleed até a
+   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw),
+   com padding calculado pra alinhar o primeiro card com a coluna de 960px em telas largas, mas
+   ir até a borda real em mobile. scrollbar escondida (sem lib nova, só propriedades CSS) —
+   a "pista" de rolagem é visual (cards cortados na borda), não uma barra de scroll. */
+.marketing-usecases-grid {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 20px;
+  margin-top: 2rem;
+  padding: 4px max(20px, calc(50vw - 480px)) 16px;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  margin-left: -50vw;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.marketing-usecases-grid::-webkit-scrollbar { display: none; }
+.marketing-usecase {
+  flex: none;
+  width: 260px;
+  scroll-snap-align: center;
+}
 .marketing-usecase .card-heading svg { flex: none; }
+/* Fundo "post-it" cíclico (6 tons distintos) — reaproveita tokens já existentes (soft accents +
+   superfícies neutras), nada de cor nova fora do sistema. Independente da cor do ícone
+   (useCase.color, que segue seu próprio ciclo em landing.ejs) de propósito: o objetivo aqui é só
+   variedade visual entre os "post-its", não uma correspondência 1:1 ícone/fundo. */
+.marketing-usecase:nth-child(6n+1) { background: var(--accent-blue-soft); }
+.marketing-usecase:nth-child(6n+2) { background: var(--accent-yellow-soft); }
+.marketing-usecase:nth-child(6n+3) { background: var(--accent-red-soft); }
+.marketing-usecase:nth-child(6n+4) { background: var(--accent-green-soft); }
+.marketing-usecase:nth-child(6n+5) { background: var(--surface-alt); }
+.marketing-usecase:nth-child(6n+6) { background: var(--paper); }
 
 /* Fecha a página como um "card" grande (--surface, mesma borda à mão dos demais cards) em vez de
    mais uma seção plana igual às anteriores — dá peso de encerramento, ecoa o CTA do hero. */
@@ -422,6 +485,17 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   margin: 56px 0;
   padding: 56px 32px;
 }
+
+/* Rodapé da home pública (redesign a partir de mockup de referência) — só marca + assinatura,
+   sem links de Termos/Privacidade/Ajuda do mockup original: essas páginas não existem no app, e
+   um link morto é pior que nenhum rodapé. */
+.marketing-footer {
+  border-top: var(--border-w) solid var(--ink);
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+.marketing-footer .brand { display: block; margin-bottom: 4px; }
 
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
