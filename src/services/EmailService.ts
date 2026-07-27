@@ -41,7 +41,7 @@ class EmailServiceImpl {
       body: JSON.stringify({
         sender: parseSender(env.SMTP_FROM!),
         to: [{ email: to }],
-        subject: 'Redefinição de senha — Medidor de Eficiência',
+        subject: 'Redefinição de senha — Sketch your time',
         textContent: `Recebemos um pedido para redefinir sua senha. Acesse o link abaixo para escolher uma nova senha (válido por 1 hora):\n\n${resetUrl}\n\nSe você não pediu isso, ignore este e-mail.`,
       }),
       signal: AbortSignal.timeout(10_000),

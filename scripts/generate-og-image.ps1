@@ -39,7 +39,7 @@ $accentPen = New-Object System.Drawing.Pen($accentBlue, 6)
 $accentPen.StartCap = [System.Drawing.Drawing2D.LineCap]::Round
 $accentPen.EndCap = [System.Drawing.Drawing2D.LineCap]::Round
 
-$title = 'Medidor de Eficiência'
+$title = 'Sketch your time'
 $subtitle = 'Registre seu dia. Entenda seu tempo.'
 
 $titleSize = $graphics.MeasureString($title, $titleFont)

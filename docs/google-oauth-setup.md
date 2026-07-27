@@ -33,7 +33,7 @@ GOOGLE_CALLBACK_URL=http://localhost:3000/auth/google/callback
    - Menu lateral → **APIs e serviços** → **Credenciais**
    - **+ Criar credenciais** → **ID do cliente OAuth**
    - Tipo de aplicativo: **Aplicativo da Web**
-   - Nome: algo identificável (ex.: `Medidor de Eficiência - Web`)
+   - Nome: algo identificável (ex.: `Sketch your time - Web`)
    - **Origens JavaScript autorizadas**: URL base da aplicação, sem path
      - Dev: `http://localhost:3000`
      - Produção: `https://seu-dominio.com`

@@ -1,4 +1,4 @@
-# CLAUDE.md — Medidor de Eficiência
+# CLAUDE.md — Sketch your time
 
 Contexto para o Claude Code. Leia também `medidor_eficiencia.md` (documentação completa do MVP) antes de tarefas de arquitetura ou novas features.
 

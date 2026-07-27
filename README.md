@@ -1,4 +1,4 @@
-# ⏱ Medidor de Eficiência — MVP
+# ⏱ Sketch your time — MVP
 
 Sistema web para registro de atividades diárias e análise de eficiência pessoal.
 **Stack:** Node.js 20+ · TypeScript · Express · EJS (views server-side) · Prisma · PostgreSQL.

@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Medidor de Eficiência
+  title: Sketch your time
   description: >
     Sistema web para registro de atividades diárias e análise de eficiência pessoal.
     A aplicação é um MVC server-side renderizado (Express + EJS): a maioria das rotas
