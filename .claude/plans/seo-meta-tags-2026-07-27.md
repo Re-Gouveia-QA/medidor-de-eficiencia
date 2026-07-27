@@ -1,7 +1,7 @@
 # Plan: Meta tags — SEO, redes sociais e divulgação
 
-**Date:** 2026-07-27 (Fases 1-3 concluídas em 2026-07-27)
-**Status:** ativo — Fases 1-3 concluídas em `feature/seo-meta-tags`, não mescladas em `master`
+**Date:** 2026-07-27 (Fases 1-4 concluídas em 2026-07-27)
+**Status:** ativo — Fases 1-4 concluídas em `feature/seo-meta-tags`, não mescladas em `master`
 ainda (mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: `src/views/partials/meta-tags.ejs` criado e incluído nos dois layouts —
@@ -53,6 +53,30 @@ adicionado nos dois layouts. Verificado ao vivo: `GET /favicon.svg` retorna 200 
 `Content-Type: image/svg+xml` correto (definido automaticamente pelo `express.static`) e o
 conteúdo bate com o arquivo local. Checagem visual real do ícone na aba do navegador continua
 pendente — sem ferramenta de browser neste ambiente de sessão (mesma limitação recorrente).
+
+Build/lint verdes; testes 127/130 (mesmas 3 falhas de ambiente).
+
+Fase 4: `scripts/generate-og-image.ps1` novo (`System.Drawing`, sem dependência nova) gera
+`public/og-image.png` (1200×630) — fundo `--paper` (mesmo hex do favicon), título "Medidor de
+Eficiência" em serif bold, o mesmo traço ondulado do favicon/`title-underline` desenhado via
+`GraphicsPath.AddBezier`, subtítulo reaproveitando o texto de `auth.login.subtitle`
+("Registre seu dia. Entenda seu tempo."). **Percalço real encontrado e corrigido:** a primeira
+geração saiu com mojibake (`"EficiÃªncia"`) — o arquivo `.ps1` foi salvo em UTF-8 sem BOM, e
+Windows PowerShell 5.1 (diferente do PowerShell 7+) interpreta um `.ps1` sem BOM usando a
+codepage ANSI do sistema, corrompendo os literais de string com acento no próprio parse do
+script (antes mesmo de chegar no `System.Drawing`). Corrigido regravando o arquivo com
+`Set-Content -Encoding UTF8` (que em Windows PowerShell 5.1 grava com BOM), reexecutando o script
+e confirmando visualmente (`Read` da imagem gerada) que o texto saiu correto na segunda vez —
+relevante se este script for editado de novo no futuro: **sempre salvar/reescrever `.ps1` com BOM
+UTF-8 quando o conteúdo tiver acentuação**, não é opcional neste ambiente (Windows PowerShell
+5.1), diferente de arquivos `.ts`/`.ejs`/`.json` do resto do projeto que não têm esse problema.
+
+Verificado ao vivo: `GET /og-image.png` retorna 200 com `Content-Type: image/png`; `/login`
+mostra `og:image`/`twitter:image` apontando pra URL absoluta correta. Fontes manuscritas do
+design system (Patrick Hand/Architects Daughter) não estão instaladas neste Windows, então o
+título saiu em Georgia (serif genérica) em vez da fonte real do app — aceitável pra v1 (é só o
+preview de compartilhamento), replanning trigger do plano original permanece válido se o usuário
+achar o resultado insatisfatório ao ver a imagem.
 
 Build/lint verdes; testes 127/130 (mesmas 3 falhas de ambiente).
 
