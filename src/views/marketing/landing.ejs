@@ -23,3 +23,31 @@
     <a class="btn btn-secondary btn-lg sketch-edge sketch-hover" href="/login"><%= t('marketing.hero.secondaryCta') %></a>
   </div>
 </section>
+
+<%
+  /* Abaixo da dobra: entrada por scroll (scroll-reveal.js), não no carregamento — diferente do
+     hero acima (sketch-in direto). data-scroll-reveal marca os elementos que o script observa;
+     .scroll-reveal (opacity: 0) é a classe "escondida" trocada por sketch-in quando a seção entra
+     na viewport. Sem JS/com prefers-reduced-motion, scroll-reveal.js remove .scroll-reveal na
+     hora, deixando tudo visível sem animação nenhuma. */
+%>
+<section class="marketing-section marketing-whatis">
+  <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.whatIsIt.heading') %></h2>
+  <div class="grid-menu marketing-features">
+    <div class="card sketch-edge section-blue marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 1;">
+      <%- include('../partials/icon', { name: 'plus', size: 32 }) %>
+      <h3 class="card-title"><%= t('marketing.whatIsIt.activities.title') %></h3>
+      <p class="muted"><%= t('marketing.whatIsIt.activities.description') %></p>
+    </div>
+    <div class="card sketch-edge section-red marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 2;">
+      <%- include('../partials/icon', { name: 'tag', size: 32 }) %>
+      <h3 class="card-title"><%= t('marketing.whatIsIt.categories.title') %></h3>
+      <p class="muted"><%= t('marketing.whatIsIt.categories.description') %></p>
+    </div>
+    <div class="card sketch-edge section-yellow marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 3;">
+      <%- include('../partials/icon', { name: 'star', size: 32 }) %>
+      <h3 class="card-title"><%= t('marketing.whatIsIt.reports.title') %></h3>
+      <p class="muted"><%= t('marketing.whatIsIt.reports.description') %></p>
+    </div>
+  </div>
+</section>

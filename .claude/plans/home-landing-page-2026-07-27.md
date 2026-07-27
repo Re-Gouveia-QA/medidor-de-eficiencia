@@ -1,7 +1,7 @@
 # Plan: Home pública — explicação do app + maneiras criativas de usar
 
-**Date:** 2026-07-27 (Fases 1-2 concluídas em 2026-07-27)
-**Status:** ativo — Fases 1-2 concluídas em `feature/home-landing-page`, não mescladas em
+**Date:** 2026-07-27 (Fases 1-3 concluídas em 2026-07-27)
+**Status:** ativo — Fases 1-3 concluídas em `feature/home-landing-page`, não mescladas em
 `master` ainda (mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: rota dividida em `src/routes/index.ts` (dois handlers em `GET /`: o primeiro checa
@@ -66,6 +66,37 @@ funciona em `.login-hero-title`; token novo `--text-hero: clamp(40px, 8vw, 84px)
 Build/lint verdes; testes 129/132 (mesmas 3 falhas de ambiente); 176/176 chaves em paridade.
 Recomendado uma checagem visual real em viewport mobile (celular/emulador de verdade) antes de
 considerar a Fase 2 100% validada — a mobile via headless Chrome neste ambiente não é confiável.
+
+Fase 3: seção "O que você pode fazer" (3 blocos — atividades/categorias/relatórios) + entrada por
+scroll. Ícones e cores reaproveitam exatamente o mapeamento já estabelecido no menu da home
+autenticada e no plano de polimento (`plus`/`--accent-blue` = atividades, `tag`/`--accent-red` =
+categorias, `star`/`--accent-yellow` = relatórios) — cria familiaridade com quem depois entra
+logado, não é uma paleta nova. Cards centralizados (`.marketing-feature`, flex column +
+`align-items: center`), diferente do menu da home (que é left-aligned) — variação de layout
+deliberada entre seções, não acidental.
+
+`public/js/scroll-reveal.js` (novo): `IntersectionObserver` observa `[data-scroll-reveal]` e troca
+a classe `.scroll-reveal` (novo utilitário, `opacity: 0`) por `sketch-in` (mecanismo de entrada já
+existente) quando o elemento intersecta a viewport — reaproveita a animação, só muda o gatilho de
+"carregamento da página" pra "entrou na tela". Sem `IntersectionObserver` ou com
+`prefers-reduced-motion: reduce`, o script só remove `.scroll-reveal` de tudo na hora (sem
+observer, sem animação) — nunca deixa conteúdo esperando um scroll que talvez não aconteça.
+
+**Verificado ao vivo com screenshot (não só leitura de código desta vez):**
+- Viewport alto (1280×1400, conteúdo inteiro dentro da área capturada): os 3 cards aparecem
+  revelados e coloridos corretamente (azul/vermelho/amarelo), confirmando que a interseção
+  dispara mesmo quando o conteúdo já nasce dentro da área visível (comportamento correto e
+  esperado do `IntersectionObserver` — não depende de um evento de scroll de fato acontecer).
+- Viewport baixo (1280×650, a seção "o que você pode fazer" começa depois do fim dessa altura):
+  a screenshot mostra só o hero, nada da seção seguinte vazando ou aparecendo cortado — confirma
+  que `.scroll-reveal` (`opacity: 0`) esconde corretamente o conteúdo antes da interseção, sem
+  deixar um estado visualmente quebrado no meio do caminho.
+- Corrigido antes de rodar a screenshot (revisão de código): `<%` sem `*/` de fechamento no
+  comentário JSDoc-like da Fase 2 seria fácil de repetir por engano — usei `ejs.compile()` direto
+  via `node -e` pra validar a sintaxe do `.ejs` ANTES de gastar um ciclo de screenshot, prática
+  que vale manter nas próximas fases.
+
+Build/lint verdes; testes 129/132 (mesmas 3 falhas de ambiente); 183/183 chaves em paridade.
 
 Build/lint verdes; testes 129/132 (as 3 falhas são as mesmas de sempre — `GET /` autenticado via
 Google/login real, precisa de Postgres local, Docker Desktop indisponível nesta sessão — não
