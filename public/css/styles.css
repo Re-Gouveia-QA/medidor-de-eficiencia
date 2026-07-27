@@ -465,16 +465,23 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   scroll-snap-align: center;
 }
 .marketing-usecase .card-heading svg { flex: none; }
-/* Fundo "post-it" cíclico (6 tons distintos) — reaproveita tokens já existentes (soft accents +
-   superfícies neutras), nada de cor nova fora do sistema. Independente da cor do ícone
+/* Fundo "post-it" cíclico (6 tons distintos) — tokens --postit-* dedicados (tokens.css), não os
+   --accent-*-soft usados em badges: aqueles são claros demais (90-93% L) pra ler como "nota
+   colorida" ao lado do --paper (97% L) da página, o efeito some. Independente da cor do ícone
    (useCase.color, que segue seu próprio ciclo em landing.ejs) de propósito: o objetivo aqui é só
-   variedade visual entre os "post-its", não uma correspondência 1:1 ícone/fundo. */
-.marketing-usecase:nth-child(6n+1) { background: var(--accent-blue-soft); }
-.marketing-usecase:nth-child(6n+2) { background: var(--accent-yellow-soft); }
-.marketing-usecase:nth-child(6n+3) { background: var(--accent-red-soft); }
-.marketing-usecase:nth-child(6n+4) { background: var(--accent-green-soft); }
-.marketing-usecase:nth-child(6n+5) { background: var(--surface-alt); }
-.marketing-usecase:nth-child(6n+6) { background: var(--paper); }
+   variedade visual entre os "post-its", não uma correspondência 1:1 ícone/fundo.
+   IMPORTANTE: o alvo é ::before, não o elemento — a "moldura à mão" de .sketch-edge é um
+   ::before absolutamente posicionado (inset: -3px) com seu próprio background: var(--surface)
+   (tokens.css), pintado ACIMA do background do elemento real (z-index: -1 dentro do stacking
+   context isolado de .sketch-edge ainda fica por cima do próprio background do elemento — só
+   fica atrás do conteúdo em fluxo normal, como texto/ícone). Um background no .marketing-usecase
+   em si fica completamente encoberto por esse ::before opaco e nunca aparece. */
+.marketing-usecase:nth-child(6n+1)::before { background: var(--postit-blue); }
+.marketing-usecase:nth-child(6n+2)::before { background: var(--postit-yellow); }
+.marketing-usecase:nth-child(6n+3)::before { background: var(--postit-red); }
+.marketing-usecase:nth-child(6n+4)::before { background: var(--postit-green); }
+.marketing-usecase:nth-child(6n+5)::before { background: var(--surface-alt); }
+.marketing-usecase:nth-child(6n+6)::before { background: var(--paper); }
 
 /* Fecha a página como um "card" grande (--surface, mesma borda à mão dos demais cards) em vez de
    mais uma seção plana igual às anteriores — dá peso de encerramento, ecoa o CTA do hero. */

@@ -23,6 +23,15 @@
   --accent-green-soft: oklch(92% 0.06 145);
   --accent-yellow: oklch(80% 0.15 95);
   --accent-yellow-soft: oklch(93% 0.06 95);
+  /* "Post-it" da home pública (carrossel de "maneiras criativas de usar") — mesmo hue das 4 canetas
+     de acento, mas com mais chroma e menos lightness que as variantes -soft acima: -soft (90-93% L,
+     0.05-0.06 C) foi calibrada pra ser um fundo discreto atrás de texto/ícone (badges), e nesse uso
+     fica indistinguível do --paper (97% L) — o efeito "nota adesiva colorida" some por completo.
+     Cores próprias (mais escuras/saturadas) resolvem sem inventar hue novo fora do sistema. */
+  --postit-blue: oklch(86% 0.09 255);
+  --postit-yellow: oklch(88% 0.12 95);
+  --postit-red: oklch(87% 0.09 25);
+  --postit-green: oklch(86% 0.09 145);
   /* Texto/ícone sobre botão "sólido" (btn-primary/btn-danger) — sempre claro, independente do tema.
      Não usar --paper aqui: no tema escuro --paper vira escuro (é o fundo da página), e um botão sólido
      continua precisando de texto claro sobre a cor de acento (ver ajuste de --accent-* no tema escuro). */
@@ -81,6 +90,13 @@
   --accent-green-soft: oklch(37% 0.07 145);
   --accent-yellow: oklch(83% 0.13 95);
   --accent-yellow-soft: oklch(40% 0.07 95);
+  /* Post-it no tema escuro: mesma lógica do --accent-*-soft acima (escurece em vez de clarear,
+     pra não competir em luminosidade com --paper, que aqui é escuro) — só com mais chroma que os
+     -soft de badge, pelo mesmo motivo documentado no :root. */
+  --postit-blue: oklch(34% 0.09 255);
+  --postit-yellow: oklch(36% 0.10 95);
+  --postit-red: oklch(35% 0.09 25);
+  --postit-green: oklch(34% 0.09 145);
 }
 
 /* Efeito "traço à mão" — usado por todo componente sketch-edge/sketch-hover.
