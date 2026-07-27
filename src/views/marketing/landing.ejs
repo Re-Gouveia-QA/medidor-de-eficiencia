@@ -100,12 +100,15 @@
      ".card.section-* svg" em styles.css) + filtro url(#sketch-rough-icon) pro mesmo tremor
      "à mão" dos ícones normais. */
   const benefitIllustrations = {
+    // Canvas maior (80, era 64) e traço um pouco mais grosso (2.6, era 2.4) — versão maior/mais
+    // presente das mesmas 3 cenas, com composição mais espaçada (barras/lupa/lápis não coladas
+    // nas bordas do viewBox) pra ler melhor no card de 130px.
     clarity:
-      '<svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M8 48V38M20 48V30M32 48V22" /><circle cx="42" cy="26" r="12" /><path d="M50.5 34.5L58 42" /></svg>',
+      '<svg viewBox="0 0 80 80" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M14 64V48M28 64V36M42 64V24" /><circle cx="56" cy="28" r="15" /><path d="M67 39L76 48" /></svg>',
     simplicity:
-      '<svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M6 20h13M6 32h18M6 44h11" /><circle cx="42" cy="32" r="16" /><path d="M35 32.5l5 5 10-10.5" /></svg>',
+      '<svg viewBox="0 0 80 80" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M4 20h26M4 34h20M4 48h12" /><circle cx="54" cy="36" r="20" /><path d="M44 36l7 7 15-16" /></svg>',
     flexibility:
-      '<svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M8 50c6-15 19-24 33-27" /><path d="M39 25l11-11 5 5-11 11z" /><path d="M50 14l5 5" /><circle cx="8" cy="50" r="2.2" fill="currentColor" stroke="none" /></svg>',
+      '<svg viewBox="0 0 80 80" width="96" height="96" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M8 66C20 44 34 30 50 26" /><path d="M50 26l12-12 7 7-12 12z" /><path d="M62 14l7 7" /><circle cx="8" cy="66" r="2.6" fill="currentColor" stroke="none" /></svg>',
   };
 %>
 <section class="marketing-section marketing-benefits">

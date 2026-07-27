@@ -32,6 +32,8 @@
   --postit-yellow: oklch(88% 0.12 95);
   --postit-red: oklch(87% 0.09 25);
   --postit-green: oklch(86% 0.09 145);
+  --postit-purple: oklch(86% 0.10 300);
+  --postit-orange: oklch(87% 0.11 55);
   /* Texto/ícone sobre botão "sólido" (btn-primary/btn-danger) — sempre claro, independente do tema.
      Não usar --paper aqui: no tema escuro --paper vira escuro (é o fundo da página), e um botão sólido
      continua precisando de texto claro sobre a cor de acento (ver ajuste de --accent-* no tema escuro). */
@@ -97,6 +99,8 @@
   --postit-yellow: oklch(36% 0.10 95);
   --postit-red: oklch(35% 0.09 25);
   --postit-green: oklch(34% 0.09 145);
+  --postit-purple: oklch(35% 0.10 300);
+  --postit-orange: oklch(36% 0.11 55);
 }
 
 /* Efeito "traço à mão" — usado por todo componente sketch-edge/sketch-hover.
