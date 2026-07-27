@@ -5,7 +5,7 @@ import { UserModel } from '../models/UserModel';
 import { PasswordResetTokenModel } from '../models/PasswordResetTokenModel';
 import { GoogleAuthService } from '../services/GoogleAuthService';
 import { EmailService } from '../services/EmailService';
-import { env } from '../config/env';
+import { buildAppUrl } from '../config/env';
 import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '../utils/validators';
 
 class AuthControllerImpl extends BaseController {
@@ -112,8 +112,7 @@ class AuthControllerImpl extends BaseController {
     if (user && user.senhaHash) {
       try {
         const rawToken = await PasswordResetTokenModel.create(user.id);
-        const baseUrl = env.APP_URL ?? `http://localhost:${env.PORT}`;
-        const resetUrl = `${baseUrl}/reset-password/${rawToken}`;
+        const resetUrl = buildAppUrl(`/reset-password/${rawToken}`);
         await EmailService.sendPasswordResetEmail(user.email, resetUrl);
       } catch (err) {
         // Log detalhado só no servidor — a flash pro usuário continua genérica de propósito

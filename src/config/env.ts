@@ -27,3 +27,14 @@ if (!parsed.success) {
 
 export const env = parsed.data;
 export const isProd = env.NODE_ENV === 'production';
+
+/**
+ * Monta uma URL absoluta a partir de um caminho (ex.: "/reset-password/abc" → "https://.../reset-password/abc").
+ * Mesmo fallback já usado em AuthController (link de redefinição de senha por e-mail) — extraído
+ * aqui pra ser reaproveitado também pelas meta tags OG/Twitter e pelo `sitemap.xml`, que exigem
+ * URL absoluta e não têm como saber o domínio de produção sozinhos.
+ */
+export function buildAppUrl(path: string): string {
+  const baseUrl = env.APP_URL ?? `http://localhost:${env.PORT}`;
+  return `${baseUrl}${path}`;
+}

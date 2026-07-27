@@ -1,4 +1,5 @@
 {
+  "meta.defaultDescription": "Log your daily activities, organize them into categories, and track your efficiency with time and value reports per period.",
   "home.title": "Home",
   "home.greeting": "Welcome back, {{name}}",
   "home.inProgress.status": "In progress · {{categoria}}",

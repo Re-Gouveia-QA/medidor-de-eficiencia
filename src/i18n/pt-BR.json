@@ -1,4 +1,5 @@
 {
+  "meta.defaultDescription": "Registre suas atividades diárias, organize-as em categorias e acompanhe sua eficiência com relatórios de tempo e valor por período.",
   "home.title": "Página inicial",
   "home.greeting": "Bem-vindo(a) de volta, {{name}}",
   "home.inProgress.status": "Em andamento · {{categoria}}",
