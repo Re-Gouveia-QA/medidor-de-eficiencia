@@ -8,6 +8,14 @@
        embaixo do texto. Forçando a quebra e isolando só a 2ª linha no próprio inline-block
        (.marketing-hero-title-accent), o sublinhado sempre acompanha exatamente essa linha. */
   %>
+  <%
+    /* Marca d'água decorativa (relógio gigante, bem apagado) — só atmosfera/profundidade, sem
+       concorrer com o texto; assimétrica de propósito (cortada na borda, não centralizada) pra
+       quebrar a monotonia de "tudo empilhado e centralizado" do resto da página. */
+  %>
+  <svg class="marketing-hero-watermark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.6" aria-hidden="true" focusable="false">
+    <path d="M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 3" />
+  </svg>
   <h1 class="marketing-hero-title sketch-in" style="--stagger-index: 0;">
     <%= t('marketing.hero.titleLine1') %><br />
     <span class="marketing-hero-title-accent">
@@ -19,6 +27,13 @@
   </h1>
   <p class="marketing-hero-subtitle sketch-in" style="--stagger-index: 1;"><%= t('marketing.hero.subtitle') %></p>
   <div class="marketing-hero-ctas sketch-in" style="--stagger-index: 2;">
+    <span class="marketing-hero-cta-doodle" aria-hidden="true">
+      <svg viewBox="0 0 60 40" preserveAspectRatio="none" focusable="false">
+        <path d="M4 4 Q 10 30, 40 32 T 54 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" />
+        <path d="M46 18 L55 25 L44 28 Z" fill="currentColor" />
+      </svg>
+      <span><%= t('marketing.hero.ctaDoodle') %></span>
+    </span>
     <a class="btn btn-primary btn-lg sketch-edge sketch-hover" href="/register"><%= t('marketing.hero.primaryCta') %></a>
     <a class="btn btn-secondary btn-lg sketch-edge sketch-hover" href="/login"><%= t('marketing.hero.secondaryCta') %></a>
   </div>
@@ -31,23 +46,31 @@
      na viewport. Sem JS/com prefers-reduced-motion, scroll-reveal.js remove .scroll-reveal na
      hora, deixando tudo visível sem animação nenhuma. */
 %>
+<%
+  /* Faixa cheia (full-bleed, quebra o max-width:960px do .marketing-content) com fundo --surface
+     — cria uma "zona" visual distinta em vez de mais uma seção sobre o mesmo fundo de papel do
+     resto da página (ver crítica: antes disso, a página inteira era um bloco monótono de cima a
+     baixo). .marketing-whatis-inner recentraliza o conteúdo na coluna de 960px de novo. */
+%>
 <section class="marketing-section marketing-whatis">
-  <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.whatIsIt.heading') %></h2>
-  <div class="grid-menu marketing-features">
-    <div class="card sketch-edge section-blue marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 1;">
-      <%- include('../partials/icon', { name: 'plus', size: 32 }) %>
-      <h3 class="card-title"><%= t('marketing.whatIsIt.activities.title') %></h3>
-      <p class="muted"><%= t('marketing.whatIsIt.activities.description') %></p>
-    </div>
-    <div class="card sketch-edge section-red marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 2;">
-      <%- include('../partials/icon', { name: 'tag', size: 32 }) %>
-      <h3 class="card-title"><%= t('marketing.whatIsIt.categories.title') %></h3>
-      <p class="muted"><%= t('marketing.whatIsIt.categories.description') %></p>
-    </div>
-    <div class="card sketch-edge section-yellow marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 3;">
-      <%- include('../partials/icon', { name: 'star', size: 32 }) %>
-      <h3 class="card-title"><%= t('marketing.whatIsIt.reports.title') %></h3>
-      <p class="muted"><%= t('marketing.whatIsIt.reports.description') %></p>
+  <div class="marketing-whatis-inner">
+    <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.whatIsIt.heading') %></h2>
+    <div class="grid-menu marketing-features">
+      <div class="card sketch-edge section-blue marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 1;">
+        <%- include('../partials/icon', { name: 'plus', size: 32 }) %>
+        <h3 class="card-title"><%= t('marketing.whatIsIt.activities.title') %></h3>
+        <p class="muted"><%= t('marketing.whatIsIt.activities.description') %></p>
+      </div>
+      <div class="card sketch-edge section-red marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 2;">
+        <%- include('../partials/icon', { name: 'tag', size: 32 }) %>
+        <h3 class="card-title"><%= t('marketing.whatIsIt.categories.title') %></h3>
+        <p class="muted"><%= t('marketing.whatIsIt.categories.description') %></p>
+      </div>
+      <div class="card sketch-edge section-yellow marketing-feature scroll-reveal" data-scroll-reveal style="--stagger-index: 3;">
+        <%- include('../partials/icon', { name: 'star', size: 32 }) %>
+        <h3 class="card-title"><%= t('marketing.whatIsIt.reports.title') %></h3>
+        <p class="muted"><%= t('marketing.whatIsIt.reports.description') %></p>
+      </div>
     </div>
   </div>
 </section>
@@ -57,16 +80,17 @@
      uma feature real e verificável no código (nunca uma promessa vazia de marketing): valor por
      categoria (freelancer/orçamento), tempoDesejadoMin (estudante), duracaoPadraoMin (exercício),
      "dias registrados" do relatório (hábito/streak), atividade em andamento (foco). Cores
-     cicladas pelas 4 "canetas" de acento (i % 4) e tilt alternado (i % 2, mesma técnica de
-     categories/index.ejs) — visual de "notas espalhadas no caderno", deliberadamente diferente
-     da grade centralizada e uniforme da seção anterior (variedade de composição entre seções). */
+     cicladas pelas 4 "canetas" de acento. Tilt por item (não só i % 2 alternado) — valores
+     variados de propósito, não uma progressão regular, pra parecer notas espalhadas à mão em vez
+     de uma grade com leve inclinação uniforme; deliberadamente diferente da grade centralizada e
+     uniforme da seção anterior (variedade de composição entre seções). */
   const useCases = [
-    { icon: 'tag', color: 'section-blue', key: 'freelancer' },
-    { icon: 'calendar', color: 'section-green', key: 'student' },
-    { icon: 'tag', color: 'section-yellow', key: 'budget' },
-    { icon: 'clock', color: 'section-red', key: 'exercise' },
-    { icon: 'star', color: 'section-blue', key: 'habit' },
-    { icon: 'eye', color: 'section-green', key: 'focus' },
+    { icon: 'tag', color: 'section-blue', key: 'freelancer', tilt: '-0.8deg' },
+    { icon: 'calendar', color: 'section-green', key: 'student', tilt: '0.6deg' },
+    { icon: 'tag', color: 'section-yellow', key: 'budget', tilt: '-0.5deg' },
+    { icon: 'clock', color: 'section-red', key: 'exercise', tilt: '0.9deg' },
+    { icon: 'star', color: 'section-blue', key: 'habit', tilt: '-0.7deg' },
+    { icon: 'eye', color: 'section-green', key: 'focus', tilt: '0.5deg' },
   ];
 %>
 <section class="marketing-section marketing-usecases">
@@ -75,7 +99,7 @@
     <% useCases.forEach((useCase, i) => { %>
       <div class="card sketch-edge <%= useCase.color %> marketing-usecase scroll-reveal"
            data-scroll-reveal
-           style="--tilt: <%= i % 2 ? '0.7deg' : '-0.7deg' %>; --stagger-index: <%= i + 1 %>; transform: rotate(var(--tilt));">
+           style="--tilt: <%= useCase.tilt %>; --stagger-index: <%= i + 1 %>; transform: rotate(var(--tilt));">
         <div class="card-heading">
           <%- include('../partials/icon', { name: useCase.icon, size: 22 }) %>
           <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>
@@ -91,6 +115,7 @@
      chaves novas) fechando o "loop" da página pra quem leu até aqui sem converter no topo. */
 %>
 <section class="marketing-section marketing-final-cta sketch-edge scroll-reveal" data-scroll-reveal style="--stagger-index: 0;">
+  <div class="washi-tape" aria-hidden="true"></div>
   <h2 class="marketing-section-heading"><%= t('marketing.finalCta.heading') %></h2>
   <div class="marketing-hero-ctas">
     <a class="btn btn-primary btn-lg sketch-edge sketch-hover" href="/register"><%= t('marketing.hero.primaryCta') %></a>

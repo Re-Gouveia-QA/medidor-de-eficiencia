@@ -1,8 +1,41 @@
 # Plan: Home pública — explicação do app + maneiras criativas de usar
 
-**Date:** 2026-07-27 (Fases 1-5 concluídas em 2026-07-27)
-**Status:** concluído (Fases 1-5) em `feature/home-landing-page`, não mesclado em `master` ainda
-(mesma convenção: push/merge só mediante pedido explícito).
+**Date:** 2026-07-27 (Fases 1-5 + passe de refino visual concluídos em 2026-07-27)
+**Status:** concluído (Fases 1-5 + refino) em `feature/home-landing-page`, não mesclado em
+`master` ainda (mesma convenção: push/merge só mediante pedido explícito).
+
+**Passe de refino visual (pós-Fase 5, a pedido explícito do usuário via `/frontend-design`):**
+crítica da própria página com a checklist do `frontend-design` (screenshot real, não só leitura
+de código) apontou o ponto fraco: tipografia/motion já estavam bons, mas composição espacial era
+monótona — cada seção era um retângulo centralizado empilhado sobre o mesmo fundo de papel, sem
+assimetria, sobreposição ou variação de "zona" visual; a página tinha zero elementos decorativos
+apesar do login já usar `.washi-tape`. Ajustes (todos dentro do "Caderno de Esboço", nenhum token
+novo de cor):
+- `.marketing-hero-watermark`: relógio gigante (ícone `clock` já existente) em opacity 0.05,
+  cortado na borda direita de propósito (assimétrico, não centralizado) — atmosfera/profundidade
+  sem competir com o texto (`currentColor` herda `--ink`, já funciona nos dois temas).
+- `.marketing-hero-cta-doodle`: seta curva + "comece por aqui" (`--font-accent`/Kalam, rotacionado
+  -4deg) apontando pro CTA primário — reposicionado uma vez após a primeira screenshot revelar que
+  a posição inicial (`top: -58px`) sobrepunha o subtítulo; corrigido pra `top: -32px` mais perto do
+  botão. Escondido no mobile (Fase 2 já empilha os CTAs em coluna, doodle não tem onde respirar).
+- `.marketing-whatis`: banda full-bleed (`width:100vw` + `left:50%`/`margin-left:-50vw`, quebra o
+  `max-width:960px` do `.marketing-content`) com fundo `--surface` — cria uma zona visual
+  distinta em vez de mais uma seção sobre o mesmo papel; `.marketing-whatis-inner` recentraliza o
+  conteúdo na coluna de 960px.
+- `.washi-tape` (já existia, usado só no login) adicionada no card de CTA final — reaproveita o
+  elemento decorativo em vez de inventar um novo, e cria continuidade visual com a próxima tela
+  real (login) que a pessoa vê ao clicar.
+- Tilt dos 6 cards de "maneiras criativas de usar": de `i % 2` alternado uniforme pra um valor
+  fixo por item (array `tilt` no objeto `useCase`) — parece notas espalhadas à mão, não uma grade
+  com leve inclinação mecânica.
+
+Verificado com 3 rodadas de screenshot (hero sozinho, depois com o doodle reposicionado, depois a
+página inteira) — a posição inicial do doodle foi um erro real pego e corrigido nesse ciclo, não
+só suspeitado por leitura de código.
+
+Build/lint verdes; **testes 132/132** (as 3 falhas de `GET /` por Postgres indisponível,
+documentadas em toda a sessão, não aparecem mais — Docker Desktop deve ter ficado disponível
+nesta janela); 198/198 chaves em paridade.
 
 Fase 1: rota dividida em `src/routes/index.ts` (dois handlers em `GET /`: o primeiro checa
 `req.session.userId` e já responde com `LandingController.show` se não houver sessão, senão
