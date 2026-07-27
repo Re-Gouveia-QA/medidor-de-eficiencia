@@ -22,6 +22,8 @@
   "marketing.whatIsIt.reports.description": "Days logged, total hours, and the distribution across categories — all in one simple report, by period.",
   "marketing.useCases.heading": "Creative ways to use it",
   "marketing.useCases.scrollHint": "swipe sideways to see more",
+  "marketing.useCases.prevAriaLabel": "See previous example",
+  "marketing.useCases.nextAriaLabel": "See next example",
   "marketing.useCases.freelancer.title": "Freelancing, billed per project",
   "marketing.useCases.freelancer.description": "Create a category with value enabled and log how much each delivery or hour was worth — the default value already fills in the form for you.",
   "marketing.useCases.student.title": "Studying, organized by subject",

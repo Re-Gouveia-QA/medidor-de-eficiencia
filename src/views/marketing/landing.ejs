@@ -101,10 +101,27 @@
        o último card cabe perfeitamente e não sobra nenhuma pista visual de que há mais conteúdo à
        direita). Simples e confiável em qualquer tamanho de tela, sem cálculo de layout. */
   %>
-  <p class="marketing-usecases-hint muted scroll-reveal" data-scroll-reveal style="--stagger-index: 0.5;">
-    <%- include('../partials/icon', { name: 'arrow-right', size: 16 }) %>
-    <%= t('marketing.useCases.scrollHint') %>
-  </p>
+  <%
+    /* Setas de navegação (marketing-slider.js) — controle explícito além do gesto de arrastar,
+       reaproveitando chevron-right (só rotacionado 180deg pra virar "anterior", mesma técnica já
+       usada em .back-btn). JS faz scrollBy com behavior:'smooth' no .marketing-usecases-grid, que
+       já tem scroll-snap-type: x mandatory — a "animação" do slider é o scroll nativo suave, não
+       uma reimplementação própria de easing/frames. */
+  %>
+  <div class="marketing-usecases-controls">
+    <p class="marketing-usecases-hint muted scroll-reveal" data-scroll-reveal style="--stagger-index: 0.5;">
+      <%- include('../partials/icon', { name: 'arrow-right', size: 16 }) %>
+      <%= t('marketing.useCases.scrollHint') %>
+    </p>
+    <div class="marketing-usecases-arrows">
+      <button type="button" class="icon-btn btn-sm sketch-edge sketch-hover btn-secondary marketing-slider-prev" aria-label="<%= t('marketing.useCases.prevAriaLabel') %>" disabled>
+        <%- include('../partials/icon', { name: 'chevron-right', size: 18 }) %>
+      </button>
+      <button type="button" class="icon-btn btn-sm sketch-edge sketch-hover btn-secondary marketing-slider-next" aria-label="<%= t('marketing.useCases.nextAriaLabel') %>">
+        <%- include('../partials/icon', { name: 'chevron-right', size: 18 }) %>
+      </button>
+    </div>
+  </div>
   <%
     /* Carrossel horizontal (redesign a partir de mockup de referência): os cards entram direto
        via sketch-in no carregamento (como o hero), NÃO por scroll-reveal.js. Motivo: scroll-reveal
@@ -121,7 +138,17 @@
       <div class="card sketch-edge <%= useCase.color %> marketing-usecase sketch-in"
            style="--tilt: <%= useCase.tilt %>; --stagger-index: <%= i %>; transform: rotate(var(--tilt));">
         <div class="card-heading">
-          <%- include('../partials/icon', { name: useCase.icon, size: 22 }) %>
+          <%
+            /* Chip neutro (--paper) atrás do ícone: os cards agora têm fundo colorido (post-it,
+               ver fix f938512), e o ícone usa a mesma cor cíclica de acento (useCase.color) —
+               em alguns pares isso resultava em baixo contraste (ex.: ícone azul sobre card azul).
+               Um fundo sempre neutro garante o mesmo contraste ícone/fundo dos outros usos desse
+               ícone no app (ex.: cards de "o que você pode fazer" acima), não importa a cor do
+               post-it embaixo. */
+          %>
+          <span class="usecase-icon-chip">
+            <%- include('../partials/icon', { name: useCase.icon, size: 18 }) %>
+          </span>
           <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>
         </div>
         <p class="muted"><%= t(`marketing.useCases.${useCase.key}.description`) %></p>

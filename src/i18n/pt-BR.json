@@ -22,6 +22,8 @@
   "marketing.whatIsIt.reports.description": "Dias registrados, total de horas e a distribuição entre categorias — tudo num relatório simples, por período.",
   "marketing.useCases.heading": "Maneiras criativas de usar",
   "marketing.useCases.scrollHint": "arraste para o lado para ver mais",
+  "marketing.useCases.prevAriaLabel": "Ver exemplo anterior",
+  "marketing.useCases.nextAriaLabel": "Ver próximo exemplo",
   "marketing.useCases.freelancer.title": "Freelancer cobrando por projeto",
   "marketing.useCases.freelancer.description": "Crie uma categoria com valor habilitado e registre quanto cada entrega ou hora rendeu — o valor padrão já preenche o formulário pra você.",
   "marketing.useCases.student.title": "Estudante organizando as matérias",

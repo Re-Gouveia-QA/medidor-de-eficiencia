@@ -427,15 +427,29 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-feature:nth-child(even) { transform: rotate(0.8deg); }
 .marketing-feature:hover { transform: rotate(0deg); }
 
-.marketing-usecases-hint {
+/* Linha de controle acima do carrossel: dica de arrastar (esquerda) + setas do slider (direita).
+   Em telas estreitas quebra pra 2 linhas (wrap) e centraliza, já que não sobra largura pras duas
+   coisas lado a lado sem espremer. */
+.marketing-usecases-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: var(--text-sm);
+  gap: 16px;
+  flex-wrap: wrap;
   margin-top: -8px;
 }
+.marketing-usecases-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  margin: 0;
+}
 .marketing-usecases-hint svg { color: var(--ink-soft); }
+.marketing-usecases-arrows { display: flex; gap: 8px; }
+/* chevron-right reaproveitado como "anterior" via rotate(180deg) — mesma técnica de .back-btn. */
+.marketing-slider-prev svg { transform: rotate(180deg); }
+.marketing-slider-prev:disabled, .marketing-slider-next:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* Maneiras criativas de usar — carrossel horizontal de "post-its" (redesign a partir de mockup
    de referência), 3ª composição distinta da página (hero centralizado, grade de features, e
@@ -465,6 +479,19 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   scroll-snap-align: center;
 }
 .marketing-usecase .card-heading svg { flex: none; }
+/* Chip neutro atrás do ícone — garante o mesmo contraste ícone/fundo de qualquer outro uso desse
+   ícone no app, independente da cor do post-it embaixo (ver comentário em landing.ejs). */
+.usecase-icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--paper);
+  border: var(--border-w) solid var(--ink);
+}
 /* Fundo "post-it" cíclico (6 tons distintos) — tokens --postit-* dedicados (tokens.css), não os
    --accent-*-soft usados em badges: aqueles são claros demais (90-93% L) pra ler como "nota
    colorida" ao lado do --paper (97% L) da página, o efeito some. Independente da cor do ícone
