@@ -1,0 +1,29 @@
+<%
+// Reaproveitado por layouts/main.ejs e layouts/auth.ejs. Locals aceitos (todos opcionais):
+// - description: description/OG/Twitter da página; sem ela, cai no fallback traduzido abaixo.
+// - noindex: quando true, emite <meta name="robots" content="noindex, nofollow">. Todo página que
+//   usa main.ejs já exige requireAuth, então main.ejs sempre passa noindex: true — não é uma flag
+//   por controller, é fixo no próprio layout (ver comentário lá).
+// - ogImage: caminho da imagem de preview social; sem ela, usa a imagem padrão do app.
+const metaDescription = typeof description !== 'undefined' && description ? description : t('meta.defaultDescription');
+const metaImage = appUrl(typeof ogImage !== 'undefined' && ogImage ? ogImage : '/og-image.png');
+const metaUrl = appUrl(currentPath);
+const siteName = 'Medidor de Eficiência';
+const ogLocale = locale.replace('-', '_');
+%>
+<meta name="description" content="<%= metaDescription %>" />
+<link rel="canonical" href="<%= metaUrl %>" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="<%= title %> · <%= siteName %>" />
+<meta property="og:description" content="<%= metaDescription %>" />
+<meta property="og:url" content="<%= metaUrl %>" />
+<meta property="og:image" content="<%= metaImage %>" />
+<meta property="og:site_name" content="<%= siteName %>" />
+<meta property="og:locale" content="<%= ogLocale %>" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="<%= title %> · <%= siteName %>" />
+<meta name="twitter:description" content="<%= metaDescription %>" />
+<meta name="twitter:image" content="<%= metaImage %>" />
+<% if (typeof noindex !== 'undefined' && noindex) { %>
+<meta name="robots" content="noindex, nofollow" />
+<% } %>

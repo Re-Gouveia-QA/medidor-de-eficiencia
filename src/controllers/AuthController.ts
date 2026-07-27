@@ -5,12 +5,16 @@ import { UserModel } from '../models/UserModel';
 import { PasswordResetTokenModel } from '../models/PasswordResetTokenModel';
 import { GoogleAuthService } from '../services/GoogleAuthService';
 import { EmailService } from '../services/EmailService';
-import { env } from '../config/env';
+import { buildAppUrl } from '../config/env';
 import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema } from '../utils/validators';
 
 class AuthControllerImpl extends BaseController {
   showLogin = (_req: Request, res: Response) => {
-    res.render('auth/login', { title: res.locals.t('auth.login.title'), layout: 'layouts/auth' });
+    res.render('auth/login', {
+      title: res.locals.t('auth.login.title'),
+      description: res.locals.t('auth.login.metaDescription'),
+      layout: 'layouts/auth',
+    });
   };
 
   login = async (req: Request, res: Response) => {
@@ -33,7 +37,11 @@ class AuthControllerImpl extends BaseController {
   };
 
   showRegister = (_req: Request, res: Response) => {
-    res.render('auth/register', { title: res.locals.t('auth.register.title'), layout: 'layouts/auth' });
+    res.render('auth/register', {
+      title: res.locals.t('auth.register.title'),
+      description: res.locals.t('auth.register.metaDescription'),
+      layout: 'layouts/auth',
+    });
   };
 
   register = async (req: Request, res: Response) => {
@@ -96,7 +104,11 @@ class AuthControllerImpl extends BaseController {
   };
 
   showForgotPassword = (_req: Request, res: Response) => {
-    res.render('auth/forgot-password', { title: res.locals.t('auth.forgotPassword.title'), layout: 'layouts/auth' });
+    res.render('auth/forgot-password', {
+      title: res.locals.t('auth.forgotPassword.title'),
+      description: res.locals.t('auth.forgotPassword.metaDescription'),
+      layout: 'layouts/auth',
+    });
   };
 
   /**
@@ -112,8 +124,7 @@ class AuthControllerImpl extends BaseController {
     if (user && user.senhaHash) {
       try {
         const rawToken = await PasswordResetTokenModel.create(user.id);
-        const baseUrl = env.APP_URL ?? `http://localhost:${env.PORT}`;
-        const resetUrl = `${baseUrl}/reset-password/${rawToken}`;
+        const resetUrl = buildAppUrl(`/reset-password/${rawToken}`);
         await EmailService.sendPasswordResetEmail(user.email, resetUrl);
       } catch (err) {
         // Log detalhado só no servidor — a flash pro usuário continua genérica de propósito

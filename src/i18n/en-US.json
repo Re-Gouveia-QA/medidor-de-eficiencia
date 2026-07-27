@@ -1,4 +1,8 @@
 {
+  "meta.defaultDescription": "Log your daily activities, organize them into categories, and track your efficiency with time and value reports per period.",
+  "auth.login.metaDescription": "Log in to Medidor de Eficiência to log your day and understand your time.",
+  "auth.register.metaDescription": "Create your free account and start logging your daily activities today.",
+  "auth.forgotPassword.metaDescription": "Recover access to your Medidor de Eficiência account.",
   "home.title": "Home",
   "home.greeting": "Welcome back, {{name}}",
   "home.inProgress.status": "In progress · {{categoria}}",

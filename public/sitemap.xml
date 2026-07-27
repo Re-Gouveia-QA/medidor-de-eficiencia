@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- TODO: trocar para o domínio de produção real antes do primeiro deploy público (placeholder
+     localhost documentado em .claude/plans/seo-meta-tags-2026-07-27.md). Só /login e /register
+     entram — são as únicas páginas de entrada com valor de SEO real (ver robots.txt/plano). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://localhost:3000/login</loc>
+  </url>
+  <url>
+    <loc>http://localhost:3000/register</loc>
+  </url>
+</urlset>

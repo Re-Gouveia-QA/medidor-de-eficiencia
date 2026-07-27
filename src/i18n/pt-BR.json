@@ -1,4 +1,8 @@
 {
+  "meta.defaultDescription": "Registre suas atividades diárias, organize-as em categorias e acompanhe sua eficiência com relatórios de tempo e valor por período.",
+  "auth.login.metaDescription": "Entre no Medidor de Eficiência para registrar seu dia e entender seu tempo.",
+  "auth.register.metaDescription": "Crie sua conta gratuita e comece a registrar suas atividades diárias hoje.",
+  "auth.forgotPassword.metaDescription": "Recupere o acesso à sua conta do Medidor de Eficiência.",
   "home.title": "Página inicial",
   "home.greeting": "Bem-vindo(a) de volta, {{name}}",
   "home.inProgress.status": "Em andamento · {{categoria}}",

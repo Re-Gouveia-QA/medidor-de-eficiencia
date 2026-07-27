@@ -1,0 +1,17 @@
+# Só as páginas públicas de auth valem indexação (o resto do app exige login e não tem
+# conteúdo indexável mesmo sem esta regra — isto é defesa em profundidade, não a única barreira).
+# Bloqueio geral primeiro, allowlist específica depois: uma rota privada nova adicionada no
+# futuro fica escondida por padrão, em vez de precisar lembrar de listá-la aqui.
+User-agent: *
+Disallow: /
+Allow: /login
+Allow: /register
+Allow: /forgot-password
+# Contém token no path — nunca deve ser crawleada/indexada, mesmo sendo tecnicamente pública
+# antes da validação do token (Disallow explícito, não coberto pelo "Disallow: /" acima porque
+# uma Allow mais específica de /login etc. não vaza para cá, mas fica documentado por clareza).
+Disallow: /reset-password/
+
+# TODO: trocar para o domínio de produção real antes do primeiro deploy público (placeholder
+# localhost documentado em .claude/plans/seo-meta-tags-2026-07-27.md).
+Sitemap: http://localhost:3000/sitemap.xml

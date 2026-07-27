@@ -5,7 +5,7 @@ import expressLayouts from 'express-ejs-layouts';
 import methodOverride from 'method-override';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
-import { isProd } from './config/env';
+import { buildAppUrl, isProd } from './config/env';
 import { DEFAULT_TIMEZONE } from './utils/time';
 import { DEFAULT_LOCALE, createTranslator, isValidLocale } from './i18n';
 import { sessionMiddleware } from './config/session';
@@ -107,6 +107,7 @@ export function createApp() {
     req.userLocale = readLocaleCookie(req);
     res.locals.locale = req.userLocale;
     res.locals.t = createTranslator(req.userLocale);
+    res.locals.appUrl = buildAppUrl;
     next();
   });
 
