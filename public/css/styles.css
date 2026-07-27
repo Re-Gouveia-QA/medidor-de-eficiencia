@@ -320,6 +320,14 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* Home pública (marketing/landing.ejs) — única página do app com coluna mais larga que 640px:
    é a única pensada pra composição editorial/hero, não pro formulário estreito mobile-first do
    resto do app (ver CLAUDE.md, "Layout — sem sidebar"). Ver .claude/plans/home-landing-page-2026-07-27.md. */
+/* .marketing-whatis e .marketing-usecases-grid usam o truque clássico de full-bleed
+   (width: 100vw; left: 50%; margin-left: -50vw) pra escapar do max-width:960px de
+   .marketing-content. Problema conhecido desse truque: 100vw inclui a largura da barra de
+   scroll vertical do navegador, então costuma ficar um pouco mais largo que 100% (a área
+   realmente visível) — o suficiente pra criar uma barra de scroll HORIZONTAL na página inteira.
+   Escopado a .marketing-page (não no body/html global) pra não mudar o comportamento do resto
+   do app, que não usa esse truque. */
+.marketing-page { overflow-x: hidden; }
 .marketing-topbar, .marketing-content { max-width: 960px; }
 .marketing-content { margin: 0 auto; padding: 8px 20px 96px; }
 /* Topbar fixo ao rolar (redesign a partir de mockup de referência) — só na home pública; o
@@ -477,6 +485,14 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   flex: none;
   width: 260px;
   scroll-snap-align: center;
+}
+/* Chip empilhado ACIMA do título (não ao lado, como o .card-heading padrão de
+   categories/index.ejs) — só nos cards do carrossel: dá o título largura cheia do card em vez de
+   dividir a linha com o ícone, sem precisar comprimir/quebrar o texto pra caber. */
+.marketing-usecase .card-heading {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 .marketing-usecase .card-heading svg { flex: none; }
 /* Chip neutro atrás do ícone — garante o mesmo contraste ícone/fundo de qualquer outro uso desse
