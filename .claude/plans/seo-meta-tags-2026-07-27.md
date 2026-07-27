@@ -1,8 +1,8 @@
 # Plan: Meta tags — SEO, redes sociais e divulgação
 
-**Date:** 2026-07-27 (Fases 1-4 concluídas em 2026-07-27)
-**Status:** ativo — Fases 1-4 concluídas em `feature/seo-meta-tags`, não mescladas em `master`
-ainda (mesma convenção: push/merge só mediante pedido explícito).
+**Date:** 2026-07-27 (Fases 1-5 concluídas em 2026-07-27)
+**Status:** concluído (Fases 1-5) em `feature/seo-meta-tags`, não mesclado em `master` ainda
+(mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: `src/views/partials/meta-tags.ejs` criado e incluído nos dois layouts —
 `main.ejs` sempre com `noindex: true` (hardcoded no include, não uma flag por controller, já que
@@ -79,6 +79,30 @@ preview de compartilhamento), replanning trigger do plano original permanece vá
 achar o resultado insatisfatório ao ver a imagem.
 
 Build/lint verdes; testes 127/130 (mesmas 3 falhas de ambiente).
+
+Fase 5: `public/robots.txt` e `public/sitemap.xml` novos. Desvio pequeno do desenho original —
+em vez de enumerar `Disallow` por rota privada (`/activities`, `/categories`, `/reports`,
+`/health`), o robots.txt usa `Disallow: /` geral + `Allow:` específico só pras 3 páginas públicas
+de auth: mais seguro por padrão, já que uma rota privada nova adicionada no futuro fica escondida
+automaticamente em vez de exigir lembrar de listá-la. `Disallow: /reset-password/` mantido
+explícito (contém token no path). `sitemap.xml` só com `/login`/`/register`, URLs absolutas com
+`http://localhost:3000` como placeholder documentado (arquivo estático, sem acesso a `env` em
+runtime — mesma decisão já registrada nas Dependencies & Assumptions do plano). Verificado ao
+vivo: `GET /robots.txt` (200, `text/plain`) e `GET /sitemap.xml` (200, `application/xml`) servidos
+por `express.static` sem rota nova.
+
+Build/lint verdes; testes 127/130 (mesmas 3 falhas de ambiente, sem relação com esta fase).
+
+**RNF de SEO/social concluído nesta branch** (Fases 1-5). Pendências conhecidas, documentadas,
+não bloqueiam o que já foi implementado:
+- Checagem visual real em navegador (favicon na aba, preview de compartilhamento real em
+  Facebook/Twitter/WhatsApp) — requer ferramenta de browser/deploy público, não disponível neste
+  ambiente de sessão.
+- Domínio de produção real ainda não definido — `APP_URL`/`robots.txt`/`sitemap.xml` usam
+  `localhost` como placeholder; revisar antes do primeiro deploy público.
+- `favicon.ico` rasterizado (navegadores muito antigos) e imagem OG com as fontes manuscritas
+  reais do design system — deliberadamente fora de escopo desta v1 (ver seções Out-of-Scope e
+  Replanning triggers acima).
 
 ## Goal
 
