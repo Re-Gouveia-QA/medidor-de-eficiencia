@@ -10,7 +10,7 @@ import { formatNumber } from '../utils/format';
 async function resolveOwnedCategory(req: Request, res: Response, categoryId: string, redirectTo: string) {
   const categoria = await CategoryModel.findById(categoryId, req.currentUser!.id);
   if (!categoria) {
-    req.flash('error', 'Categoria inválida.');
+    req.flash('error', res.locals.t('flash.activity.invalidCategory'));
     res.redirect(redirectTo);
     return undefined;
   }
@@ -30,27 +30,27 @@ class ActivityControllerImpl extends BaseController {
       CategoryModel.listByUser(req.currentUser!.id),
     ]);
     res.render('activities/index', {
-      title: 'Atividades',
+      title: res.locals.t('activities.index.title'),
       atividades,
       categorias,
       filtros: { inicio: inicio ?? '', fim: fim ?? '', categoria: categoria ?? '' },
       formatMinutes,
-      formatNumber,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatNumber: (v: Parameters<typeof formatNumber>[0]) => formatNumber(v, req.userLocale),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
     });
   };
 
   create = async (req: Request, res: Response) => {
     const categorias = await CategoryModel.listByUser(req.currentUser!.id);
     if (categorias.length === 0) {
-      req.flash('error', 'Cadastre ao menos uma categoria antes de registrar atividades.');
+      req.flash('error', res.locals.t('flash.activity.needCategoryFirst'));
       return res.redirect('/categories/new');
     }
     res.render('activities/create', {
-      title: 'Registrar atividade',
+      title: res.locals.t('activities.newActivityLabel'),
       categorias,
       atividade: null,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
     });
   };
 
@@ -65,10 +65,10 @@ class ActivityControllerImpl extends BaseController {
       valorInformado ?? (categoria.possuiValor && categoria.valorPadrao != null ? categoria.valorPadrao.toNumber() : undefined);
     try {
       await ActivityModel.create(req.currentUser!.id, { ...data, valor, timezone: req.userTimezone });
-      req.flash('success', 'Atividade registrada com sucesso.');
+      req.flash('success', res.locals.t('flash.activity.created'));
       res.redirect('/activities');
     } catch (e) {
-      req.flash('error', e instanceof Error ? e.message : 'Erro ao registrar atividade.');
+      req.flash('error', e instanceof Error ? e.message : res.locals.t('flash.activity.createError'));
       res.redirect('/activities/new');
     }
   };
@@ -79,14 +79,14 @@ class ActivityControllerImpl extends BaseController {
       CategoryModel.listByUser(req.currentUser!.id),
     ]);
     if (!atividade) {
-      req.flash('error', 'Atividade não encontrada.');
+      req.flash('error', res.locals.t('flash.activity.notFound'));
       return res.redirect('/activities');
     }
     res.render('activities/create', {
-      title: 'Editar atividade',
+      title: res.locals.t('activities.editActivityLabel'),
       categorias,
       atividade,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
     });
   };
 
@@ -99,10 +99,10 @@ class ActivityControllerImpl extends BaseController {
     const valor = parseValorInput(data.valor) ?? null;
     try {
       await ActivityModel.update(req.params.id, req.currentUser!.id, { ...data, valor, timezone: req.userTimezone });
-      req.flash('success', 'Atividade atualizada.');
+      req.flash('success', res.locals.t('flash.activity.updated'));
       res.redirect('/activities');
     } catch (e) {
-      req.flash('error', e instanceof Error ? e.message : 'Erro ao atualizar atividade.');
+      req.flash('error', e instanceof Error ? e.message : res.locals.t('flash.activity.updateError'));
       res.redirect(redirectTo);
     }
   };
@@ -110,10 +110,10 @@ class ActivityControllerImpl extends BaseController {
   destroy = async (req: Request, res: Response) => {
     const { count } = await ActivityModel.destroy(req.params.id, req.currentUser!.id);
     if (count === 0) {
-      req.flash('error', 'Atividade não encontrada.');
+      req.flash('error', res.locals.t('flash.activity.notFound'));
       return res.redirect('/activities');
     }
-    req.flash('success', 'Atividade excluída.');
+    req.flash('success', res.locals.t('flash.activity.deleted'));
     res.redirect('/activities');
   };
 
@@ -125,9 +125,9 @@ class ActivityControllerImpl extends BaseController {
     if (!categoria) return;
     try {
       await ActivityModel.startInProgress(req.currentUser!.id, data);
-      req.flash('success', 'Atividade iniciada.');
+      req.flash('success', res.locals.t('flash.activity.started'));
     } catch (e) {
-      req.flash('error', e instanceof Error ? e.message : 'Erro ao iniciar atividade.');
+      req.flash('error', e instanceof Error ? e.message : res.locals.t('flash.activity.startError'));
     }
     res.redirect('/');
   };
@@ -136,9 +136,9 @@ class ActivityControllerImpl extends BaseController {
   finish = async (req: Request, res: Response) => {
     const { count } = await ActivityModel.finish(req.params.id, req.currentUser!.id);
     if (count === 0) {
-      req.flash('error', 'Atividade não encontrada ou já finalizada.');
+      req.flash('error', res.locals.t('flash.activity.finishNotFound'));
     } else {
-      req.flash('success', 'Atividade finalizada.');
+      req.flash('success', res.locals.t('flash.activity.finished'));
     }
     res.redirect('/');
   };

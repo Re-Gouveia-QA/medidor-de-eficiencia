@@ -10,7 +10,7 @@ import { forgotPasswordSchema, loginSchema, registerSchema, resetPasswordSchema 
 
 class AuthControllerImpl extends BaseController {
   showLogin = (_req: Request, res: Response) => {
-    res.render('auth/login', { title: 'Entrar', layout: 'layouts/auth' });
+    res.render('auth/login', { title: res.locals.t('auth.login.title'), layout: 'layouts/auth' });
   };
 
   login = async (req: Request, res: Response) => {
@@ -22,7 +22,7 @@ class AuthControllerImpl extends BaseController {
 
     if (!ok || !user) {
       // Mensagem genérica: não revelar se o e-mail existe
-      req.flash('error', 'Credenciais inválidas. Verifique e-mail e senha.');
+      req.flash('error', res.locals.t('flash.auth.invalidCredentials'));
       return res.redirect('/login');
     }
 
@@ -33,7 +33,7 @@ class AuthControllerImpl extends BaseController {
   };
 
   showRegister = (_req: Request, res: Response) => {
-    res.render('auth/register', { title: 'Criar conta', layout: 'layouts/auth' });
+    res.render('auth/register', { title: res.locals.t('auth.register.title'), layout: 'layouts/auth' });
   };
 
   register = async (req: Request, res: Response) => {
@@ -42,7 +42,7 @@ class AuthControllerImpl extends BaseController {
 
     const existing = await UserModel.findByEmail(data.email);
     if (existing) {
-      req.flash('error', 'Já existe uma conta com este e-mail.');
+      req.flash('error', res.locals.t('flash.auth.emailAlreadyExists'));
       return res.redirect('/register');
     }
 
@@ -56,7 +56,7 @@ class AuthControllerImpl extends BaseController {
   /** RF03 — inicia o fluxo OAuth 2.0 redirecionando ao consent screen do Google. */
   googleLogin = (req: Request, res: Response) => {
     if (!GoogleAuthService.isConfigured()) {
-      req.flash('error', 'Login com Google não está disponível no momento.');
+      req.flash('error', res.locals.t('flash.auth.googleUnavailable'));
       return res.redirect('/login');
     }
     const state = crypto.randomBytes(16).toString('hex');
@@ -71,7 +71,7 @@ class AuthControllerImpl extends BaseController {
     req.session.oauthState = undefined;
 
     if (error || !code || !state || !expectedState || state !== expectedState) {
-      req.flash('error', 'Não foi possível autenticar com o Google. Tente novamente.');
+      req.flash('error', res.locals.t('flash.auth.googleAuthFailed'));
       return res.redirect('/login');
     }
 
@@ -86,7 +86,7 @@ class AuthControllerImpl extends BaseController {
       // Log detalhado só no servidor — a flash pro usuário continua genérica de propósito
       // (não expor detalhes de token/OAuth), mas sem isso a causa real fica invisível.
       console.error('[GoogleAuth] Falha no callback:', err);
-      req.flash('error', 'Não foi possível autenticar com o Google. Tente novamente.');
+      req.flash('error', res.locals.t('flash.auth.googleAuthFailed'));
       res.redirect('/login');
     }
   };
@@ -96,7 +96,7 @@ class AuthControllerImpl extends BaseController {
   };
 
   showForgotPassword = (_req: Request, res: Response) => {
-    res.render('auth/forgot-password', { title: 'Esqueceu a senha?', layout: 'layouts/auth' });
+    res.render('auth/forgot-password', { title: res.locals.t('auth.forgotPassword.title'), layout: 'layouts/auth' });
   };
 
   /**
@@ -123,17 +123,17 @@ class AuthControllerImpl extends BaseController {
       }
     }
 
-    req.flash('success', 'Se o e-mail informado estiver cadastrado, enviaremos instruções para redefinir a senha.');
+    req.flash('success', res.locals.t('flash.auth.forgotPasswordGenericSuccess'));
     res.redirect('/forgot-password');
   };
 
   showResetPassword = async (req: Request, res: Response) => {
     const token = await PasswordResetTokenModel.findValidByRawToken(req.params.token);
     if (!token) {
-      req.flash('error', 'Este link de redefinição de senha é inválido ou expirou.');
+      req.flash('error', res.locals.t('flash.auth.resetLinkInvalid'));
       return res.redirect('/forgot-password');
     }
-    res.render('auth/reset-password', { title: 'Redefinir senha', layout: 'layouts/auth', token: req.params.token });
+    res.render('auth/reset-password', { title: res.locals.t('auth.resetPassword.title'), layout: 'layouts/auth', token: req.params.token });
   };
 
   resetPassword = async (req: Request, res: Response) => {
@@ -143,14 +143,14 @@ class AuthControllerImpl extends BaseController {
 
     const token = await PasswordResetTokenModel.findValidByRawToken(rawToken);
     if (!token) {
-      req.flash('error', 'Este link de redefinição de senha é inválido ou expirou.');
+      req.flash('error', res.locals.t('flash.auth.resetLinkInvalid'));
       return res.redirect('/forgot-password');
     }
 
     await UserModel.updatePassword(token.userId, data.senha);
     await PasswordResetTokenModel.markUsed(token.id);
 
-    req.flash('success', 'Senha redefinida com sucesso. Faça login com sua nova senha.');
+    req.flash('success', res.locals.t('flash.auth.resetSuccess'));
     res.redirect('/login');
   };
 }

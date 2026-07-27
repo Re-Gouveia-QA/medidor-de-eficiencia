@@ -14,11 +14,16 @@ import { ZodSchema } from 'zod';
  * a duplicação do fluxo parse → validar → flash → redirect.
  */
 export abstract class BaseController {
-  /** Faz parse do body com o schema Zod; em falha, já envia flash de erro + redirect. */
+  /**
+   * Faz parse do body com o schema Zod; em falha, já envia flash de erro + redirect.
+   * `parsed.error.errors[0].message` é uma chave de i18n, não o texto final — os schemas em
+   * `validators.ts` são singletons de módulo sem acesso a `res.locals.t` no momento em que são
+   * definidos (ver comentário lá). Só aqui, já dentro da requisição, a chave vira texto traduzido.
+   */
   protected parseOrRedirect<T>(req: Request, res: Response, schema: ZodSchema<T>, redirectTo: string): T | undefined {
     const parsed = schema.safeParse(req.body);
     if (!parsed.success) {
-      req.flash('error', parsed.error.errors[0].message);
+      req.flash('error', res.locals.t(parsed.error.errors[0].message));
       res.redirect(redirectTo);
       return undefined;
     }

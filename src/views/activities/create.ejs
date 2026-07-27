@@ -1,23 +1,23 @@
-<%- include('../partials/page-header', { title: atividade ? 'Editar Atividade' : 'Nova Atividade', backHref: '/activities' }) %>
+<%- include('../partials/page-header', { title: atividade ? t('activities.form.editTitle') : t('activities.form.newTitle'), backHref: '/activities' }) %>
 
 <form id="activityForm" action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>"
       method="POST" class="form form-narrow" data-editing="<%= atividade ? 'true' : 'false' %>">
   <div class="field sketch-in" style="--stagger-index: 0;">
-    <label class="field-label" for="nome">Nome da atividade</label>
+    <label class="field-label" for="nome"><%= t('activities.form.nameLabel') %></label>
     <div class="sketch-edge input-wrap">
-      <input type="text" id="nome" name="nome" class="input" required placeholder="Ex.: Leitura, Academia, Reunião de equipe" value="<%= atividade?.nome ?? '' %>" />
+      <input type="text" id="nome" name="nome" class="input" required placeholder="<%= t('activities.form.namePlaceholder') %>" value="<%= atividade?.nome ?? '' %>" />
     </div>
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 1;">
-    <label class="field-label" for="categoryId">Categoria</label>
+    <label class="field-label" for="categoryId"><%= t('activities.filters.categoryLabel') %></label>
     <div class="sketch-edge input-wrap">
       <select id="categoryId" name="categoryId" class="select" required>
         <% categorias.forEach((c) => { %>
           <option value="<%= c.id %>" <%= atividade?.categoryId === c.id ? 'selected' : '' %>
             data-duracao-padrao-min="<%= c.duracaoPadraoMin ?? '' %>"
             data-possui-valor="<%= c.possuiValor %>"
-            data-valor-label="<%= c.valorLabel ?? 'Valor' %>"
+            data-valor-label="<%= c.valorLabel ?? t('common.valueLabelDefault') %>"
             data-valor-padrao="<%= c.valorPadrao ?? '' %>"
           ><%= c.nome %></option>
         <% }) %>
@@ -27,7 +27,7 @@
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 2;">
-    <label class="field-label" for="data">Data</label>
+    <label class="field-label" for="data"><%= t('activities.form.dateLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="date" id="data" name="data" class="input" required
              value="<%= atividade ? atividade.data.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>" />
@@ -36,14 +36,14 @@
 
   <div class="form-row sketch-in" style="--stagger-index: 3;">
     <div class="field">
-      <label class="field-label" for="horaInicio">Hora de início</label>
+      <label class="field-label" for="horaInicio"><%= t('activities.form.startTimeLabel') %></label>
       <div class="sketch-edge input-wrap">
         <input type="time" id="horaInicio" name="horaInicio" class="input" required
                value="<%= atividade ? formatTime(atividade.horaInicio) : '' %>" />
       </div>
     </div>
     <div class="field">
-      <label class="field-label" for="horaFim">Hora de fim</label>
+      <label class="field-label" for="horaFim"><%= t('activities.form.endTimeLabel') %></label>
       <div class="sketch-edge input-wrap">
         <input type="time" id="horaFim" name="horaFim" class="input" required
                value="<%= atividade && atividade.horaFim ? formatTime(atividade.horaFim) : '' %>" />
@@ -52,7 +52,7 @@
   </div>
 
   <div id="valorField" class="field hidden">
-    <label class="field-label" for="valor" id="valorLabelText">Valor</label>
+    <label class="field-label" for="valor" id="valorLabelText"><%= t('common.valueLabelDefault') %></label>
     <div class="sketch-edge input-wrap">
       <input type="number" id="valor" name="valor" class="input" min="0.01" step="0.01" placeholder="0.00"
              value="<%= atividade?.valor ?? '' %>" />
@@ -60,13 +60,13 @@
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 4;">
-    <label class="field-label" for="descricao">Descrição / observações (opcional)</label>
+    <label class="field-label" for="descricao"><%= t('activities.form.descriptionLabel') %></label>
     <div class="sketch-edge input-wrap">
-      <textarea id="descricao" name="descricao" class="input" rows="4" placeholder="Alguma observação sobre esta atividade?"><%= atividade?.descricao ?? '' %></textarea>
+      <textarea id="descricao" name="descricao" class="input" rows="4" placeholder="<%= t('activities.form.descriptionPlaceholder') %>"><%= atividade?.descricao ?? '' %></textarea>
     </div>
   </div>
 
-  <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 5;"><%= atividade ? 'Salvar' : 'Registrar' %></button>
+  <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 5;"><%= atividade ? t('common.submitSave') : t('common.submitNew') %></button>
 </form>
 
 <script src="/js/activity-form.js"></script>

@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
 import { isProd } from './config/env';
 import { DEFAULT_TIMEZONE } from './utils/time';
+import { DEFAULT_LOCALE, createTranslator, isValidLocale } from './i18n';
 import { sessionMiddleware } from './config/session';
 import { loadOpenApiDocument } from './config/openapi';
 import { globalLimiter } from './config/rateLimit';
@@ -57,6 +58,19 @@ function readTimezoneCookie(req: Request): string {
   return candidate && isValidTimeZone(candidate) ? candidate : DEFAULT_TIMEZONE;
 }
 
+/**
+ * Lê o cookie "locale" (setado via JS por public/js/locale-toggle.js, mesmo padrão de "theme" e
+ * "tz") — Fase 0 do RNF04 (i18n en-US, ver .claude/plans/i18n-en-us-2026-07-24.md). Cookie
+ * não-httpOnly, por isso valida contra a lista fechada de locales suportados antes de confiar.
+ */
+function readLocaleCookie(req: Request) {
+  const header = req.headers.cookie;
+  if (!header) return DEFAULT_LOCALE;
+  const match = header.split(';').map((part) => part.trim()).find((part) => part.startsWith('locale='));
+  const candidate = match?.slice('locale='.length);
+  return candidate && isValidLocale(candidate) ? candidate : DEFAULT_LOCALE;
+}
+
 export function createApp() {
   const app = express();
 
@@ -90,6 +104,9 @@ export function createApp() {
     res.locals.currentPath = req.path; // usado pela sidebar para destacar o item ativo
     res.locals.theme = readThemeCookie(req);
     req.userTimezone = readTimezoneCookie(req);
+    req.userLocale = readLocaleCookie(req);
+    res.locals.locale = req.userLocale;
+    res.locals.t = createTranslator(req.userLocale);
     next();
   });
 

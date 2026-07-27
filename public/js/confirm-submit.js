@@ -23,7 +23,7 @@
     event.preventDefault();
     pendingForm = form;
     trigger = document.activeElement;
-    messageEl.textContent = form.dataset.confirm || 'Confirma esta ação?';
+    messageEl.textContent = form.dataset.confirm || toast.dataset.defaultMessage || 'Confirma esta ação?';
     toast.classList.add('is-visible');
     confirmBtn.focus();
   });

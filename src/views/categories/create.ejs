@@ -1,42 +1,42 @@
-<%- include('../partials/page-header', { title: categoria ? 'Editar Categoria' : 'Nova Categoria', backHref: '/categories' }) %>
+<%- include('../partials/page-header', { title: categoria ? t('categories.form.editTitle') : t('categories.form.newTitle'), backHref: '/categories' }) %>
 
 <form action="<%= categoria ? `/categories/${categoria.id}?_method=PUT` : '/categories' %>" method="POST" class="form form-narrow category-form">
   <div class="field sketch-in" style="--stagger-index: 0;">
-    <label class="field-label" for="nome">Nome</label>
+    <label class="field-label" for="nome"><%= t('categories.form.nameLabel') %></label>
     <div class="sketch-edge input-wrap">
-      <input type="text" id="nome" name="nome" class="input" required placeholder="Ex.: Trabalho, Estudos, Lazer" value="<%= categoria?.nome ?? '' %>" />
+      <input type="text" id="nome" name="nome" class="input" required placeholder="<%= t('categories.form.namePlaceholder') %>" value="<%= categoria?.nome ?? '' %>" />
     </div>
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 1;">
-    <label class="field-label" for="descricao">Descrição</label>
+    <label class="field-label" for="descricao"><%= t('categories.form.descriptionLabel') %></label>
     <div class="sketch-edge input-wrap">
-      <textarea id="descricao" name="descricao" class="input" rows="3" placeholder="Opcional"><%= categoria?.descricao ?? '' %></textarea>
+      <textarea id="descricao" name="descricao" class="input" rows="3" placeholder="<%= t('categories.form.descriptionPlaceholder') %>"><%= categoria?.descricao ?? '' %></textarea>
     </div>
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 2;">
-    <label class="field-label" for="cor">Cor de identificação</label>
+    <label class="field-label" for="cor"><%= t('categories.form.colorLabel') %></label>
     <div class="sketch-edge color-swatch">
       <input type="color" id="cor" name="cor" class="color-input" value="<%= categoria?.cor ?? '#2563EB' %>" />
     </div>
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 3;">
-    <label class="field-label" for="tempoDesejadoMin">Tempo desejado por dia (minutos, opcional)</label>
+    <label class="field-label" for="tempoDesejadoMin"><%= t('categories.form.goalTimeLabel') %></label>
     <div class="sketch-edge input-wrap">
-      <input type="number" id="tempoDesejadoMin" name="tempoDesejadoMin" class="input" min="1" placeholder="Ex.: 60"
+      <input type="number" id="tempoDesejadoMin" name="tempoDesejadoMin" class="input" min="1" placeholder="<%= t('common.minutesExamplePlaceholder') %>"
              value="<%= categoria?.tempoDesejadoMin ?? '' %>" />
     </div>
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 4;">
-    <label class="field-label" for="duracaoPadraoMin">Duração padrão da atividade (minutos, opcional)</label>
+    <label class="field-label" for="duracaoPadraoMin"><%= t('categories.form.defaultDurationLabel') %></label>
     <div class="sketch-edge input-wrap">
-      <input type="number" id="duracaoPadraoMin" name="duracaoPadraoMin" class="input" min="1" placeholder="Ex.: 60"
+      <input type="number" id="duracaoPadraoMin" name="duracaoPadraoMin" class="input" min="1" placeholder="<%= t('common.minutesExamplePlaceholder') %>"
              value="<%= categoria?.duracaoPadraoMin ?? '' %>" aria-describedby="duracaoPadraoMinHelp" />
     </div>
-    <span class="field-helper" id="duracaoPadraoMinHelp">Ao registrar uma atividade nesta categoria, a hora de fim será sugerida a partir deste valor.</span>
+    <span class="field-helper" id="duracaoPadraoMinHelp"><%= t('categories.form.defaultDurationHelp') %></span>
   </div>
 
   <label class="check-row sketch-in" style="--stagger-index: 5;">
@@ -44,25 +44,25 @@
       <input type="checkbox" id="possuiValor" name="possuiValor" class="check-input" <%= categoria?.possuiValor ? 'checked' : '' %> />
       <span class="check-box sketch-edge"><%- include('../partials/icon', { name: 'check', size: 14 }) %></span>
     </span>
-    Esta categoria possui um valor numérico associado (ex.: custo, valor de depósito)
+    <%= t('categories.form.hasValueLabel') %>
   </label>
 
   <div id="valorFields" class="field <%= categoria?.possuiValor ? '' : 'hidden' %>">
-    <label class="field-label" for="valorLabel">Rótulo do valor</label>
+    <label class="field-label" for="valorLabel"><%= t('categories.form.valueLabelLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="text" id="valorLabel" name="valorLabel" class="input" maxlength="80"
-             placeholder="Ex.: Custo da passagem (R$)" value="<%= categoria?.valorLabel ?? '' %>" />
+             placeholder="<%= t('categories.form.valueLabelPlaceholder') %>" value="<%= categoria?.valorLabel ?? '' %>" />
     </div>
 
-    <label class="field-label" for="valorPadrao">Valor padrão (opcional)</label>
+    <label class="field-label" for="valorPadrao"><%= t('categories.form.defaultValueLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="number" id="valorPadrao" name="valorPadrao" class="input" min="0.01" step="0.01" placeholder="0.00"
              value="<%= categoria?.valorPadrao ?? '' %>" aria-describedby="valorPadraoHelp" />
     </div>
-    <span class="field-helper" id="valorPadraoHelp">Sugerido ao registrar uma atividade nesta categoria, mas pode ser alterado.</span>
+    <span class="field-helper" id="valorPadraoHelp"><%= t('categories.form.defaultValueHelp') %></span>
   </div>
 
-  <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 6;"><%= categoria ? 'Salvar' : 'Registrar' %></button>
+  <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 6;"><%= categoria ? t('common.submitSave') : t('common.submitNew') %></button>
 </form>
 
 <script src="/js/category-form.js"></script>

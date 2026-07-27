@@ -1,19 +1,19 @@
-<%- include('../partials/page-header', { title: 'Relatório', backHref: '/' }) %>
+<%- include('../partials/page-header', { title: t('reports.index.heading'), backHref: '/' }) %>
 
 <form method="GET" action="/reports" class="filters">
   <div class="field">
-    <label class="field-label" for="inicio">De</label>
+    <label class="field-label" for="inicio"><%= t('activities.filters.fromLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="date" id="inicio" name="inicio" class="input" value="<%= filtros.inicio %>" required />
     </div>
   </div>
   <div class="field">
-    <label class="field-label" for="fim">Até</label>
+    <label class="field-label" for="fim"><%= t('activities.filters.toLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="date" id="fim" name="fim" class="input" value="<%= filtros.fim %>" required />
     </div>
   </div>
-  <button type="submit" class="btn btn-secondary sketch-edge sketch-hover">Aplicar período</button>
+  <button type="submit" class="btn btn-secondary sketch-edge sketch-hover"><%= t('reports.filters.submit') %></button>
 </form>
 
 <div class="report-cards">
@@ -24,7 +24,7 @@
         <path d="M4 12 Q 50 3, 100 11 T 196 9" pathLength="1" />
       </svg>
     </span>
-    <span class="muted">dias registrados</span>
+    <span class="muted"><%= t('reports.stats.daysLabel') %></span>
   </div>
   <div class="card sketch-edge report-card sketch-in" style="--tilt: 0.6deg; --stagger-index: 1; transform: rotate(var(--tilt));">
     <span class="report-big-wrap">
@@ -33,13 +33,13 @@
         <path d="M4 12 Q 50 3, 100 11 T 196 9" pathLength="1" />
       </svg>
     </span>
-    <span class="muted">total de horas registradas no período</span>
+    <span class="muted"><%= t('reports.stats.totalHoursLabel') %></span>
   </div>
 </div>
 
-<h2>Tempo por categoria</h2>
+<h2><%= t('reports.categoryTimeHeading') %></h2>
 <% if (relatorio.distribuicao.length === 0) { %>
-  <p class="muted">Nenhuma atividade registrada no período selecionado.</p>
+  <p class="muted"><%= t('reports.categoryTimeEmpty') %></p>
 <% } else { %>
   <div class="card sketch-edge">
     <ul class="bars">
@@ -58,9 +58,9 @@
   </div>
 <% } %>
 
-<h2>Valor por categoria</h2>
+<h2><%= t('reports.valueByCategoryHeading') %></h2>
 <% if (seriesValor.length === 0) { %>
-  <p class="muted">Nenhuma categoria com valor registrado no período selecionado.</p>
+  <p class="muted"><%= t('reports.valueByCategoryEmpty') %></p>
 <% } else { %>
   <% seriesValor.forEach((serie, i) => { %>
     <div class="card sketch-edge sketch-in line-chart-card" style="--stagger-index: <%= i %>;">
@@ -70,7 +70,7 @@
       </div>
       <div class="line-chart-wrap">
         <svg class="line-chart" viewBox="0 0 <%= serie.geometry.totalWidth %> <%= serie.geometry.totalHeight %>" preserveAspectRatio="none" role="img"
-             aria-label="Gráfico de linha de <%= serie.valorLabel %> ao longo do tempo para <%= serie.categoria %>, variando de <%= formatNumber(serie.geometry.minY) %> a <%= formatNumber(serie.geometry.maxY) %>">
+             aria-label="<%= t('reports.chart.ariaLabel', { valorLabel: serie.valorLabel, categoria: serie.categoria, min: formatNumber(serie.geometry.minY), max: formatNumber(serie.geometry.maxY) }) %>">
           <% if (serie.geometry.points) { %>
             <polyline points="<%= serie.geometry.points %>" pathLength="1" style="stroke: <%= serie.cor %>" />
           <% } %>
@@ -82,7 +82,7 @@
         <% serie.pontos.forEach((p, j) => { %>
           <button type="button" class="chart-point"
                   style="left: <%= (serie.geometry.circles[j].x / serie.geometry.totalWidth * 100).toFixed(2) %>%; top: <%= (serie.geometry.circles[j].y / serie.geometry.totalHeight * 100).toFixed(2) %>%;"
-                  aria-label="<%= p.nome %>: <%= formatNumber(p.valor) %> em <%= formatDate(p.horaInicio) %>, <%= formatTime(p.horaInicio) %>">
+                  aria-label="<%= t('reports.chart.pointAriaLabel', { nome: p.nome, valor: formatNumber(p.valor), data: formatDate(p.horaInicio), hora: formatTime(p.horaInicio) }) %>">
             <span class="chart-tooltip sketch-edge" aria-hidden="true">
               <span class="chart-tooltip-name"><%= p.nome %></span>
               <span class="chart-tooltip-value"><%= formatNumber(p.valor) %></span>
@@ -92,8 +92,8 @@
         <% }) %>
       </div>
       <div class="line-chart-meta">
-        <span>Mín.: <%= formatNumber(serie.geometry.minY) %></span>
-        <span>Máx.: <%= formatNumber(serie.geometry.maxY) %></span>
+        <span><%= t('reports.chart.min', { valor: formatNumber(serie.geometry.minY) }) %></span>
+        <span><%= t('reports.chart.max', { valor: formatNumber(serie.geometry.maxY) }) %></span>
       </div>
     </div>
   <% }) %>

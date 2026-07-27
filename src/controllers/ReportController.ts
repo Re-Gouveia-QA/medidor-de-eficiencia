@@ -30,7 +30,7 @@ class ReportControllerImpl extends BaseController {
     if (inicio && fim && inicioDate && fimDate && inicioDate.getTime() <= fimDate.getTime()) {
       periodo = { inicio: inicioDate, fim: fimDate };
     } else if (inicio || fim) {
-      req.flash('error', 'Período inválido: a data inicial deve ser anterior ou igual à final. Exibindo o mês corrente.');
+      req.flash('error', res.locals.t('flash.report.invalidPeriod'));
       periodo = ReportService.defaultPeriod(); // regra 8: padrão = mês corrente
     } else {
       periodo = ReportService.defaultPeriod();
@@ -49,12 +49,12 @@ class ReportControllerImpl extends BaseController {
     }));
 
     res.render('reports/index', {
-      title: 'Relatórios',
+      title: res.locals.t('reports.index.pageTitle'),
       relatorio,
       seriesValor,
-      formatNumber,
-      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone),
-      formatDate: (d: Date) => formatDateShortInZone(d, req.userTimezone),
+      formatNumber: (v: Parameters<typeof formatNumber>[0]) => formatNumber(v, req.userLocale),
+      formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
+      formatDate: (d: Date) => formatDateShortInZone(d, req.userTimezone, req.userLocale),
       filtros: {
         inicio: periodo.inicio.toISOString().slice(0, 10),
         fim: periodo.fim.toISOString().slice(0, 10),

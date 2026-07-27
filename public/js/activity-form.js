@@ -34,7 +34,7 @@
 
     var possuiValor = opt.getAttribute('data-possui-valor') === 'true';
     valorField.classList.toggle('hidden', !possuiValor);
-    valorLabelText.textContent = opt.getAttribute('data-valor-label') || 'Valor';
+    valorLabelText.textContent = opt.getAttribute('data-valor-label') || valorLabelText.textContent;
     if (possuiValor && !isEditing && !valorInput.value) {
       var valorPadrao = opt.getAttribute('data-valor-padrao');
       if (valorPadrao) valorInput.value = valorPadrao;

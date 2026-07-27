@@ -34,11 +34,15 @@ function toCategoryData(raw: CategoryInput): CategoryFormData {
 class CategoryControllerImpl extends BaseController {
   index = async (req: Request, res: Response) => {
     const categorias = await CategoryModel.listByUser(req.currentUser!.id);
-    res.render('categories/index', { title: 'Categorias', categorias, formatNumber });
+    res.render('categories/index', {
+      title: res.locals.t('categories.index.title'),
+      categorias,
+      formatNumber: (v: Parameters<typeof formatNumber>[0]) => formatNumber(v, req.userLocale),
+    });
   };
 
   create = (_req: Request, res: Response) => {
-    res.render('categories/create', { title: 'Nova categoria', categoria: null });
+    res.render('categories/create', { title: res.locals.t('categories.newCategoryLabel'), categoria: null });
   };
 
   store = async (req: Request, res: Response) => {
@@ -46,10 +50,10 @@ class CategoryControllerImpl extends BaseController {
     if (!raw) return;
     try {
       await CategoryModel.create(req.currentUser!.id, toCategoryData(raw));
-      req.flash('success', 'Categoria criada com sucesso.');
+      req.flash('success', res.locals.t('flash.category.created'));
       res.redirect('/categories');
     } catch {
-      req.flash('error', 'Você já possui uma categoria com esse nome.'); // regra 6
+      req.flash('error', res.locals.t('flash.category.duplicateName')); // regra 6
       res.redirect('/categories/new');
     }
   };
@@ -57,10 +61,10 @@ class CategoryControllerImpl extends BaseController {
   edit = async (req: Request, res: Response) => {
     const categoria = await CategoryModel.findById(req.params.id, req.currentUser!.id);
     if (!categoria) {
-      req.flash('error', 'Categoria não encontrada.');
+      req.flash('error', res.locals.t('flash.category.notFound'));
       return res.redirect('/categories');
     }
-    res.render('categories/create', { title: 'Editar categoria', categoria });
+    res.render('categories/create', { title: res.locals.t('categories.editCategoryLabel'), categoria });
   };
 
   update = async (req: Request, res: Response) => {
@@ -77,10 +81,10 @@ class CategoryControllerImpl extends BaseController {
         valorPadrao: data.valorPadrao ?? null,
         duracaoPadraoMin: data.duracaoPadraoMin ?? null,
       });
-      req.flash('success', 'Categoria atualizada.');
+      req.flash('success', res.locals.t('flash.category.updated'));
       res.redirect('/categories');
     } catch {
-      req.flash('error', 'Você já possui uma categoria com esse nome.');
+      req.flash('error', res.locals.t('flash.category.duplicateName'));
       res.redirect(redirectTo);
     }
   };
@@ -90,24 +94,21 @@ class CategoryControllerImpl extends BaseController {
     // (contagem de atividades) ou tentar excluí-la.
     const categoria = await CategoryModel.findById(req.params.id, req.currentUser!.id);
     if (!categoria) {
-      req.flash('error', 'Categoria não encontrada.');
+      req.flash('error', res.locals.t('flash.category.notFound'));
       return res.redirect('/categories');
     }
     // Regra 7: bloquear exclusão de categoria com atividades vinculadas
     const total = await CategoryModel.countActivities(categoria.id);
     if (total > 0) {
-      req.flash(
-        'error',
-        `Não é possível excluir: existem ${total} atividade(s) vinculadas a esta categoria.`,
-      );
+      req.flash('error', res.locals.t('flash.category.deleteBlocked', { count: total }));
       return res.redirect('/categories');
     }
     const deleted = await CategoryModel.destroy(categoria.id, req.currentUser!.id);
     if (!deleted) {
-      req.flash('error', 'Categoria não encontrada.');
+      req.flash('error', res.locals.t('flash.category.notFound'));
       return res.redirect('/categories');
     }
-    req.flash('success', 'Categoria excluída.');
+    req.flash('success', res.locals.t('flash.category.deleted'));
     res.redirect('/categories');
   };
 }

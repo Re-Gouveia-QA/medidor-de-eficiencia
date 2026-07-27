@@ -1,11 +1,11 @@
-<h1 class="home-greeting">Bem-vindo(a) de volta, <%= userName %></h1>
+<h1 class="home-greeting"><%= t('home.greeting', { name: userName }) %></h1>
 <p class="muted home-date"><%= dataHoje %></p>
 
 <% if (emAndamento) { %>
   <div class="card sketch-edge in-progress-card is-live">
     <div class="in-progress-status">
       <span class="live-dot" aria-hidden="true"></span>
-      Em andamento · <%= emAndamento.category.nome %>
+      <%= t('home.inProgress.status', { categoria: emAndamento.category.nome }) %>
     </div>
     <strong class="in-progress-name"><%= emAndamento.nome %></strong>
     <span class="report-big-wrap">
@@ -16,24 +16,24 @@
     </span>
     <form action="/activities/<%= emAndamento.id %>/finish" method="POST">
       <button type="submit" class="btn btn-primary sketch-edge sketch-hover">
-        <%- include('../partials/icon', { name: 'check', size: 16 }) %> Finalizar
+        <%- include('../partials/icon', { name: 'check', size: 16 }) %> <%= t('home.inProgress.finish') %>
       </button>
     </form>
   </div>
   <script src="/js/in-progress-timer.js"></script>
 <% } else if (categorias.length > 0) { %>
   <form action="/activities/start" method="POST" class="card sketch-edge in-progress-card form">
-    <h2>O que você está fazendo agora?</h2>
+    <h2><%= t('home.startForm.heading') %></h2>
     <div class="form-row">
       <div class="field">
         <div class="sketch-edge input-wrap">
-          <input type="text" name="nome" class="input" required placeholder="Ex.: Reunião de equipe" autofocus />
+          <input type="text" name="nome" class="input" required placeholder="<%= t('home.startForm.namePlaceholder') %>" autofocus />
         </div>
       </div>
       <div class="field">
         <div class="sketch-edge input-wrap">
           <select name="categoryId" class="select" required>
-            <option value="" disabled selected>Categoria</option>
+            <option value="" disabled selected><%= t('home.startForm.categoryPlaceholder') %></option>
             <% categorias.forEach((c) => { %>
               <option value="<%= c.id %>"><%= c.nome %></option>
             <% }) %>
@@ -43,32 +43,32 @@
       </div>
     </div>
     <button type="submit" class="btn btn-primary sketch-edge sketch-hover">
-      <%- include('../partials/icon', { name: 'plus', size: 16 }) %> Iniciar
+      <%- include('../partials/icon', { name: 'plus', size: 16 }) %> <%= t('home.startForm.submit') %>
     </button>
   </form>
 <% } %>
 
-<h3 class="">O que você quer fazer agora?</h3>
+<h3 class=""><%= t('home.menu.heading') %></h3>
 
 <div class="grid-menu">
   <a class="card sketch-edge sketch-hover sketch-in section-blue" style="--stagger-index: 0;" href="/activities/new">
     <%- include('../partials/icon', { name: 'plus', size: 26 }) %>
-    <strong>Registrar atividade</strong>
-    <span class="muted">Anote o que você acabou de fazer</span>
+    <strong><%= t('home.menu.newActivity.title') %></strong>
+    <span class="muted"><%= t('home.menu.newActivity.subtitle') %></span>
   </a>
   <a class="card sketch-edge sketch-hover sketch-in section-green" style="--stagger-index: 1;" href="/activities">
     <%- include('../partials/icon', { name: 'clock', size: 26 }) %>
-    <strong>Visualizar atividades</strong>
-    <span class="muted">Liste e filtre seus registros</span>
+    <strong><%= t('home.menu.viewActivities.title') %></strong>
+    <span class="muted"><%= t('home.menu.viewActivities.subtitle') %></span>
   </a>
   <a class="card sketch-edge sketch-hover sketch-in section-yellow" style="--stagger-index: 2;" href="/reports">
     <%- include('../partials/icon', { name: 'star', size: 26 }) %>
-    <strong>Relatórios</strong>
-    <span class="muted">Dias registrados e tempo por categoria</span>
+    <strong><%= t('home.menu.reports.title') %></strong>
+    <span class="muted"><%= t('home.menu.reports.subtitle') %></span>
   </a>
   <a class="card sketch-edge sketch-hover sketch-in section-red" style="--stagger-index: 3;" href="/categories">
     <%- include('../partials/icon', { name: 'tag', size: 26 }) %>
-    <strong>Categorias</strong>
-    <span class="muted">Organize do seu jeito</span>
+    <strong><%= t('home.menu.categories.title') %></strong>
+    <span class="muted"><%= t('home.menu.categories.subtitle') %></span>
   </a>
 </div>

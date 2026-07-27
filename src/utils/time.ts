@@ -3,6 +3,7 @@
  * RNF05: datas/horários armazenados em UTC e exibidos no fuso do usuário.
  * Regra 5: a duração é sempre calculada pelo sistema.
  */
+import { DEFAULT_LOCALE, Locale } from '../i18n';
 
 export const DEFAULT_TIMEZONE = 'UTC';
 
@@ -53,17 +54,24 @@ export function combineDateTime(dateISO: string, timeHHmm: string, timeZone: str
   return new Date(naiveUtc.getTime() - offsetMs);
 }
 
-/** Formata um instante UTC como HH:mm no fuso do usuário (RNF05). */
-export function formatTimeInZone(date: Date, timeZone: string = DEFAULT_TIMEZONE): string {
-  return new Intl.DateTimeFormat('pt-BR', { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(
+/**
+ * Formata um instante UTC como HH:mm no fuso do usuário (RNF05). `hourCycle: 'h23'` é fixo
+ * independente do locale (24h, sem AM/PM) — é o mesmo formato consumido como `value` de
+ * `<input type="time">` em `activities/create.ejs`, que exige HH:mm; com hour/minute em
+ * '2-digit' e hourCycle fixo, a saída é idêntica em dígitos entre 'pt-BR'/'en-US' (só varia o
+ * que de fato depende do locale, como a ordem dd/MM vs MM/dd em `formatDateShortInZone` abaixo).
+ */
+export function formatTimeInZone(date: Date, timeZone: string = DEFAULT_TIMEZONE, locale: Locale = DEFAULT_LOCALE): string {
+  return new Intl.DateTimeFormat(locale, { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(
     date,
   );
 }
 
-/** Formata um instante UTC como dd/MM no fuso do usuário (RNF05) — usado nas marcações de eixo
- * do gráfico de linha (valor x tempo), onde o horário exato já fica disponível no tooltip. */
-export function formatDateShortInZone(date: Date, timeZone: string = DEFAULT_TIMEZONE): string {
-  return new Intl.DateTimeFormat('pt-BR', { timeZone, day: '2-digit', month: '2-digit' }).format(date);
+/** Formata um instante UTC como data curta (dd/MM em pt-BR, MM/dd em en-US) no fuso do usuário
+ * (RNF05) — usado nas marcações de eixo do gráfico de linha (valor x tempo), onde o horário
+ * exato já fica disponível no tooltip. */
+export function formatDateShortInZone(date: Date, timeZone: string = DEFAULT_TIMEZONE, locale: Locale = DEFAULT_LOCALE): string {
+  return new Intl.DateTimeFormat(locale, { timeZone, day: '2-digit', month: '2-digit' }).format(date);
 }
 
 /**
