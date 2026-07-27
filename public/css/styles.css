@@ -434,8 +434,13 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    perde legibilidade, só o FUNDO da faixa fica quase todo ver-através. */
 .marketing-whatis { background: color-mix(in oklch, var(--surface) 25%, transparent); width: 100vw; position: relative; left: 50%; margin-left: -50vw; padding: 56px 20px; }
 .marketing-whatis-inner { max-width: 960px; margin: 0 auto; }
-.marketing-features { margin-top: 2rem; }
-.marketing-feature { display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s ease; }
+/* auto-fit (não o auto-fill de .grid-menu, base desta classe) colapsa a faixa de coluna
+   implícita vazia que sobrava em telas largas — com só 3 cards e minmax(220px,1fr), auto-fill
+   ainda reservava uma 4ª faixa vazia, deixando os cards encolhidos e alinhados à esquerda em vez
+   de ocupar a linha inteira com o mesmo espaço entre eles ("space between" pedido). minmax maior
+   (260px, era 220px) deixa cada card visivelmente maior no desktop. */
+.marketing-features { margin-top: 2rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.marketing-feature { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 34px 28px; transition: transform 0.2s ease; }
 .marketing-feature svg { margin-bottom: 10px; }
 .marketing-feature .card-title { font-size: var(--text-lg); }
 /* Leve inclinação alternada que endireita no hover (redesign a partir de mockup de referência) —
@@ -586,13 +591,18 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* Rodapé da home pública (redesign a partir de mockup de referência) — só marca + assinatura,
    sem links de Termos/Privacidade/Ajuda do mockup original: essas páginas não existem no app, e
    um link morto é pior que nenhum rodapé. */
+/* Fundo sólido (--ink, pedido explícito) em vez do quadriculado de papel do resto da página —
+   --ink já inverte sozinho por tema (escuro no tema claro, claro no tema escuro), então o texto
+   usa --paper (o oposto exato) pra manter contraste nos dois temas sem token novo. Isso torna o
+   border-top antigo (mesma cor --ink da própria borda E do fundo agora) invisível/redundante,
+   por isso foi removido — a mudança de cor página→rodapé já marca a separação sozinha. */
 .marketing-footer {
-  border-top: var(--border-w) solid var(--ink);
   padding: 32px 20px;
   text-align: center;
-  color: var(--ink-soft);
+  background: var(--ink);
+  color: var(--paper);
 }
-.marketing-footer .brand { display: block; margin-bottom: 4px; }
+.marketing-footer .brand { display: block; margin-bottom: 4px; color: var(--paper); }
 
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
