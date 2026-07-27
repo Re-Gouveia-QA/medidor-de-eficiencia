@@ -88,10 +88,25 @@
      use cases abaixo): relatório (dias/horas/distribuição), duração calculada automaticamente,
      categoria com cor/meta/valor livres — não promessas genéricas de marketing. */
   const benefits = [
-    { icon: 'search', color: 'section-blue', key: 'clarity' },
-    { icon: 'check', color: 'section-green', key: 'simplicity' },
-    { icon: 'edit', color: 'section-yellow', key: 'flexibility' },
+    { color: 'section-blue', key: 'clarity' },
+    { color: 'section-green', key: 'simplicity' },
+    { color: 'section-yellow', key: 'flexibility' },
   ];
+  /* Ilustrações maiores (não ícones de 24px do catálogo de icon.ejs) — pedido explícito de
+     substituir ícones por imagens nesta seção. Ficam inline aqui (não em icon.ejs, que é o
+     catálogo de glifos pequenos reutilizados no app inteiro) porque são cenas específicas desta
+     seção, mesmo padrão já usado na seta de "comece por aqui" do hero. Mesma linguagem visual do
+     resto do app: stroke="currentColor" (herda a cor de .section-blue/green/yellow via
+     ".card.section-* svg" em styles.css) + filtro url(#sketch-rough-icon) pro mesmo tremor
+     "à mão" dos ícones normais. */
+  const benefitIllustrations = {
+    clarity:
+      '<svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M8 48V38M20 48V30M32 48V22" /><circle cx="42" cy="26" r="12" /><path d="M50.5 34.5L58 42" /></svg>',
+    simplicity:
+      '<svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M6 20h13M6 32h18M6 44h11" /><circle cx="42" cy="32" r="16" /><path d="M35 32.5l5 5 10-10.5" /></svg>',
+    flexibility:
+      '<svg viewBox="0 0 64 64" width="72" height="72" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="filter: url(#sketch-rough-icon)"><path d="M8 50c6-15 19-24 33-27" /><path d="M39 25l11-11 5 5-11 11z" /><path d="M50 14l5 5" /><circle cx="8" cy="50" r="2.2" fill="currentColor" stroke="none" /></svg>',
+  };
 %>
 <section class="marketing-section marketing-benefits">
   <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.benefits.heading') %></h2>
@@ -99,7 +114,7 @@
     <% benefits.forEach((benefit, i) => { %>
       <div class="marketing-benefit-row scroll-reveal" data-scroll-reveal style="--stagger-index: <%= i + 1 %>;">
         <div class="marketing-benefit-visual card sketch-edge <%= benefit.color %>" style="transform: rotate(<%= i % 2 ? '0.8deg' : '-0.8deg' %>);">
-          <%- include('../partials/icon', { name: benefit.icon, size: 48 }) %>
+          <%- benefitIllustrations[benefit.key] %>
         </div>
         <div class="marketing-benefit-text">
           <h3 class="card-title"><%= t(`marketing.benefits.${benefit.key}.title`) %></h3>
