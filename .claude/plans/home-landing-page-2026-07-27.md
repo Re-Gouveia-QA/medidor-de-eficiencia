@@ -1,8 +1,8 @@
 # Plan: Home pública — explicação do app + maneiras criativas de usar
 
-**Date:** 2026-07-27 (Fases 1-4 concluídas em 2026-07-27)
-**Status:** ativo — Fases 1-4 concluídas em `feature/home-landing-page`, não mescladas em
-`master` ainda (mesma convenção: push/merge só mediante pedido explícito).
+**Date:** 2026-07-27 (Fases 1-5 concluídas em 2026-07-27)
+**Status:** concluído (Fases 1-5) em `feature/home-landing-page`, não mesclado em `master` ainda
+(mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: rota dividida em `src/routes/index.ts` (dois handlers em `GET /`: o primeiro checa
 `req.session.userId` e já responde com `LandingController.show` se não houver sessão, senão
@@ -126,6 +126,35 @@ azul, eye verde) — nenhuma quebra de layout entre as duas seções consecutiva
 diferentes.
 
 Build/lint verdes; testes 129/132 (mesmas 3 falhas de ambiente); 196/196 chaves em paridade.
+
+Fase 5: CTA final — não uma seção plana igual às anteriores, mas um "card" grande
+(`.marketing-final-cta`, `--surface` + `sketch-edge`, mesmo tratamento de borda à mão dos demais
+cards) que fecha a página ecoando o hero (mesmas chaves `marketing.hero.primaryCta`/
+`secondaryCta`, sem duplicar texto/chave nova). `LandingController.show` já usava
+`marketing.metaDescription` própria desde a Fase 1 (não o fallback genérico) — nada a mudar ali.
+
+`public/robots.txt`: `Allow: /$` adicionado (âncora de fim-de-string, extensão Google/Bing) —
+sem o `$`, `Allow: /` combinaria como prefixo com QUALQUER caminho, empatando com o
+`Disallow: /` geral em todas as rotas e efetivamente revogando o bloqueio geral, não só liberando
+a home. Detalhe fácil de errar, documentado no próprio arquivo. `public/sitemap.xml`: `/`
+adicionado como primeira entrada (antes de `/login`/`/register`).
+
+Verificado ao vivo: página inteira (viewport 1280×2500) renderiza as 4 seções + hero sem quebra
+visual, incluindo o card de fechamento; `curl` confirma `robots.txt`/`sitemap.xml` corretos e a
+home em inglês (`locale=en-US`) mostrando "Ready to get started?"/"Create free account"/"I
+already have an account" corretamente.
+
+Build/lint verdes; testes 129/132 (mesmas 3 falhas de ambiente, mesma causa documentada em toda a
+sessão — Postgres/Docker Desktop indisponível); 197/197 chaves em paridade.
+
+**Plano concluído (Fases 1-5).** Pendências conhecidas, documentadas, não bloqueiam o que já foi
+implementado:
+- Checagem visual real em navegador/dispositivo de verdade (a screenshot via Chrome headless
+  cobriu bem o desktop, mas viewport mobile não é confiável neste ambiente sandboxed — ver Fase 2).
+- Domínio de produção real ainda não definido — `robots.txt`/`sitemap.xml` usam `localhost` como
+  placeholder documentado; revisar antes do primeiro deploy público.
+- Fontes manuscritas reais do design system não foram testadas em todos os navegadores/SOs — só
+  confirmado que carregam via Google Fonts neste ambiente de sessão.
 
 Build/lint verdes; testes 129/132 (as 3 falhas são as mesmas de sempre — `GET /` autenticado via
 Google/login real, precisa de Postgres local, Docker Desktop indisponível nesta sessão — não

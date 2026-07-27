@@ -4,6 +4,11 @@
 # futuro fica escondida por padrão, em vez de precisar lembrar de listá-la aqui.
 User-agent: *
 Disallow: /
+# "/" (a home pública, ver plano de landing page) precisa do "$" de fim-de-string (extensão
+# aceita por Google/Bing) pra casar só a raiz exata — sem ele, "Allow: /" combinaria com QUALQUER
+# caminho como prefixo (o mesmo que "Disallow: /" já combina), empatando em todas as rotas e
+# efetivamente anulando o bloqueio geral acima, não só liberando a home.
+Allow: /$
 Allow: /login
 Allow: /register
 Allow: /forgot-password

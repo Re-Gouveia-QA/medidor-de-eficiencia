@@ -364,6 +364,16 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-usecases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; margin-top: 2rem; }
 .marketing-usecase .card-heading svg { flex: none; }
 
+/* Fecha a página como um "card" grande (--surface, mesma borda à mão dos demais cards) em vez de
+   mais uma seção plana igual às anteriores — dá peso de encerramento, ecoa o CTA do hero. */
+.marketing-final-cta {
+  background: var(--surface);
+  border-radius: var(--radius-blob);
+  text-align: center;
+  margin: 56px 0;
+  padding: 56px 32px;
+}
+
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
   .app-content { padding: 10px 16px 48px; }

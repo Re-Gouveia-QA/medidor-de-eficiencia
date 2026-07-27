@@ -85,3 +85,15 @@
     <% }) %>
   </div>
 </section>
+
+<%
+  /* CTA final — ecoa o hero (mesmos botões/textos, marketing.hero.primaryCta/secondaryCta, não
+     chaves novas) fechando o "loop" da página pra quem leu até aqui sem converter no topo. */
+%>
+<section class="marketing-section marketing-final-cta sketch-edge scroll-reveal" data-scroll-reveal style="--stagger-index: 0;">
+  <h2 class="marketing-section-heading"><%= t('marketing.finalCta.heading') %></h2>
+  <div class="marketing-hero-ctas">
+    <a class="btn btn-primary btn-lg sketch-edge sketch-hover" href="/register"><%= t('marketing.hero.primaryCta') %></a>
+    <a class="btn btn-secondary btn-lg sketch-edge sketch-hover" href="/login"><%= t('marketing.hero.secondaryCta') %></a>
+  </div>
+</section>

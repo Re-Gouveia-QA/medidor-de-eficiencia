@@ -32,6 +32,7 @@
   "marketing.useCases.habit.description": "Reading, an instrument, meditation: the days-logged count in the report becomes your consistency counter, with nothing beyond what the app already shows.",
   "marketing.useCases.focus.title": "Deep work vs. meetings",
   "marketing.useCases.focus.description": "Start an in-progress activity right from the home to time it in real time, and split deep work from meetings into different categories to compare later.",
+  "marketing.finalCta.heading": "Ready to get started?",
   "home.title": "Home",
   "home.greeting": "Welcome back, {{name}}",
   "home.inProgress.status": "In progress · {{categoria}}",

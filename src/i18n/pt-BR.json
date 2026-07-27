@@ -32,6 +32,7 @@
   "marketing.useCases.habit.description": "Leitura, instrumento, meditação: o número de dias registrados no relatório vira seu contador de consistência, sem precisar de nada além do que o app já mostra.",
   "marketing.useCases.focus.title": "Foco vs. reuniões",
   "marketing.useCases.focus.description": "Inicie uma atividade em andamento direto da home pra cronometrar o tempo em tempo real, e separe deep work de reunião em categorias diferentes pra comparar depois.",
+  "marketing.finalCta.heading": "Pronto para começar?",
   "home.title": "Página inicial",
   "home.greeting": "Bem-vindo(a) de volta, {{name}}",
   "home.inProgress.status": "Em andamento · {{categoria}}",
