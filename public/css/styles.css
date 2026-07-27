@@ -332,22 +332,26 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-content { margin: 0 auto; padding: 8px 20px 96px; }
 /* Topbar fixo ao rolar (redesign a partir de mockup de referência) — só na home pública; o
    .topbar autenticado (main.ejs) não ganha isso, a página logada não tem essa composição de
-   scroll longo. Vidro fosco (glassmorphism): sem borda (pedido explícito — a linha reta de baixo
-   destoava do resto da identidade "traço à mão"), fundo semi-transparente via color-mix() +
-   backdrop-filter: blur() pra o conteúdo por baixo continuar visível/borrado ao rolar. Isso
-   reverte a cautela anterior (evitar color-mix/backdrop-filter por suporte de navegador, ver
-   .washi-tape) só aqui, a pedido — ambos têm suporte amplo em navegadores evergreen atuais
-   (Chrome/Edge/Firefox/Safari 16.4+), e sem prefixo -webkit- o efeito degrada de forma segura
-   pra um fundo sólido opaco (sem blur) em vez de quebrar. */
+   scroll longo. Começa sem nenhum fundo (totalmente transparente sobre o hero) — o vidro fosco
+   (glassmorphism: color-mix() + backdrop-filter: blur()) só aparece quando .is-scrolled é
+   adicionada pelo JS (marketing-navbar.js), a partir de um pequeno scroll — sem isso, o texto
+   branco/claro do próprio conteúdo por baixo, cores fortes, etc. ficariam ilegíveis atravessando
+   um topbar sem nenhum contraste próprio; o fundo só "aparece" quando de fato precisa cobrir
+   conteúdo que já passou por baixo dele. Sem borda (pedido explícito de uma sessão anterior — a
+   linha reta destoava da identidade "traço à mão"). */
 .marketing-topbar {
   position: sticky;
   top: 0;
   z-index: 20;
+  background: transparent;
+  transition: background-color 0.25s ease;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.marketing-topbar.is-scrolled {
   background: color-mix(in oklch, var(--paper) 80%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding-top: 12px;
-  padding-bottom: 12px;
 }
 
 .marketing-hero { padding: 72px 0 56px; text-align: center; position: relative; overflow: hidden; }
@@ -392,28 +396,21 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    ("Criar conta grátis") então estoura a largura do container em vez de quebrar linha. */
 .marketing-hero-ctas .btn { min-width: 0; }
 
-/* Setinha + anotação à mão apontando pro CTA primário — o tipo de detalhe pequeno que fica na
-   memória (frontend-design: "o que torna isso inesquecível?"), sem inventar cor nova (usa
-   --accent-blue, a mesma do botão que aponta). Posicionado à mão (não calculado), ajustado via
-   screenshot; escondido no mobile (Fase 2 já empilha os CTAs em coluna — não sobra espaço
-   horizontal pro doodle respirar do lado, e o alvo que ele aponta muda de lugar). */
-.marketing-hero-cta-doodle {
-  position: absolute;
-  top: -32px;
-  left: 2%;
+/* Dica de rolagem no fim do hero, apontando pra seção seguinte — não mais uma setinha ao lado do
+   CTA (era fácil de confundir com "clique aqui"; o pedido foi reorientar pra "role pra baixo").
+   Centralizada, sem posicionamento absoluto (flui normalmente depois de .marketing-hero-ctas). */
+.marketing-hero-scroll-cue {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+  align-items: center;
   gap: 4px;
+  margin-top: 36px;
   color: var(--accent-blue);
-  transform: rotate(-4deg);
-  pointer-events: none;
 }
-.marketing-hero-cta-doodle svg { width: 46px; height: 32px; }
-.marketing-hero-cta-doodle span {
+.marketing-hero-scroll-cue svg { width: 26px; height: 32px; }
+.marketing-hero-scroll-cue span {
   font-family: var(--font-accent);
   font-size: var(--text-base);
-  white-space: nowrap;
-  margin-bottom: 4px;
 }
 
 /* Seções abaixo da dobra — entram via scroll (scroll-reveal.js), não no carregamento como o
@@ -427,7 +424,11 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    de um bloco único e monótono. width:100vw + left:50%/margin-left:-50vw é o truque clássico de
    full-bleed dentro de um container centralizado; .marketing-whatis-inner recentraliza o
    conteúdo na coluna de 960px de novo. */
-.marketing-whatis { background: var(--surface); width: 100vw; position: relative; left: 50%; margin-left: -50vw; padding: 56px 20px; }
+/* Fundo bem transparente (pedido explícito) — o quadriculado do papel (body, components.css)
+   continua visível por baixo da faixa em vez de um --surface opaco; os cards dentro
+   (.marketing-feature) continuam opacos (--surface via .sketch-edge::before), então o texto não
+   perde legibilidade, só o FUNDO da faixa fica quase todo ver-através. */
+.marketing-whatis { background: color-mix(in oklch, var(--surface) 25%, transparent); width: 100vw; position: relative; left: 50%; margin-left: -50vw; padding: 56px 20px; }
 .marketing-whatis-inner { max-width: 960px; margin: 0 auto; }
 .marketing-features { margin-top: 2rem; }
 .marketing-feature { display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.2s ease; }
@@ -561,7 +562,6 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   .actions { width: 100%; justify-content: flex-end; }
   .marketing-hero { padding: 48px 0 40px; }
   .marketing-hero-ctas { flex-direction: column; align-items: stretch; }
-  .marketing-hero-cta-doodle { display: none; }
   .marketing-hero-watermark { width: 70vw; opacity: 0.04; }
   /* Topbar da home pública tem 2 elementos a mais que o .topbar padrão (Entrar + Criar conta,
      texto em vez de só ícone) — não cabem numa linha só em telas estreitas junto com marca +
