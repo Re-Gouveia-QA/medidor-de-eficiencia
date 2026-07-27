@@ -39,6 +39,12 @@
   --text-xl: 28px;
   --text-2xl: 36px;
   --text-3xl: 48px;
+  /* Só pro hero da home pública (marketing/landing.ejs) — maior que qualquer texto interno do
+     app de propósito (ver .claude/plans/home-landing-page-2026-07-27.md, Fase 2). clamp() em vez
+     de um px fixo porque, diferente do resto do app (coluna única 640px, mobile-first sóbrio), o
+     hero ocupa uma faixa bem mais larga e precisa encolher em telas pequenas sem virar 2-3 linhas
+     quebradas de forma feia. */
+  --text-hero: clamp(40px, 8vw, 84px);
 
   /* Espaçamento e formas */
   --space-1: 4px;

@@ -9,14 +9,19 @@ vi.mock('../../src/models/UserModel');
 vi.mock('../../src/models/ActivityModel');
 vi.mock('../../src/models/CategoryModel');
 
-describe('GET / (home pública x dashboard — Fase 1 do plano de landing page)', () => {
+describe('GET / (home pública x dashboard — plano de landing page)', () => {
   const app = createApp();
 
-  it('sem sessão, renderiza a home pública (landing) em vez de redirecionar pro /login', async () => {
+  it('sem sessão, renderiza a home pública (landing) com hero e CTAs em pt-BR', async () => {
     const res = await request(app).get('/');
     expect(res.status).toBe(200);
     expect(res.text).toContain('<html lang="pt-BR"');
-    expect(res.text).toContain('Medidor de Eficiência');
+    expect(res.text).toContain('Um caderno para');
+    expect(res.text).toContain('o seu tempo.');
+    expect(res.text).toContain('href="/register"');
+    expect(res.text).toContain('Criar conta grátis');
+    expect(res.text).toContain('href="/login"');
+    expect(res.text).toContain('Já tenho conta');
     // Não é o dashboard autenticado — não deve trazer texto que só existe pra quem está logado.
     expect(res.text).not.toContain('O que você quer fazer agora?');
   });
@@ -25,6 +30,9 @@ describe('GET / (home pública x dashboard — Fase 1 do plano de landing page)'
     const res = await request(app).get('/').set('Cookie', 'locale=en-US');
     expect(res.status).toBe(200);
     expect(res.text).toContain('<html lang="en-US"');
+    expect(res.text).toContain('A notebook for');
+    expect(res.text).toContain('your time.');
+    expect(res.text).toContain('Create free account');
     expect(res.text).toContain('Log in');
     expect(res.text).toContain('Create account');
   });

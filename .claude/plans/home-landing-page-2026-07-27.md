@@ -1,8 +1,8 @@
 # Plan: Home pública — explicação do app + maneiras criativas de usar
 
-**Date:** 2026-07-27 (Fase 1 concluída em 2026-07-27)
-**Status:** ativo — Fase 1 concluída em `feature/home-landing-page`, não mesclada em `master`
-ainda (mesma convenção: push/merge só mediante pedido explícito).
+**Date:** 2026-07-27 (Fases 1-2 concluídas em 2026-07-27)
+**Status:** ativo — Fases 1-2 concluídas em `feature/home-landing-page`, não mescladas em
+`master` ainda (mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: rota dividida em `src/routes/index.ts` (dois handlers em `GET /`: o primeiro checa
 `req.session.userId` e já responde com `LandingController.show` se não houver sessão, senão
@@ -23,6 +23,49 @@ Testes novos em `tests/routes/home.routes.test.ts` (3 casos: sem sessão mostra 
 pt-BR, sem sessão + cookie `locale=en-US` mostra em inglês, com sessão continua mostrando o
 dashboard de sempre). Verificado ao vivo (dev server + curl, mesma técnica das fases anteriores)
 nos dois idiomas.
+
+**Novidade nesta sessão — screenshot real via Chrome headless:** descobri que
+`chrome.exe --headless=new --screenshot=arquivo.png url` (Chrome já instalado no Windows, sem
+dependência nova) funciona neste ambiente pra capturar renderização de verdade — a limitação
+"sem ferramenta de browser/screenshot" registrada em todo plano anterior desta sessão (RNF04,
+SEO) deixa de valer pra telas em largura desktop. Detalhe que importa reproduzir: precisa de
+`--user-data-dir` único por chamada (perfil reaproveitado trava intermitentemente) e
+`--run-all-compositor-stages-before-draw --virtual-time-budget=2000` pra deixar animações CSS
+(`.sketch-in`) terminarem antes da captura — sem isso, a screenshot pega o estado inicial da
+animação (`scale(0.94) rotate(-1deg)`, opacity parcial) e qualquer elemento posicionado em % de
+um ancestral transformado aparece deslocado, parecendo um bug de layout que não existe de verdade
+(aconteceu na Fase 2, ver abaixo). **Limitação real encontrada:** `--window-size=390,900` (mobile)
+não é respeitado neste ambiente sandboxed — `window.innerWidth` reporta 500 independente do valor
+pedido, mesmo numa página HTML sem nenhum CSS. Testagem visual em largura mobile não é confiável
+aqui; só desktop (testado em 1280×900).
+
+Fase 2: topbar completo (mesma marca + toggles de tema/idioma já existentes + CTAs "Entrar"
+secundário/"Criar conta" primário) e hero (título em 2 linhas forçadas via `<br/>` — não wrap
+natural — pra isolar a 2ª linha, junto com o sublinhado à mão, no mesmo inline-block que já
+funciona em `.login-hero-title`; token novo `--text-hero: clamp(40px, 8vw, 84px)` em
+`tokens.css`; subtítulo; CTA duplo). Copy do headline ("Um caderno para o seu tempo." /
+"A notebook for your time.") faz callback direto ao nome da identidade visual do produto
+("Caderno de Esboço"), não é um título genérico de SaaS.
+
+**Achados reais via screenshot (corrigidos, não só suspeitados):**
+- Título forçado em 2 linhas (`titleLine1`/`titleLine2`) evita que o sublinhado, cuja largura em
+  `%` é relativa ao inline-block do título, fique solto quando o texto quebra num ponto
+  imprevisível — mais robusto do que confiar no wrap natural do navegador.
+  `.marketing-hero-title-accent` isola só a 2ª linha nesse inline-block.
+- `.btn` é `display: inline-flex`; como item flex direto de `.marketing-hero-ctas`
+  (`flex-direction: column` no mobile), o `min-width: auto` padrão usaria o conteúdo (texto sem
+  quebra) como largura mínima — `.marketing-hero-ctas .btn { min-width: 0; }` corrige (gotcha
+  clássico de flexbox, real, não dependia da largura de viewport pra reproduzir).
+- `overflow-wrap: break-word` adicionado em `.marketing-hero-title` como precaução geral.
+- Topbar da home pública tem 2 elementos a mais que o `.topbar` padrão (CTAs de texto, não só
+  ícone) — no breakpoint mobile já existente (`max-width: 560px`), o botão secundário "Entrar" some
+  (já duplicado no hero abaixo) e o "Criar conta" encolhe, evitando aperto excessivo. Esse ajuste
+  específico não pôde ser confirmado visualmente (limitação de viewport mobile acima), é uma
+  correção por revisão de código, não por screenshot.
+
+Build/lint verdes; testes 129/132 (mesmas 3 falhas de ambiente); 176/176 chaves em paridade.
+Recomendado uma checagem visual real em viewport mobile (celular/emulador de verdade) antes de
+considerar a Fase 2 100% validada — a mobile via headless Chrome neste ambiente não é confiável.
 
 Build/lint verdes; testes 129/132 (as 3 falhas são as mesmas de sempre — `GET /` autenticado via
 Google/login real, precisa de Postgres local, Docker Desktop indisponível nesta sessão — não
