@@ -51,3 +51,37 @@
     </div>
   </div>
 </section>
+
+<%
+  /* Maneiras criativas de usar — o coração do pedido original desta home. Cada caso de uso cita
+     uma feature real e verificável no código (nunca uma promessa vazia de marketing): valor por
+     categoria (freelancer/orçamento), tempoDesejadoMin (estudante), duracaoPadraoMin (exercício),
+     "dias registrados" do relatório (hábito/streak), atividade em andamento (foco). Cores
+     cicladas pelas 4 "canetas" de acento (i % 4) e tilt alternado (i % 2, mesma técnica de
+     categories/index.ejs) — visual de "notas espalhadas no caderno", deliberadamente diferente
+     da grade centralizada e uniforme da seção anterior (variedade de composição entre seções). */
+  const useCases = [
+    { icon: 'tag', color: 'section-blue', key: 'freelancer' },
+    { icon: 'calendar', color: 'section-green', key: 'student' },
+    { icon: 'tag', color: 'section-yellow', key: 'budget' },
+    { icon: 'clock', color: 'section-red', key: 'exercise' },
+    { icon: 'star', color: 'section-blue', key: 'habit' },
+    { icon: 'eye', color: 'section-green', key: 'focus' },
+  ];
+%>
+<section class="marketing-section marketing-usecases">
+  <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.useCases.heading') %></h2>
+  <div class="marketing-usecases-grid">
+    <% useCases.forEach((useCase, i) => { %>
+      <div class="card sketch-edge <%= useCase.color %> marketing-usecase scroll-reveal"
+           data-scroll-reveal
+           style="--tilt: <%= i % 2 ? '0.7deg' : '-0.7deg' %>; --stagger-index: <%= i + 1 %>; transform: rotate(var(--tilt));">
+        <div class="card-heading">
+          <%- include('../partials/icon', { name: useCase.icon, size: 22 }) %>
+          <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>
+        </div>
+        <p class="muted"><%= t(`marketing.useCases.${useCase.key}.description`) %></p>
+      </div>
+    <% }) %>
+  </div>
+</section>

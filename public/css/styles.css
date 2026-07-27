@@ -358,6 +358,12 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .marketing-feature svg { margin-bottom: 10px; }
 .marketing-feature .card-title { font-size: var(--text-lg); }
 
+/* Maneiras criativas de usar — cards left-aligned com ícone+título lado a lado (.card-heading,
+   mesmo padrão de categories/index.ejs), de propósito diferente do centralizado de
+   .marketing-feature acima: variedade de composição entre seções consecutivas. */
+.marketing-usecases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; margin-top: 2rem; }
+.marketing-usecase .card-heading svg { flex: none; }
+
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
   .app-content { padding: 10px 16px 48px; }

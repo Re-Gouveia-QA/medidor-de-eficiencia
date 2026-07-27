@@ -1,7 +1,7 @@
 # Plan: Home pública — explicação do app + maneiras criativas de usar
 
-**Date:** 2026-07-27 (Fases 1-3 concluídas em 2026-07-27)
-**Status:** ativo — Fases 1-3 concluídas em `feature/home-landing-page`, não mescladas em
+**Date:** 2026-07-27 (Fases 1-4 concluídas em 2026-07-27)
+**Status:** ativo — Fases 1-4 concluídas em `feature/home-landing-page`, não mescladas em
 `master` ainda (mesma convenção: push/merge só mediante pedido explícito).
 
 Fase 1: rota dividida em `src/routes/index.ts` (dois handlers em `GET /`: o primeiro checa
@@ -97,6 +97,35 @@ observer, sem animação) — nunca deixa conteúdo esperando um scroll que talv
   que vale manter nas próximas fases.
 
 Build/lint verdes; testes 129/132 (mesmas 3 falhas de ambiente); 183/183 chaves em paridade.
+
+Fase 4: seção "Maneiras criativas de usar" — o pedido central deste plano. 6 casos de uso, cada
+um citando uma feature real e verificável no código (não uma promessa de marketing vazia):
+freelancer/orçamento doméstico → `possuiValor`/`valorPadrao` de categoria; estudante →
+`tempoDesejadoMin` (meta diária); exercício → `duracaoPadraoMin`; hábito/streak → "dias
+registrados" do relatório; foco vs. reuniões → atividade em andamento (RF do card da home).
+Estrutura via array `useCases` + `forEach` no `.ejs` (mesma técnica de `categories/index.ejs`),
+evitando repetir 6 blocos quase idênticos à mão. Ícones/cores ciclam pelas 4 "canetas" de acento
+(`i % 4` implícito na ordem do array) com repetição intencional entre casos correlatos (`tag` em
+freelancer e orçamento — ambos sobre o campo `valor`). Cards left-aligned com `.card-heading`
+(ícone+título lado a lado) e tilt alternado (`i % 2`, mesma técnica de `categories/index.ejs`) —
+visual de "notas espalhadas no caderno", deliberadamente diferente da grade centralizada da seção
+anterior (Fase 3): variedade de composição entre seções consecutivas, não repetição.
+
+**Erro real cometido e corrigido antes de gastar um ciclo de screenshot:** fechei a tag `<%` logo
+depois do comentário JSDoc-like, deixando `const useCases = [...]` como texto literal órfão fora
+de qualquer tag (mesma classe de erro da Fase 2 — comentário sem `*/` de fechamento —, mas
+manifestando de um jeito ligeiramente diferente: aqui era um `%>` prematuro, não uma ausência de
+`*/`). Pego mais cedo desta vez porque validar com `ejs.compile()` direto via `node -e` **antes**
+de subir o dev server virou hábito a partir da Fase 3 — vale continuar fazendo isso sempre antes
+de screenshot.
+
+Verificado ao vivo com screenshot (viewport 1280×2200, página inteira capturada de uma vez): os 3
+cards da Fase 3 e os 6 cards da Fase 4 renderizam corretos, coloridos, com tilt alternado visível
+e ícones certos (tag azul/verde/vermelho conforme o array, calendar verde, clock vermelho, star
+azul, eye verde) — nenhuma quebra de layout entre as duas seções consecutivas com composições
+diferentes.
+
+Build/lint verdes; testes 129/132 (mesmas 3 falhas de ambiente); 196/196 chaves em paridade.
 
 Build/lint verdes; testes 129/132 (as 3 falhas são as mesmas de sempre — `GET /` autenticado via
 Google/login real, precisa de Postgres local, Docker Desktop indisponível nesta sessão — não
