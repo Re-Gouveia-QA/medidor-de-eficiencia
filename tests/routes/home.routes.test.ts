@@ -1,3 +1,4 @@
+import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createApp } from '../../src/app';
 import { ActivityModel } from '../../src/models/ActivityModel';
@@ -7,6 +8,36 @@ import { loginAgent } from '../helpers/auth';
 vi.mock('../../src/models/UserModel');
 vi.mock('../../src/models/ActivityModel');
 vi.mock('../../src/models/CategoryModel');
+
+describe('GET / (home pública x dashboard — Fase 1 do plano de landing page)', () => {
+  const app = createApp();
+
+  it('sem sessão, renderiza a home pública (landing) em vez de redirecionar pro /login', async () => {
+    const res = await request(app).get('/');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('<html lang="pt-BR"');
+    expect(res.text).toContain('Medidor de Eficiência');
+    // Não é o dashboard autenticado — não deve trazer texto que só existe pra quem está logado.
+    expect(res.text).not.toContain('O que você quer fazer agora?');
+  });
+
+  it('sem sessão, com cookie "locale=en-US", renderiza a landing em inglês', async () => {
+    const res = await request(app).get('/').set('Cookie', 'locale=en-US');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('<html lang="en-US"');
+    expect(res.text).toContain('Log in');
+    expect(res.text).toContain('Create account');
+  });
+
+  it('com sessão, continua renderizando o dashboard normal (comportamento inalterado)', async () => {
+    const agent = await loginAgent(app);
+    vi.mocked(ActivityModel.findInProgress).mockResolvedValue(null);
+    vi.mocked(CategoryModel.listByUser).mockResolvedValue([]);
+    const res = await agent.get('/');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('O que você quer fazer agora?');
+  });
+});
 
 describe('GET / (i18n Fase 0 — RNF04)', () => {
   const app = createApp();

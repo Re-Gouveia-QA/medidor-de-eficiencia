@@ -5,8 +5,10 @@ import { createApp } from '../../src/app';
 describe('requireAuth — proteção de rotas privadas (RNF02)', () => {
   const app = createApp();
 
+  // "/" não entra aqui: desde a Fase 1 do plano de landing page, é pública pra visitante sem
+  // sessão (mostra a home explicativa em vez de redirecionar) — ver
+  // tests/routes/home.routes.test.ts pro comportamento detalhado dela.
   const rotasProtegidas = [
-    '/',
     '/activities',
     '/activities/new',
     '/categories',

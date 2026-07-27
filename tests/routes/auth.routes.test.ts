@@ -233,9 +233,10 @@ describe('Rotas de autenticação', () => {
     expect(res.status).toBe(302);
     expect(res.headers.location).toBe('/login');
 
+    // Fase 1 do plano de landing page: "/" sem sessão mostra a home pública (200), não redireciona
+    // mais pro /login — ver tests/routes/home.routes.test.ts pro comportamento detalhado.
     const home = await agent.get('/');
-    expect(home.status).toBe(302);
-    expect(home.headers.location).toBe('/login');
+    expect(home.status).toBe(200);
   });
 
   describe('Recuperação de senha', () => {

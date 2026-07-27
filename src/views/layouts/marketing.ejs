@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="<%= locale %>"<% if (theme === 'dark') { %> data-theme="dark"<% } %>>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> · Medidor de Eficiência</title>
+  <%- include('../partials/meta-tags') %>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body class="marketing-page">
+  <%- include('../partials/svg-filters') %>
+  <header class="topbar marketing-topbar">
+    <a class="brand" href="/">Medidor</a>
+    <div class="topbar-actions">
+      <button type="button" id="localeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary locale-toggle" aria-label="<%= t('layout.localeToggleAriaLabel') %>" data-next-locale="<%= locale === 'pt-BR' ? 'en-US' : 'pt-BR' %>">
+        <%= locale === 'pt-BR' ? 'EN' : 'PT' %>
+      </button>
+      <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="<%= t('layout.themeToggleAriaLabel') %>" aria-pressed="<%= theme === 'dark' ? 'true' : 'false' %>">
+        <span class="icon-sun"><%- include('../partials/icon', { name: 'sun', size: 18, color: 'var(--accent-yellow)' }) %></span>
+        <span class="icon-moon"><%- include('../partials/icon', { name: 'moon', size: 18, color: 'var(--ink-soft)' }) %></span>
+      </button>
+      <a class="btn btn-secondary sketch-edge sketch-hover" href="/login"><%= t('marketing.topbar.login') %></a>
+      <a class="btn btn-primary sketch-edge sketch-hover" href="/register"><%= t('marketing.topbar.register') %></a>
+    </div>
+  </header>
+
+  <main id="main-content" class="marketing-content">
+    <%- include('../partials/flash') %>
+    <%- body %>
+  </main>
+
+  <script src="/js/theme-toggle.js"></script>
+  <script src="/js/locale-toggle.js"></script>
+</body>
+</html>
