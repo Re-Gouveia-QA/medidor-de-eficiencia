@@ -41,23 +41,21 @@
   <ul class="list">
     <% atividades.forEach((a, i) => { %>
       <li class="list-item sketch-edge sketch-in" style="--stagger-index: <%= i %>;">
-        <span class="color-dot" style="background: <%= a.category.cor %>" aria-hidden="true"></span>
-        <div class="list-item-body">
-          <strong><%= a.nome %></strong>
-          <span class="muted">
-            <%= a.data.toISOString().slice(0, 10).split('-').reverse().join('/') %> ·
-            <% if (a.horaFim) { %>
-              <%= formatTime(a.horaInicio) %>–<%= formatTime(a.horaFim) %> · <%= formatMinutes(a.duracaoMin) %> ·
-            <% } else { %>
-              <span class="badge badge-blue"><%= t('activities.index.inProgressBadge') %></span> ·
-            <% } %>
-            <%= a.category.nome %>
-          </span>
-          <% if (a.category.possuiValor && a.valor != null) { %>
-            <span class="muted"><%= a.category.valorLabel || t('common.valueLabelDefault') %>: <%= formatNumber(a.valor) %></span>
-          <% } %>
-          <% if (a.descricao) { %><span class="muted"><%= a.descricao %></span><% } %>
-        </div>
+        <button type="button" class="list-item-info js-view-activity-details" aria-label="<%= t('activities.index.viewDetailsAriaLabel', { nome: a.nome }) %>">
+          <span class="color-dot" style="background: <%= a.category.cor %>" aria-hidden="true"></span>
+          <div class="list-item-body">
+            <strong><%= a.nome %></strong>
+            <span class="muted">
+              <%= a.data.toISOString().slice(0, 10).split('-').reverse().join('/') %> ·
+              <% if (a.horaFim) { %>
+                <%= formatTime(a.horaInicio) %>–<%= formatTime(a.horaFim) %> · <%= formatMinutes(a.duracaoMin) %> ·
+              <% } else { %>
+                <span class="badge badge-blue"><%= t('activities.index.inProgressBadge') %></span> ·
+              <% } %>
+              <%= a.category.nome %>
+            </span>
+          </div>
+        </button>
         <div class="actions">
           <a class="icon-btn sketch-edge sketch-hover btn-secondary" href="/activities/<%= a.id %>/edit" aria-label="<%= t('activities.index.editAriaLabel') %>">
             <%- include('../partials/icon', { name: 'edit', size: 20 }) %>
@@ -69,7 +67,30 @@
             </button>
           </form>
         </div>
+        <template class="activity-detail-template">
+          <h3 class="activity-detail-name"><%= a.nome %></h3>
+          <p class="activity-detail-meta">
+            <span class="color-dot" style="background: <%= a.category.cor %>" aria-hidden="true"></span>
+            <%= a.category.nome %>
+          </p>
+          <p class="muted">
+            <%= a.data.toISOString().slice(0, 10).split('-').reverse().join('/') %>
+            <% if (a.horaFim) { %>
+              · <%= formatTime(a.horaInicio) %>–<%= formatTime(a.horaFim) %> · <%= formatMinutes(a.duracaoMin) %>
+            <% } else { %>
+              · <span class="badge badge-blue"><%= t('activities.index.inProgressBadge') %></span>
+            <% } %>
+          </p>
+          <% if (a.descricao) { %>
+            <p><%= a.descricao %></p>
+          <% } %>
+          <% if (a.category.possuiValor && a.valor != null) { %>
+            <p><strong><%= a.category.valorLabel || t('common.valueLabelDefault') %>:</strong> <%= formatNumber(a.valor) %></p>
+          <% } %>
+        </template>
       </li>
     <% }) %>
   </ul>
 <% } %>
+
+<%- include('../partials/activity-detail-modal') %>
