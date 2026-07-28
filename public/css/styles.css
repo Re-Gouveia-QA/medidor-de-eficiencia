@@ -13,7 +13,7 @@
   display: flex; align-items: center; justify-content: space-between;
   max-width: 640px; margin: 0 auto; padding: 16px 20px 4px; gap: 12px;
 }
-.brand { font-family: var(--font-display); font-size: var(--text-xl); color: var(--ink); text-decoration: none; }
+.brand { font-family: var(--font-display); font-size: var(--text-xl); color: var(--ink); text-decoration: none; -webkit-text-stroke-width: 0; }
 .brand:hover { color: var(--ink); }
 .topbar-actions { display: flex; align-items: center; gap: 16px; }
 .topbar-actions form { display: contents; }
@@ -208,7 +208,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    era longa o bastante pra quebrar linha (ex.: "total de horas registradas no período"), a linha
    quebrada ficava colada no número acima, sem respiro. */
 .report-card { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 1.75rem 1rem; gap: 6px; }
-.report-big { font-family: var(--font-display); font-size: var(--text-2xl); }
+.report-big { font-family: var(--font-display); font-size: var(--text-2xl); -webkit-text-stroke-width: 0; }
 /* Destaque dos números-chave do relatório — mesma técnica do sublinhado "marca-texto" da tela de
    login (path com pathLength="1" pra usar stroke-dasharray/dashoffset em unidades simples): o
    wrapper inline-block encolhe pro tamanho do número, então o sublinhado (94% da largura do
@@ -265,7 +265,13 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* Marcação de data (dd/MM) abaixo de cada ponto — SVG não herda fonte/cor da página, precisa
    declarar explicitamente. Horário exato de cada ponto continua só no tooltip de hover/foco
    (.chart-point abaixo), a marcação aqui é só orientação grosseira de "quando" no eixo X. */
-.line-chart-axis-label { font-family: var(--font-body); font-size: 13px; fill: var(--ink-soft); }
+.line-chart-axis-label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  fill: var(--ink-soft);
+  -webkit-text-stroke-width: var(--font-body-stroke);
+  -webkit-text-stroke-color: var(--ink-soft);
+}
 .line-chart-meta { display: flex; justify-content: space-between; font-size: var(--text-sm); color: var(--ink-soft); margin-top: 4px; }
 
 /* Ponto do gráfico como <button> HTML posicionado por porcentagem sobre o wrapper (mesma
@@ -310,7 +316,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    de contraste como texto sobre --surface — por isso ela só aparece no dot/linha/círculo, nunca
    em texto, mesma cautela já aplicada em .color-dot. */
 .chart-tooltip-name { font-size: var(--text-sm); color: var(--ink-soft); }
-.chart-tooltip-value { font-family: var(--font-accent); font-size: var(--text-lg); line-height: 1.1; }
+.chart-tooltip-value { font-family: var(--font-accent); font-size: var(--text-lg); line-height: 1.1; -webkit-text-stroke-width: 0; }
 .chart-tooltip-meta { font-size: var(--text-sm); color: var(--ink-soft); }
 .chart-point:hover .chart-tooltip, .chart-point:focus-visible .chart-tooltip {
   opacity: 1;
