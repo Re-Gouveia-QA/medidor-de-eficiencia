@@ -5,7 +5,9 @@
 testes passando, mesma cobertura, só reorganização). Fase 2 concluída (Playwright + banco `_e2e`
 funcionando, smoke spec passando 2x seguidas contra `localhost:5433/medidor_eficiencia_e2e`,
 servidor de teste isolado na porta 3100 — confirmado que não colide com o servidor de dev na 3000
-nem com o banco de dev, mesmo os dois rodando ao mesmo tempo). Fases 3-7 ainda não iniciadas.
+nem com o banco de dev, mesmo os dois rodando ao mesmo tempo). Fase 3 concluída (`e2e/auth.spec.ts`,
+4/4 cenários: login válido, senha errada, guarda de rota sem sessão, logout). Fases 4-7 ainda não
+iniciadas.
 
 ## Goal
 
