@@ -1,7 +1,13 @@
 # Plan: Modal de detalhes da atividade (lista de `/activities`)
 
 **Date:** 2026-07-28
-**Status:** draft
+**Status:** concluído — Fases 1-2 implementadas, cada uma em branch própria empilhada
+(`feature/activity-detail-modal` → `feature/activity-card-simplify`, já que a Fase 2 remove linhas
+do card que dependem do `<template>` adicionado na Fase 1 no mesmo arquivo). Build/testes/lint
+verdes (137/137) nas duas fases; verificado ao vivo via CDP nos dois temas: modal abre com o
+conteúdo certo do item clicado, `Tab`/`Escape`/retorno de foco funcionam, e o card ficou compacto
+(nome, data, horário/duração, categoria, 3 ícones de ação) sem perder nenhuma informação — valor e
+descrição continuam disponíveis, só que dentro do modal. Branches aguardando decisão de merge.
 
 ## Goal
 

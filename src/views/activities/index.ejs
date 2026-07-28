@@ -53,10 +53,6 @@
             <% } %>
             <%= a.category.nome %>
           </span>
-          <% if (a.category.possuiValor && a.valor != null) { %>
-            <span class="muted"><%= a.category.valorLabel || t('common.valueLabelDefault') %>: <%= formatNumber(a.valor) %></span>
-          <% } %>
-          <% if (a.descricao) { %><span class="muted"><%= a.descricao %></span><% } %>
         </div>
         <div class="actions">
           <button type="button" class="icon-btn sketch-edge sketch-hover btn-secondary js-view-activity-details" aria-label="<%= t('activities.index.viewDetailsAriaLabel') %>">
