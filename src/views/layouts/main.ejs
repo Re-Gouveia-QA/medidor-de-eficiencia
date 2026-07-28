@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title><%= title %> · Medidor de Eficiência</title>
+  <title><%= title %> · Sketch your time</title>
   <%- include('../partials/meta-tags', { noindex: true }) %>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="/css/styles.css" />
@@ -13,7 +13,7 @@
   <% if (currentUser) { %>
     <a class="skip-link" href="#main-content"><%= t('layout.skipLink') %></a>
     <header class="topbar">
-      <a class="brand" href="/">Medidor</a>
+      <a class="brand" href="/">Sketch</a>
       <div class="topbar-actions">
         <% if (currentUser.isAdmin) { %>
           <a class="icon-btn sketch-edge sketch-hover btn-secondary docs-btn" href="/docs" aria-label="<%= t('layout.docsAriaLabel') %>">

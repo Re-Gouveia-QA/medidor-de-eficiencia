@@ -1,8 +1,8 @@
 {
   "meta.defaultDescription": "Registre suas atividades diárias, organize-as em categorias e acompanhe sua eficiência com relatórios de tempo e valor por período.",
-  "auth.login.metaDescription": "Entre no Medidor de Eficiência para registrar seu dia e entender seu tempo.",
+  "auth.login.metaDescription": "Entre no Sketch your time para registrar seu dia e entender seu tempo.",
   "auth.register.metaDescription": "Crie sua conta gratuita e comece a registrar suas atividades diárias hoje.",
-  "auth.forgotPassword.metaDescription": "Recupere o acesso à sua conta do Medidor de Eficiência.",
+  "auth.forgotPassword.metaDescription": "Recupere o acesso à sua conta do Sketch your time.",
   "marketing.metaDescription": "Registre suas atividades diárias, organize-as em categorias e descubra maneiras criativas de usar o Sketch your time para entender seu tempo.",
   "marketing.topbar.login": "Entrar",
   "marketing.topbar.register": "Criar conta",

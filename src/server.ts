@@ -17,5 +17,5 @@ process.on('unhandledRejection', (reason) => {
 const app = createApp();
 
 app.listen(env.PORT, () => {
-  console.log(`✅ Medidor de Eficiência rodando em http://localhost:${env.PORT}`);
+  console.log(`✅ Sketch your time rodando em http://localhost:${env.PORT}`);
 });
