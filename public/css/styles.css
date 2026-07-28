@@ -203,6 +203,11 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 
 /* Relatórios */
 .report-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin: 1rem 0 1.5rem; }
+/* Título de cada seção do relatório ("Tempo por categoria"/"Valor por categoria") — h1-h4 zeram
+   margin por padrão (components.css, usado de propósito em .card-title etc.), então sem isso o
+   título ficava colado no card anterior (o card de .bars não tem margin-bottom próprio). Escopado
+   aqui em vez de mudar o reset global, que outros h1-h4 (dentro de card, por exemplo) dependem. */
+.report-section-heading { margin: 2rem 0 1rem; }
 /* display: flex era omitido antes (align-items sozinho não fazia nada) — sem isso, o número
    (.report-big-wrap) e a descrição (.muted) ficavam no mesmo fluxo inline, e quando a descrição
    era longa o bastante pra quebrar linha (ex.: "total de horas registradas no período"), a linha
