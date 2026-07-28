@@ -43,9 +43,12 @@
   --font-body: 'Patrick Hand', cursive;
   --font-display: 'Architects Daughter', cursive;
   --font-accent: 'Kalam', cursive;
+  /* --text-base 18px -> 19px (Fase 3 de .claude/plans/pequenos-ajustes-visuais-2026-07-28.md —
+     "sutil", escolhida entre 3 direções comparadas visualmente). --text-sm fica no piso de 15px
+     (CLAUDE.md: corpo nunca abaixo disso) — não fazia parte da direção escolhida. */
   --text-xs: 13px;
   --text-sm: 15px;
-  --text-base: 18px;
+  --text-base: 19px;
   --text-lg: 22px;
   --text-xl: 28px;
   --text-2xl: 36px;
