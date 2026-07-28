@@ -1,0 +1,11 @@
+<div id="activityDetailModal" class="activity-detail-modal" role="dialog" aria-modal="true" aria-labelledby="activityDetailModalTitle">
+  <div class="activity-detail-modal-card card sketch-edge">
+    <div class="activity-detail-modal-header">
+      <h2 id="activityDetailModalTitle"><%= t('activities.index.detailModal.title') %></h2>
+      <button type="button" class="icon-btn sketch-edge sketch-hover btn-secondary activity-detail-modal-close" aria-label="<%= t('activities.index.detailModal.closeAriaLabel') %>">
+        <%- include('./icon', { name: 'x', size: 18 }) %>
+      </button>
+    </div>
+    <div class="activity-detail-body"></div>
+  </div>
+</div>

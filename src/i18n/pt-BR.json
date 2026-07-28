@@ -129,6 +129,9 @@
   "activities.index.editAriaLabel": "Editar",
   "activities.index.deleteAriaLabel": "Excluir",
   "activities.index.deleteConfirm": "Excluir esta atividade?",
+  "activities.index.viewDetailsAriaLabel": "Ver detalhes",
+  "activities.index.detailModal.title": "Detalhes da atividade",
+  "activities.index.detailModal.closeAriaLabel": "Fechar",
 
   "activities.form.newTitle": "Nova Atividade",
   "activities.form.editTitle": "Editar Atividade",

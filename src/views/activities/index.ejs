@@ -59,6 +59,9 @@
           <% if (a.descricao) { %><span class="muted"><%= a.descricao %></span><% } %>
         </div>
         <div class="actions">
+          <button type="button" class="icon-btn sketch-edge sketch-hover btn-secondary js-view-activity-details" aria-label="<%= t('activities.index.viewDetailsAriaLabel') %>">
+            <%- include('../partials/icon', { name: 'eye', size: 20 }) %>
+          </button>
           <a class="icon-btn sketch-edge sketch-hover btn-secondary" href="/activities/<%= a.id %>/edit" aria-label="<%= t('activities.index.editAriaLabel') %>">
             <%- include('../partials/icon', { name: 'edit', size: 20 }) %>
           </a>
@@ -69,7 +72,30 @@
             </button>
           </form>
         </div>
+        <template class="activity-detail-template">
+          <h3 class="activity-detail-name"><%= a.nome %></h3>
+          <p class="activity-detail-meta">
+            <span class="color-dot" style="background: <%= a.category.cor %>" aria-hidden="true"></span>
+            <%= a.category.nome %>
+          </p>
+          <p class="muted">
+            <%= a.data.toISOString().slice(0, 10).split('-').reverse().join('/') %>
+            <% if (a.horaFim) { %>
+              · <%= formatTime(a.horaInicio) %>–<%= formatTime(a.horaFim) %> · <%= formatMinutes(a.duracaoMin) %>
+            <% } else { %>
+              · <span class="badge badge-blue"><%= t('activities.index.inProgressBadge') %></span>
+            <% } %>
+          </p>
+          <% if (a.category.possuiValor && a.valor != null) { %>
+            <p><strong><%= a.category.valorLabel || t('common.valueLabelDefault') %>:</strong> <%= formatNumber(a.valor) %></p>
+          <% } %>
+          <% if (a.descricao) { %>
+            <p><%= a.descricao %></p>
+          <% } %>
+        </template>
       </li>
     <% }) %>
   </ul>
 <% } %>
+
+<%- include('../partials/activity-detail-modal') %>

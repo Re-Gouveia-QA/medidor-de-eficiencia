@@ -212,3 +212,28 @@ textarea.input { padding: 10px 4px; resize: vertical; }
 .confirm-toast-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .confirm-toast-message { margin: 0; }
 .confirm-toast-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* Modal de detalhes da atividade (somente leitura) — ver public/js/activity-detail-modal.js.
+   Diferente do confirm-toast acima (peça de rodapé sem scrim, pra uma mensagem curta): aqui é um
+   dialog centralizado de verdade, com scrim, porque o conteúdo (descrição completa da atividade)
+   pode ser bem mais longo que uma confirmação de uma linha. Scrim usa rgba(0,0,0) fixo, não
+   var(--ink): --ink se inverte no tema escuro (fica claro), e um scrim precisa sempre escurecer o
+   que está atrás, nos dois temas — não faria sentido variar com o tema. */
+.activity-detail-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+.activity-detail-modal.is-visible { opacity: 1; pointer-events: auto; }
+.activity-detail-modal-card { width: min(480px, 100%); max-height: min(80vh, 640px); overflow-y: auto; padding: 22px; }
+.activity-detail-modal-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.activity-detail-modal-header h2 { font-size: var(--text-xl); }
+.activity-detail-body { display: flex; flex-direction: column; gap: 10px; }
