@@ -8,13 +8,19 @@
      sempre no esquema claro do SO, ficando ilegíveis (ex.: ícone de calendário preto) no tema escuro. */
   color-scheme: light;
 
-  /* Cores — papel/tinta + 4 canetas de acento (mesma família oklch, variando o hue) */
-  --paper: oklch(97% 0.015 85);
+  /* Cores — papel/tinta + 4 canetas de acento (mesma família oklch, variando o hue).
+     Papel/tinta/superfície na paleta "sépia quente" (Fase 1 de
+     .claude/plans/pequenos-ajustes-visuais-2026-07-28.md — 3 variações comparadas lado a lado
+     num Artifact, esta foi a escolhida pelo usuário): matiz mais quente que a paleta original
+     (hue 85/260 → 75/55), pra reduzir a sensação de "luz azul" e ficar mais confortável pra
+     leitura prolongada. --paper-grid e os 4 acentos ficaram de fora desta rodada (não fizeram
+     parte da comparação aprovada). */
+  --paper: oklch(95% 0.028 75);
   --paper-grid: oklch(89% 0.03 250);
-  --ink: oklch(22% 0.03 260);
-  --ink-soft: oklch(42% 0.02 260);
-  --surface: oklch(99% 0.008 85);
-  --surface-alt: oklch(94% 0.02 85);
+  --ink: oklch(30% 0.035 55);
+  --ink-soft: oklch(47% 0.028 55);
+  --surface: oklch(97% 0.018 75);
+  --surface-alt: oklch(91% 0.032 75);
   --accent-blue: oklch(55% 0.16 255);
   --accent-blue-soft: oklch(90% 0.05 255);
   --accent-red: oklch(55% 0.19 25);
@@ -74,12 +80,13 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --paper: oklch(24% 0.012 260);
+  /* Mesma paleta "sépia quente" da Fase 1 (ver nota em :root), lado escuro. */
+  --paper: oklch(26% 0.022 50);
   --paper-grid: oklch(32% 0.02 260);
-  --ink: oklch(93% 0.02 90);
-  --ink-soft: oklch(76% 0.02 90);
-  --surface: oklch(29% 0.015 260);
-  --surface-alt: oklch(34% 0.02 260);
+  --ink: oklch(87% 0.028 80);
+  --ink-soft: oklch(72% 0.024 80);
+  --surface: oklch(30% 0.022 50);
+  --surface-alt: oklch(35% 0.026 50);
   /* --accent-blue/red/green ficam mais escuras/saturadas que no tema claro (em vez de mais claras):
      texto de botão sólido usa --on-accent (sempre claro) — um fundo já claro deixaria texto claro
      sobre claro, contraste ruim. Mantendo o acento "cheio" (não a variante -soft) perto da mesma
