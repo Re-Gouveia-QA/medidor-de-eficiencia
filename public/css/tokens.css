@@ -23,6 +23,12 @@
   --surface-alt: oklch(91% 0.032 75);
   --accent-blue: oklch(55% 0.16 255);
   --accent-blue-soft: oklch(90% 0.05 255);
+  /* Variante de --accent-blue calibrada só pra texto de link pequeno (Fase 4 de
+     .claude/plans/pequenos-ajustes-visuais-2026-07-28.md — links de "esqueci minha senha"/"criar
+     conta" no login, 13-15px). --accent-blue puro dá 4.23:1 (claro) / 3.60:1 (escuro) contra
+     --paper — abaixo do mínimo WCAG AA de 4.5:1 pra texto normal. Mesmo hue/chroma, só a
+     luminosidade ajustada (calculada via oklch->sRGB->contraste) até 4.5:1 nos dois temas. */
+  --accent-blue-link: oklch(53% 0.16 255);
   --accent-red: oklch(55% 0.19 25);
   --accent-red-soft: oklch(92% 0.05 25);
   --accent-green: oklch(58% 0.15 145);
@@ -104,6 +110,9 @@
      faixa de luminosidade do tema claro garante contraste consistente contra --on-accent nos dois temas. */
   --accent-blue: oklch(58% 0.17 255);
   --accent-blue-soft: oklch(36% 0.07 255);
+  /* Ver nota em :root — no escuro o ajuste vai pro lado oposto (mais claro, não mais escuro),
+     porque o texto precisa contrastar contra um --paper escuro. */
+  --accent-blue-link: oklch(64% 0.17 255);
   --accent-red: oklch(58% 0.20 25);
   --accent-red-soft: oklch(38% 0.08 25);
   --accent-green: oklch(60% 0.16 145);
