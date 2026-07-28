@@ -129,7 +129,7 @@
   "activities.index.editAriaLabel": "Edit",
   "activities.index.deleteAriaLabel": "Delete",
   "activities.index.deleteConfirm": "Delete this activity?",
-  "activities.index.viewDetailsAriaLabel": "View details",
+  "activities.index.viewDetailsAriaLabel": "View details for {{nome}}",
   "activities.index.detailModal.title": "Activity details",
   "activities.index.detailModal.closeAriaLabel": "Close",
 

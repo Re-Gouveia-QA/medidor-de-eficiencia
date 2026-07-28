@@ -219,6 +219,11 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 18px; margin-top: 1rem; padding: 0; }
 .list-item { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
+/* Área clicável do item (abre o modal de detalhes) — <button> em vez de handler no <li> inteiro
+   pra não sobrepor os botões de ação (editar/excluir), que ficam fora dela como irmãos. */
+.list-item-info { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; text-align: left; border-radius: 6px; }
+.list-item-info:hover .list-item-body strong { text-decoration: underline; }
+.list-item-info:focus-visible { outline: 2px solid var(--accent-blue); outline-offset: 4px; }
 .list-item-body { display: flex; flex-direction: column; flex: 1; gap: 2px; min-width: 0; }
 .actions { display: flex; gap: 14px; flex: none; }
 .color-dot { width: 16px; height: 16px; border-radius: 50%; display: inline-block; flex-shrink: 0; border: 2px solid var(--ink); }
