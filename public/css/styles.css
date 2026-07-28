@@ -529,17 +529,19 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 
 /* Maneiras criativas de usar — carrossel horizontal de "post-its" (redesign a partir de mockup
    de referência), 3ª composição distinta da página (hero centralizado, grade de features, e
-   agora scroll horizontal) — variedade deliberada entre seções consecutivas. Respeita a coluna
-   de 960px de .marketing-content (pedido explícito) — não é mais full-bleed até a borda da
-   viewport (abordagem anterior, revertida): sem width/left/margin-left, .marketing-usecases-
-   viewport já ocupa 100% do container normal do bloco pai. overflow:hidden continua aqui (não no
-   próprio .marketing-usecases-grid, que também é o que rola via overflow-x:auto — os dois
-   overflows no mesmo elemento entrariam em conflito), agora só mascarando o fade dentro dos
-   960px em vez da viewport inteira. scrollbar escondida (sem lib nova, só propriedades CSS) — a
-   "pista" de rolagem é visual (cards cortados/esmaecidos na borda), não uma barra de scroll. */
+   agora scroll horizontal) — variedade deliberada entre seções consecutivas. Full-bleed até a
+   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw)
+   — mas agora em .marketing-usecases-viewport (abaixo), não mais no próprio grid: overflow:hidden
+   (pedido explícito, pra mascarar o fade) só faz sentido no elemento que define o limite visível
+   real; no .marketing-usecases-grid, que também é o que rola (overflow-x:auto), os dois overflows
+   entrariam em conflito. scrollbar escondida (sem lib nova, só propriedades CSS) — a "pista" de
+   rolagem é visual (cards cortados/esmaecidos na borda), não uma barra de scroll. */
 .marketing-usecases-viewport {
   position: relative;
   overflow: hidden;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
 }
 /* Máscara de fade nas 2 extremidades: gradiente de --paper (cor do papel) até transparente,
    sobreposto (z-index acima do grid, que fica em fluxo normal/sem position) por cima dos cards
@@ -575,16 +577,13 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   /* padding-left/right idênticos e calculados pra centralizar o PRIMEIRO e o ÚLTIMO card no
      "coverflow" (rotateY/scale/opacity neutros do 3D, ver marketing-slider.js) logo na posição de
      repouso/final de scroll, não só os cards do meio — precisa sobrar espaço de rolagem antes do
-     primeiro e depois do último igual a metade do container menos metade da largura do card
-     (50% - 130px, 130 = metade de 260px, a largura de .marketing-usecase). % (não vw) de propósito
-     agora que .marketing-usecases-viewport não é mais full-bleed: o container do grid passou a
-     ser a coluna de 960px, não a viewport inteira, então % resolve certo contra a largura real do
-     container em vez de aproximar pela largura da tela toda. Um valor menor aqui (ex.: alinhado só
-     à borda do container, sem folga) deixa o primeiro/último card preso girado/apagado, nunca "em
-     destaque" — era exatamente esse o bug reportado antes (card inicial sem destaque, último card
-     inacessível). */
-  padding-left: max(20px, calc(50% - 130px));
-  padding-right: max(20px, calc(50% - 130px));
+     primeiro e depois do último igual a metade da viewport menos metade da largura do card
+     (50vw - 130px, 130 = metade de 260px, a largura de .marketing-usecase). Um valor menor aqui
+     (ex.: alinhado só à coluna de leitura de 960px, abordagem anterior) deixa o primeiro/último
+     card preso girado/apagado, nunca "em destaque" — era exatamente esse o bug reportado (card
+     inicial sem destaque, último card inacessível). */
+  padding-left: max(20px, calc(50vw - 130px));
+  padding-right: max(20px, calc(50vw - 130px));
   width: 100%;
   scrollbar-width: none;
   -ms-overflow-style: none;
