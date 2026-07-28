@@ -16,8 +16,8 @@ describe('GET / (home pública x dashboard — plano de landing page)', () => {
     const res = await request(app).get('/');
     expect(res.status).toBe(200);
     expect(res.text).toContain('<html lang="pt-BR"');
-    expect(res.text).toContain('Um caderno para');
-    expect(res.text).toContain('o seu tempo.');
+    expect(res.text).toContain('Uma folha em branco');
+    expect(res.text).toContain('de possibilidades');
     expect(res.text).toContain('href="/register"');
     expect(res.text).toContain('Criar conta grátis');
     expect(res.text).toContain('href="/login"');
@@ -30,8 +30,8 @@ describe('GET / (home pública x dashboard — plano de landing page)', () => {
     const res = await request(app).get('/').set('Cookie', 'locale=en-US');
     expect(res.status).toBe(200);
     expect(res.text).toContain('<html lang="en-US"');
-    expect(res.text).toContain('A notebook for');
-    expect(res.text).toContain('your time.');
+    expect(res.text).toContain('A blank canvas');
+    expect(res.text).toContain('of possibilities');
     expect(res.text).toContain('Create free account');
     expect(res.text).toContain('Log in');
     expect(res.text).toContain('Create account');

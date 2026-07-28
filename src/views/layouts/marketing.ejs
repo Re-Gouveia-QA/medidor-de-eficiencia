@@ -11,17 +11,19 @@
 <body class="marketing-page">
   <%- include('../partials/svg-filters') %>
   <header class="topbar marketing-topbar">
-    <a class="brand" href="/">Sketch</a>
-    <div class="topbar-actions">
-      <button type="button" id="localeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary locale-toggle" aria-label="<%= t('layout.localeToggleAriaLabel') %>" data-next-locale="<%= locale === 'pt-BR' ? 'en-US' : 'pt-BR' %>">
-        <%= locale === 'pt-BR' ? 'EN' : 'PT' %>
-      </button>
-      <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="<%= t('layout.themeToggleAriaLabel') %>" aria-pressed="<%= theme === 'dark' ? 'true' : 'false' %>">
-        <span class="icon-sun"><%- include('../partials/icon', { name: 'sun', size: 18, color: 'var(--accent-yellow)' }) %></span>
-        <span class="icon-moon"><%- include('../partials/icon', { name: 'moon', size: 18, color: 'var(--ink-soft)' }) %></span>
-      </button>
-      <a class="btn btn-secondary sketch-edge sketch-hover" href="/login"><%= t('marketing.topbar.login') %></a>
-      <a class="btn btn-primary sketch-edge sketch-hover" href="/register"><%= t('marketing.topbar.register') %></a>
+    <div class="marketing-topbar-inner">
+      <a class="brand" href="/">Sketch</a>
+      <div class="topbar-actions">
+        <button type="button" id="localeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary locale-toggle" aria-label="<%= t('layout.localeToggleAriaLabel') %>" data-next-locale="<%= locale === 'pt-BR' ? 'en-US' : 'pt-BR' %>">
+          <%= locale === 'pt-BR' ? 'EN' : 'PT' %>
+        </button>
+        <button type="button" id="themeToggle" class="icon-btn sketch-edge sketch-hover btn-secondary theme-toggle" aria-label="<%= t('layout.themeToggleAriaLabel') %>" aria-pressed="<%= theme === 'dark' ? 'true' : 'false' %>">
+          <span class="icon-sun"><%- include('../partials/icon', { name: 'sun', size: 18, color: 'var(--accent-yellow)' }) %></span>
+          <span class="icon-moon"><%- include('../partials/icon', { name: 'moon', size: 18, color: 'var(--ink-soft)' }) %></span>
+        </button>
+        <a class="btn btn-secondary sketch-edge sketch-hover" href="/login"><%= t('marketing.topbar.login') %></a>
+        <a class="btn btn-primary sketch-edge sketch-hover" href="/register"><%= t('marketing.topbar.register') %></a>
+      </div>
     </div>
   </header>
 

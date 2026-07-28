@@ -81,44 +81,6 @@
 </section>
 
 <%
-  /* Benefícios (por que usar, não só o que dá pra fazer) — padrão "left-right": linhas alternando
-     visual/texto de lado (nth-child(even) inverte via row-reverse em CSS), diferente da grade
-     centralizada da seção anterior e do carrossel horizontal da seguinte — 4ª composição distinta
-     da página. Cada benefício ainda cita algo real e verificável no código (mesmo critério dos
-     use cases abaixo): relatório (dias/horas/distribuição), duração calculada automaticamente,
-     categoria com cor/meta/valor livres — não promessas genéricas de marketing. */
-  const benefits = [
-    { icon: 'search', color: 'section-blue', key: 'clarity' },
-    { icon: 'check', color: 'section-green', key: 'simplicity' },
-    { icon: 'edit', color: 'section-yellow', key: 'flexibility' },
-  ];
-  /* Ícone único do catálogo de icon.ejs, bem maior que o resto do app (size 80, era 48) — não
-     as "cenas" com 2-3 elementos (gráfico+lupa, linhas+check, lápis+curva) testadas antes: feedback
-     explícito foi que a composição de vários elementos ficava confusa, não que o ícone único fosse
-     pequeno demais. Um símbolo só, maior, resolve isso sem abrir mão da linguagem visual já
-     validada do resto do app (mesmo path/proporções usados em qualquer outro lugar que usa
-     'search'/'check'/'edit') — o stroke-width do ícone escala junto com o viewBox de 24 unidades,
-     então só aumentar o size já deixa o traço proporcionalmente mais grosso, sem precisar de SVG
-     customizado. */
-%>
-<section class="marketing-section marketing-benefits">
-  <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.benefits.heading') %></h2>
-  <div class="marketing-benefits-list">
-    <% benefits.forEach((benefit, i) => { %>
-      <div class="marketing-benefit-row scroll-reveal" data-scroll-reveal style="--stagger-index: <%= i + 1 %>;">
-        <div class="marketing-benefit-visual card sketch-edge <%= benefit.color %>" style="transform: rotate(<%= i % 2 ? '0.8deg' : '-0.8deg' %>);">
-          <%- include('../partials/icon', { name: benefit.icon, size: 80 }) %>
-        </div>
-        <div class="marketing-benefit-text">
-          <h3 class="card-title"><%= t(`marketing.benefits.${benefit.key}.title`) %></h3>
-          <p class="muted"><%= t(`marketing.benefits.${benefit.key}.description`) %></p>
-        </div>
-      </div>
-    <% }) %>
-  </div>
-</section>
-
-<%
   /* Maneiras criativas de usar — o coração do pedido original desta home. Cada caso de uso cita
      uma feature real e verificável no código (nunca uma promessa vazia de marketing): valor por
      categoria (freelancer/orçamento), tempoDesejadoMin (estudante), duracaoPadraoMin (exercício),
@@ -126,7 +88,11 @@
      cicladas pelas 4 "canetas" de acento. Sem tilt fixo por item (removido): o efeito 3D
      "coverflow" de marketing-slider.js já cuida da inclinação de cada card dinamicamente,
      conforme a distância até o centro do carrossel — um tilt estático por cima ficaria
-     conflitando com o rotateY calculado no scroll. */
+     conflitando com o rotateY calculado no scroll.
+     Ordem: antes vinha depois de "por que usar" — subiu pra logo após "o que você pode fazer"
+     (pedido explícito), sem dependência entre as seções: nenhum CSS usa combinador de irmão
+     (+/~) entre .marketing-benefits/.marketing-usecases, e marketing-slider.js/scroll-reveal.js
+     só fazem querySelector por classe, não por posição no DOM. */
   const useCases = [
     { icon: 'tag', color: 'section-blue', key: 'freelancer' },
     { icon: 'calendar', color: 'section-green', key: 'student' },
@@ -176,25 +142,75 @@
        evita esse buraco de conteúdo invisível: a animação roda fora de tela (a seção ainda nem
        apareceu), então quando o usuário chega até aqui os cards já estão parados, visíveis. */
   %>
-  <div class="marketing-usecases-grid">
-    <% useCases.forEach((useCase, i) => { %>
-      <div class="card sketch-edge <%= useCase.color %> marketing-usecase sketch-in"
-           style="--stagger-index: <%= i %>;">
-        <div class="card-heading">
-          <%
-            /* Chip neutro (--paper) atrás do ícone: os cards agora têm fundo colorido (post-it,
-               ver fix f938512), e o ícone usa a mesma cor cíclica de acento (useCase.color) —
-               em alguns pares isso resultava em baixo contraste (ex.: ícone azul sobre card azul).
-               Um fundo sempre neutro garante o mesmo contraste ícone/fundo dos outros usos desse
-               ícone no app (ex.: cards de "o que você pode fazer" acima), não importa a cor do
-               post-it embaixo. */
-          %>
-          <span class="usecase-icon-chip">
-            <%- include('../partials/icon', { name: useCase.icon, size: 18 }) %>
-          </span>
-          <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>
+  <%
+    /* Wrapper com overflow:hidden (pedido explícito) + pseudo-elements ::before/::after como
+       máscara de fade horizontal nas 2 extremidades — dá uma pista visual de "tem mais conteúdo
+       pra esse lado" sem cortar os cards abruptamente na borda. Full-bleed (100vw/left/margin-left)
+       migrou pra CÁ (era de .marketing-usecases-grid): overflow:hidden só faz sentido no elemento
+       que também define os limites reais da área visível — se ficasse no próprio .marketing-
+       usecases-grid (que tem overflow-x:auto pro scroll), os dois overflows conflitariam.
+       .marketing-usecases-grid continua sendo o filho que rola de verdade, só que agora como
+       width:100% normal dentro deste viewport, não mais 100vw ele mesmo. */
+  %>
+  <div class="marketing-usecases-viewport">
+    <div class="marketing-usecases-grid">
+      <% useCases.forEach((useCase, i) => { %>
+        <div class="card sketch-edge <%= useCase.color %> marketing-usecase sketch-in"
+             style="--stagger-index: <%= i %>;">
+          <div class="card-heading">
+            <%
+              /* Chip neutro (--paper) atrás do ícone: os cards agora têm fundo colorido (post-it,
+                 ver fix f938512), e o ícone usa a mesma cor cíclica de acento (useCase.color) —
+                 em alguns pares isso resultava em baixo contraste (ex.: ícone azul sobre card azul).
+                 Um fundo sempre neutro garante o mesmo contraste ícone/fundo dos outros usos desse
+                 ícone no app (ex.: cards de "o que você pode fazer" acima), não importa a cor do
+                 post-it embaixo. */
+            %>
+            <span class="usecase-icon-chip">
+              <%- include('../partials/icon', { name: useCase.icon, size: 18 }) %>
+            </span>
+            <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>
+          </div>
+          <p class="muted"><%= t(`marketing.useCases.${useCase.key}.description`) %></p>
         </div>
-        <p class="muted"><%= t(`marketing.useCases.${useCase.key}.description`) %></p>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<%
+  /* Benefícios (por que usar, não só o que dá pra fazer) — padrão "left-right": linhas alternando
+     visual/texto de lado (nth-child(even) inverte via row-reverse em CSS), diferente da grade
+     centralizada de "o que você pode fazer" e do carrossel horizontal agora acima — 4ª composição
+     distinta da página. Cada benefício ainda cita algo real e verificável no código (mesmo
+     critério dos use cases acima): relatório (dias/horas/distribuição), duração calculada
+     automaticamente, categoria com cor/meta/valor livres — não promessas genéricas de marketing. */
+  const benefits = [
+    { icon: 'search', color: 'section-blue', key: 'clarity' },
+    { icon: 'check', color: 'section-green', key: 'simplicity' },
+    { icon: 'edit', color: 'section-yellow', key: 'flexibility' },
+  ];
+  /* Ícone único do catálogo de icon.ejs, bem maior que o resto do app (size 80, era 48) — não
+     as "cenas" com 2-3 elementos (gráfico+lupa, linhas+check, lápis+curva) testadas antes: feedback
+     explícito foi que a composição de vários elementos ficava confusa, não que o ícone único fosse
+     pequeno demais. Um símbolo só, maior, resolve isso sem abrir mão da linguagem visual já
+     validada do resto do app (mesmo path/proporções usados em qualquer outro lugar que usa
+     'search'/'check'/'edit') — o stroke-width do ícone escala junto com o viewBox de 24 unidades,
+     então só aumentar o size já deixa o traço proporcionalmente mais grosso, sem precisar de SVG
+     customizado. */
+%>
+<section class="marketing-section marketing-benefits">
+  <h2 class="marketing-section-heading scroll-reveal" data-scroll-reveal style="--stagger-index: 0;"><%= t('marketing.benefits.heading') %></h2>
+  <div class="marketing-benefits-list">
+    <% benefits.forEach((benefit, i) => { %>
+      <div class="marketing-benefit-row scroll-reveal" data-scroll-reveal style="--stagger-index: <%= i + 1 %>;">
+        <div class="marketing-benefit-visual card sketch-edge <%= benefit.color %>" style="transform: rotate(<%= i % 2 ? '0.8deg' : '-0.8deg' %>);">
+          <%- include('../partials/icon', { name: benefit.icon, size: 80 }) %>
+        </div>
+        <div class="marketing-benefit-text">
+          <h3 class="card-title"><%= t(`marketing.benefits.${benefit.key}.title`) %></h3>
+          <p class="muted"><%= t(`marketing.benefits.${benefit.key}.description`) %></p>
+        </div>
       </div>
     <% }) %>
   </div>

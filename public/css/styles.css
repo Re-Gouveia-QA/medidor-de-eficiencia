@@ -358,8 +358,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    Escopado a .marketing-page (não no body/html global) pra não mudar o comportamento do resto
    do app, que não usa esse truque. */
 .marketing-page { overflow-x: hidden; }
-.marketing-topbar, .marketing-content { max-width: 960px; }
-.marketing-content { margin: 0 auto; padding: 8px 20px 96px; }
+.marketing-content { max-width: 960px; margin: 0 auto; padding: 8px 20px 96px; }
 /* Topbar fixo ao rolar (redesign a partir de mockup de referência) — só na home pública; o
    .topbar autenticado (main.ejs) não ganha isso, a página logada não tem essa composição de
    scroll longo. Começa sem nenhum fundo (totalmente transparente sobre o hero) — o vidro fosco
@@ -375,13 +374,38 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   z-index: 20;
   background: transparent;
   transition: background-color 0.25s ease;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 12px 0;
+  /* max-width:none + margin:0 anulam o max-width:640px/margin:0 auto herdados de .topbar (base
+     class compartilhada com o header autenticado) — sem isso o <header> inteiro (fundo incluso)
+     ficava confinado a uma coluna centralizada, em vez de ocupar a largura real da viewport.
+     Pedido explícito: fundo sempre full-bleed, conteúdo (.marketing-topbar-inner, abaixo) é que
+     respeita a coluna de 960px. display:block anula o display:flex também herdado de .topbar:
+     com o <header> ainda como flex container, .marketing-topbar-inner virava um FLEX ITEM (sizing
+     shrink-to-fit/max-content) em vez de um bloco normal — e é só em fluxo de bloco normal que
+     max-width + margin:0 auto realmente centraliza preenchendo até o limite; como flex item, o
+     max-width nunca era atingido e o wrapper encolhia pro tamanho do conteúdo (~515px em vez de
+     960px), confirmado medindo o getBoundingClientRect() via CDP antes desse fix. */
+  display: block;
+  max-width: none;
+  margin: 0;
 }
 .marketing-topbar.is-scrolled {
   background: color-mix(in oklch, var(--paper) 80%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+/* Conteúdo real do topbar (marca + ações) — antes vivia direto no <header>, que também carregava
+   o max-width:960px; separar num wrapper próprio deixa o <header> livre pra ser só um contêiner
+   de fundo full-bleed (100% da viewport), enquanto isto aqui centraliza e limita a LARGURA DO
+   CONTEÚDO à mesma coluna de 960px do resto da página. */
+.marketing-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .marketing-hero { padding: 72px 0 56px; text-align: center; position: relative; overflow: hidden; }
@@ -536,9 +560,42 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* Maneiras criativas de usar — carrossel horizontal de "post-its" (redesign a partir de mockup
    de referência), 3ª composição distinta da página (hero centralizado, grade de features, e
    agora scroll horizontal) — variedade deliberada entre seções consecutivas. Full-bleed até a
-   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw).
-   scrollbar escondida (sem lib nova, só propriedades CSS) — a "pista" de rolagem é visual (cards
-   cortados na borda), não uma barra de scroll. */
+   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw)
+   — mas agora em .marketing-usecases-viewport (abaixo), não mais no próprio grid: overflow:hidden
+   (pedido explícito, pra mascarar o fade) só faz sentido no elemento que define o limite visível
+   real; no .marketing-usecases-grid, que também é o que rola (overflow-x:auto), os dois overflows
+   entrariam em conflito. scrollbar escondida (sem lib nova, só propriedades CSS) — a "pista" de
+   rolagem é visual (cards cortados/esmaecidos na borda), não uma barra de scroll. */
+.marketing-usecases-viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
+}
+/* Máscara de fade nas 2 extremidades: gradiente de --paper (cor do papel) até transparente,
+   sobreposto (z-index acima do grid, que fica em fluxo normal/sem position) por cima dos cards
+   que "saem" pela borda — dá a pista visual de conteúdo cortado sem um corte abrupto. pointer-
+   events:none pra não bloquear o arrasto/clique nos cards por baixo. Largura pequena o bastante
+   pra não esconder texto dos cards vizinhos ao centro, grande o bastante pra suavizar a borda. */
+.marketing-usecases-viewport::before,
+.marketing-usecases-viewport::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(120px, 12vw);
+  pointer-events: none;
+  z-index: 5;
+}
+.marketing-usecases-viewport::before {
+  left: 0;
+  background: linear-gradient(to right, var(--paper), transparent);
+}
+.marketing-usecases-viewport::after {
+  right: 0;
+  background: linear-gradient(to left, var(--paper), transparent);
+}
 .marketing-usecases-grid {
   display: flex;
   overflow-x: auto;
@@ -557,10 +614,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
      inicial sem destaque, último card inacessível). */
   padding-left: max(20px, calc(50vw - 130px));
   padding-right: max(20px, calc(50vw - 130px));
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  margin-left: -50vw;
+  width: 100%;
   scrollbar-width: none;
   -ms-overflow-style: none;
   /* Ponto de fuga único do "coverflow" (marketing-slider.js) — fica aqui no container, não
@@ -639,6 +693,12 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
+  /* .topbar (base) tem padding horizontal próprio (16px) que se aplicaria ao <header> full-bleed
+     também nessa largura — zera de novo aqui (mesma especificidade, depois no arquivo, vence) e
+     move o espaçamento horizontal pro wrapper de conteúdo, junto com o padding-left/right menor
+     (16px, igual ao resto do app no mobile) que .marketing-topbar-inner usa no desktop (20px). */
+  .marketing-topbar { padding-left: 0; padding-right: 0; }
+  .marketing-topbar-inner { padding: 0 16px; }
   .app-content { padding: 10px 16px 48px; }
   .form-row { grid-template-columns: 1fr; }
   .page-header { flex-direction: column; align-items: flex-start; }
