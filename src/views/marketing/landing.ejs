@@ -142,27 +142,39 @@
        evita esse buraco de conteúdo invisível: a animação roda fora de tela (a seção ainda nem
        apareceu), então quando o usuário chega até aqui os cards já estão parados, visíveis. */
   %>
-  <div class="marketing-usecases-grid">
-    <% useCases.forEach((useCase, i) => { %>
-      <div class="card sketch-edge <%= useCase.color %> marketing-usecase sketch-in"
-           style="--stagger-index: <%= i %>;">
-        <div class="card-heading">
-          <%
-            /* Chip neutro (--paper) atrás do ícone: os cards agora têm fundo colorido (post-it,
-               ver fix f938512), e o ícone usa a mesma cor cíclica de acento (useCase.color) —
-               em alguns pares isso resultava em baixo contraste (ex.: ícone azul sobre card azul).
-               Um fundo sempre neutro garante o mesmo contraste ícone/fundo dos outros usos desse
-               ícone no app (ex.: cards de "o que você pode fazer" acima), não importa a cor do
-               post-it embaixo. */
-          %>
-          <span class="usecase-icon-chip">
-            <%- include('../partials/icon', { name: useCase.icon, size: 18 }) %>
-          </span>
-          <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>
+  <%
+    /* Wrapper com overflow:hidden (pedido explícito) + pseudo-elements ::before/::after como
+       máscara de fade horizontal nas 2 extremidades — dá uma pista visual de "tem mais conteúdo
+       pra esse lado" sem cortar os cards abruptamente na borda. Full-bleed (100vw/left/margin-left)
+       migrou pra CÁ (era de .marketing-usecases-grid): overflow:hidden só faz sentido no elemento
+       que também define os limites reais da área visível — se ficasse no próprio .marketing-
+       usecases-grid (que tem overflow-x:auto pro scroll), os dois overflows conflitariam.
+       .marketing-usecases-grid continua sendo o filho que rola de verdade, só que agora como
+       width:100% normal dentro deste viewport, não mais 100vw ele mesmo. */
+  %>
+  <div class="marketing-usecases-viewport">
+    <div class="marketing-usecases-grid">
+      <% useCases.forEach((useCase, i) => { %>
+        <div class="card sketch-edge <%= useCase.color %> marketing-usecase sketch-in"
+             style="--stagger-index: <%= i %>;">
+          <div class="card-heading">
+            <%
+              /* Chip neutro (--paper) atrás do ícone: os cards agora têm fundo colorido (post-it,
+                 ver fix f938512), e o ícone usa a mesma cor cíclica de acento (useCase.color) —
+                 em alguns pares isso resultava em baixo contraste (ex.: ícone azul sobre card azul).
+                 Um fundo sempre neutro garante o mesmo contraste ícone/fundo dos outros usos desse
+                 ícone no app (ex.: cards de "o que você pode fazer" acima), não importa a cor do
+                 post-it embaixo. */
+            %>
+            <span class="usecase-icon-chip">
+              <%- include('../partials/icon', { name: useCase.icon, size: 18 }) %>
+            </span>
+            <h3 class="card-title"><%= t(`marketing.useCases.${useCase.key}.title`) %></h3>
+          </div>
+          <p class="muted"><%= t(`marketing.useCases.${useCase.key}.description`) %></p>
         </div>
-        <p class="muted"><%= t(`marketing.useCases.${useCase.key}.description`) %></p>
-      </div>
-    <% }) %>
+      <% }) %>
+    </div>
   </div>
 </section>
 

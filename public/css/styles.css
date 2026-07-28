@@ -530,9 +530,42 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* Maneiras criativas de usar — carrossel horizontal de "post-its" (redesign a partir de mockup
    de referência), 3ª composição distinta da página (hero centralizado, grade de features, e
    agora scroll horizontal) — variedade deliberada entre seções consecutivas. Full-bleed até a
-   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw).
-   scrollbar escondida (sem lib nova, só propriedades CSS) — a "pista" de rolagem é visual (cards
-   cortados na borda), não uma barra de scroll. */
+   borda da viewport (mesmo truque de .marketing-whatis: width:100vw + left:50%/margin-left:-50vw)
+   — mas agora em .marketing-usecases-viewport (abaixo), não mais no próprio grid: overflow:hidden
+   (pedido explícito, pra mascarar o fade) só faz sentido no elemento que define o limite visível
+   real; no .marketing-usecases-grid, que também é o que rola (overflow-x:auto), os dois overflows
+   entrariam em conflito. scrollbar escondida (sem lib nova, só propriedades CSS) — a "pista" de
+   rolagem é visual (cards cortados/esmaecidos na borda), não uma barra de scroll. */
+.marketing-usecases-viewport {
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
+}
+/* Máscara de fade nas 2 extremidades: gradiente de --paper (cor do papel) até transparente,
+   sobreposto (z-index acima do grid, que fica em fluxo normal/sem position) por cima dos cards
+   que "saem" pela borda — dá a pista visual de conteúdo cortado sem um corte abrupto. pointer-
+   events:none pra não bloquear o arrasto/clique nos cards por baixo. Largura pequena o bastante
+   pra não esconder texto dos cards vizinhos ao centro, grande o bastante pra suavizar a borda. */
+.marketing-usecases-viewport::before,
+.marketing-usecases-viewport::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: min(120px, 12vw);
+  pointer-events: none;
+  z-index: 5;
+}
+.marketing-usecases-viewport::before {
+  left: 0;
+  background: linear-gradient(to right, var(--paper), transparent);
+}
+.marketing-usecases-viewport::after {
+  right: 0;
+  background: linear-gradient(to left, var(--paper), transparent);
+}
 .marketing-usecases-grid {
   display: flex;
   overflow-x: auto;
@@ -551,10 +584,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
      inicial sem destaque, último card inacessível). */
   padding-left: max(20px, calc(50vw - 130px));
   padding-right: max(20px, calc(50vw - 130px));
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  margin-left: -50vw;
+  width: 100%;
   scrollbar-width: none;
   -ms-overflow-style: none;
   /* Ponto de fuga único do "coverflow" (marketing-slider.js) — fica aqui no container, não
