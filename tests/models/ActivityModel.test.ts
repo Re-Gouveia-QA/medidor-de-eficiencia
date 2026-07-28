@@ -99,7 +99,11 @@ describe('ActivityModel (BaseModel — escopo por usuário, RF12)', () => {
 
   it('finish calcula duracaoMin e atualiza horaFim quando a atividade está em andamento', async () => {
     const horaInicio = new Date(Date.now() - 30 * 60_000); // 30min atrás
-    vi.mocked(prisma.activity.findFirst).mockResolvedValue({ id: ACTIVITY_ID, horaInicio } as never);
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue({
+      id: ACTIVITY_ID,
+      horaInicio,
+      category: { possuiValor: false, valorPadrao: null },
+    } as never);
     vi.mocked(prisma.activity.updateMany).mockResolvedValue({ count: 1 });
 
     const result = await ActivityModel.finish(ACTIVITY_ID, USER_ID);
@@ -110,6 +114,9 @@ describe('ActivityModel (BaseModel — escopo por usuário, RF12)', () => {
     expect(updateCall.where).toEqual({ id: ACTIVITY_ID, horaFim: null, userId: USER_ID });
     expect(updateCall.data.duracaoMin).toBeGreaterThanOrEqual(29);
     expect(updateCall.data.horaFim).toBeInstanceOf(Date);
+    // sem "extra" (finalizar rápido) — descricao/valor continuam nulos, comportamento inalterado
+    expect(updateCall.data.descricao).toBeNull();
+    expect(updateCall.data.valor).toBeNull();
     expect(result).toEqual({ count: 1 });
   });
 
@@ -120,5 +127,51 @@ describe('ActivityModel (BaseModel — escopo por usuário, RF12)', () => {
 
     expect(result).toEqual({ count: 0 });
     expect(prisma.activity.updateMany).not.toHaveBeenCalled();
+  });
+
+  it('finish (com detalhes) grava descricao/valor quando informados', async () => {
+    const horaInicio = new Date(Date.now() - 30 * 60_000);
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue({
+      id: ACTIVITY_ID,
+      horaInicio,
+      category: { possuiValor: true, valorPadrao: { toNumber: () => 10 } },
+    } as never);
+    vi.mocked(prisma.activity.updateMany).mockResolvedValue({ count: 1 });
+
+    await ActivityModel.finish(ACTIVITY_ID, USER_ID, { descricao: 'Reunião de alinhamento', valor: 50 });
+
+    const updateCall = vi.mocked(prisma.activity.updateMany).mock.calls[0][0];
+    expect(updateCall.data.descricao).toBe('Reunião de alinhamento');
+    expect(updateCall.data.valor).toBe(50);
+  });
+
+  it('finish (com detalhes) aplica o valorPadrao da categoria quando valor não é informado (regra 9)', async () => {
+    const horaInicio = new Date(Date.now() - 30 * 60_000);
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue({
+      id: ACTIVITY_ID,
+      horaInicio,
+      category: { possuiValor: true, valorPadrao: { toNumber: () => 30 } },
+    } as never);
+    vi.mocked(prisma.activity.updateMany).mockResolvedValue({ count: 1 });
+
+    await ActivityModel.finish(ACTIVITY_ID, USER_ID, { descricao: 'Sem valor informado' });
+
+    const updateCall = vi.mocked(prisma.activity.updateMany).mock.calls[0][0];
+    expect(updateCall.data.valor).toBe(30);
+  });
+
+  it('finish (com detalhes) não aplica valorPadrao quando a categoria não possui valor', async () => {
+    const horaInicio = new Date(Date.now() - 30 * 60_000);
+    vi.mocked(prisma.activity.findFirst).mockResolvedValue({
+      id: ACTIVITY_ID,
+      horaInicio,
+      category: { possuiValor: false, valorPadrao: { toNumber: () => 30 } },
+    } as never);
+    vi.mocked(prisma.activity.updateMany).mockResolvedValue({ count: 1 });
+
+    await ActivityModel.finish(ACTIVITY_ID, USER_ID, {});
+
+    const updateCall = vi.mocked(prisma.activity.updateMany).mock.calls[0][0];
+    expect(updateCall.data.valor).toBeNull();
   });
 });

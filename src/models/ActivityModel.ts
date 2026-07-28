@@ -23,6 +23,11 @@ export interface StartActivityData {
   categoryId: string;
 }
 
+export interface FinishDetails {
+  descricao?: string;
+  valor?: number;
+}
+
 /** Model Activity — CRUD escopado por usuário (RF12), com cálculo automático de duração (regra 5). */
 class ActivityModelImpl extends BaseModel {
   listByUser(userId: string, filters: ActivityFilters = {}) {
@@ -95,7 +100,7 @@ class ActivityModelImpl extends BaseModel {
   findInProgress(userId: string) {
     return this.db.activity.findFirst({
       where: this.scopeToUser(userId, { horaFim: null }),
-      include: { category: { select: { nome: true, cor: true } } },
+      include: { category: { select: { nome: true, cor: true, possuiValor: true, valorLabel: true, valorPadrao: true } } },
     });
   }
 
@@ -129,19 +134,28 @@ class ActivityModelImpl extends BaseModel {
    * O `horaFim: null` no where (tanto na leitura quanto no updateMany) garante que uma
    * finalização em duplicidade (concorrente ou reenvio do form) não recalcule a duração
    * por cima de uma já finalizada.
+   *
+   * `extra` (opcional — "finalizar com detalhes", extensão de 2026-07-28): quando `valor` não
+   * vem preenchido e a categoria tem `possuiValor` com `valorPadrao` definido, usa o padrão da
+   * categoria (regra 9, mesmo cálculo já feito em `ActivityController.store`).
    */
-  async finish(id: string, userId: string) {
+  async finish(id: string, userId: string, extra: FinishDetails = {}) {
     const atividade = await this.db.activity.findFirst({
       where: this.scopeToUser(userId, { id, horaFim: null }),
+      include: { category: { select: { possuiValor: true, valorPadrao: true } } },
     });
     if (!atividade) {
       return { count: 0 };
     }
     const horaFim = new Date();
     const duracaoMin = calcDurationMin(atividade.horaInicio, horaFim);
+    const valor =
+      extra.valor ?? (atividade.category.possuiValor && atividade.category.valorPadrao != null
+        ? atividade.category.valorPadrao.toNumber()
+        : undefined);
     return this.db.activity.updateMany({
       where: this.scopeToUser(userId, { id, horaFim: null }),
-      data: { horaFim, duracaoMin },
+      data: { horaFim, duracaoMin, descricao: extra.descricao || null, valor: valor ?? null },
     });
   }
 }

@@ -1,14 +1,11 @@
 # Plan: Atividade em andamento (registro rápido + card na home)
 
-**Date:** 2026-07-23
-**Status:** concluído — Fases 1-5 implementadas, cada uma em branch própria empilhada sobre a
-anterior (`feature/activity-in-progress-schema` → `-model` → `-controller` → `-views` →
-`-reports`), já que ao contrário do refino visual essas fases são sequenciais/dependentes (Fase 2
-não compila sem a migration da Fase 1, por exemplo). Build/testes/lint verdes em cada fase
-(114/114 ao final); fluxo completo testado contra o banco de dev real (iniciar → card na home →
-segunda tentativa bloqueada com flash → finalizar → aparece em `/activities` com duração
-calculada → relatório exclui a atividade em andamento dos totais e não quebra). Dados de teste
-removidos do banco após cada verificação. Branches aguardando decisão de merge.
+**Date:** 2026-07-23 · **Estendido:** 2026-07-28 (Fases 6-8)
+**Status:** Fases 1-5 concluídas e mescladas em `master` (`feat(schema)` → `feat(model)` →
+`feat(controller)` → `feat(views)` → `feat(reports)`, mais um `feat(home): cronômetro ao vivo e
+polimento` posterior — tudo já em `master`). Fases 6-8 (abaixo) são uma extensão pedida em
+2026-07-28: opção "finalizar com detalhes" (descrição + valor) na hora de encerrar a atividade em
+andamento — ainda não iniciadas.
 
 ## Goal
 
@@ -142,3 +139,117 @@ atividade em andamento não aparece nos totais de `/reports` até ser finalizada
 - Replanning trigger: se o usuário pedir múltiplas atividades em andamento simultâneas, isso muda
   a Fase 3 (checagem de "já existe uma") e a Fase 4 (home precisaria de uma lista, não 1 card) —
   replanejar essas duas fases antes de implementar.
+
+---
+
+## Extensão 2026-07-28 — Finalizar com detalhes
+
+### Goal
+
+Ao finalizar a atividade em andamento, o usuário pode opcionalmente informar `descricao` e (só se
+a categoria tiver `possuiValor = true`) `valor` — hoje `finish` só grava `horaFim`/`duracaoMin`, os
+outros dois campos da `Activity` ficam sempre nulos numa atividade iniciada pela home.
+
+### Estado atual (levantado antes de planejar)
+
+- `Activity.descricao`/`Activity.valor` já existem no schema (nullable) — **sem migration
+  necessária**, são as mesmas colunas usadas pelo formulário completo de nova atividade.
+- `ActivityModel.findInProgress` (`src/models/ActivityModel.ts:95`) só seleciona
+  `category: { nome, cor }` — falta `possuiValor`/`valorLabel`/`valorPadrao` pra decidir se mostra
+  o campo de valor e qual o rótulo/padrão (regra 9, mesma lógica já usada em
+  `ActivityController.store`).
+- `ActivityModel.finish(id, userId)` (linha 133) grava só `horaFim`/`duracaoMin`; não aceita
+  campos extras nem inclui a categoria na query.
+- `ActivityController.finish` (`src/controllers/ActivityController.ts:136`) não lê `req.body` —
+  só chama `ActivityModel.finish(id, userId)` e redireciona.
+- Rota já existe: `POST /activities/:id/finish` (`src/routes/activity.routes.ts:13`) — **não
+  precisa de rota nova**, só passa a aceitar um body opcional.
+- `home/index.ejs` (linha 17-21) renderiza o form de "Finalizar" sem nenhum campo — só o botão.
+- `validators.ts` já tem o padrão exato a reaproveitar: `activitySchema.descricao`/`.valor`
+  (linha 63-64) usam `z.string().trim().optional().or(z.literal(''))` e
+  `z.coerce.number().positive().optional().or(z.literal(''))`.
+
+### Decisão de UX
+
+Botão "Finalizar" atual continua 1-clique (submit vazio, comportamento inalterado). Um segundo
+controle "Finalizar com detalhes" abre um `<details>/<summary>` nativo (sem JS novo, sem modal —
+menor unidade que resolve) com `descricao` (textarea) e, só quando
+`emAndamento.category.possuiValor` for `true` (decidido no servidor, já que a categoria da
+atividade em andamento é fixa — diferente do form de nova atividade, que tem `<select>` e por isso
+precisa de JS pra alternar o campo), o campo `valor`. Os dois campos ficam **dentro do mesmo
+`<form>`** que já existe — não é um form novo, só ganha campos extras e um botão de submit
+alternativo (ou o mesmo botão, já que ambos batem no mesmo endpoint).
+
+### Fase 6: Model + validação
+**Objetivo:** `ActivityModel.finish` aceita e persiste `descricao`/`valor` opcionais, aplicando a
+regra 9 (valor padrão da categoria quando não informado) igual a `store`.
+
+**Passos:**
+1. `validators.ts`: novo `finishDetailsSchema` — `descricao`/`valor` no mesmo formato de
+   `activitySchema` (linhas 63-64), ambos opcionais (form pode vir totalmente vazio, do botão
+   "Finalizar" rápido).
+2. `ActivityModel.findInProgress`: incluir `possuiValor: true, valorLabel: true, valorPadrao: true`
+   no `select` de `category`.
+3. `ActivityModel.finish(id, userId, extra?: { descricao?: string; valor?: number })`: buscar a
+   atividade já incluindo `category: { select: { possuiValor, valorPadrao } }`; se
+   `extra.valor` não vier e `category.possuiValor && category.valorPadrao != null`, usa o padrão
+   (mesmo cálculo de `store`); grava `descricao`/`valor` junto com `horaFim`/`duracaoMin` no
+   `updateMany`.
+
+**Files Touched:** `src/utils/validators.ts`, `src/models/ActivityModel.ts`,
+`tests/models/ActivityModel.test.ts`
+**Verify:** `npx vitest run tests/models/ActivityModel.test.ts`
+**Done When:** teste cobrindo `finish` com `descricao`/`valor` informados (persistidos), `finish`
+sem `valor` numa categoria com `valorPadrao` (aplica o padrão) e `finish` sem nenhum extra
+(comportamento atual inalterado — `descricao`/`valor` continuam nulos).
+
+---
+
+### Fase 7: Controller
+**Objetivo:** `ActivityController.finish` valida e repassa os campos opcionais.
+
+**Passos:**
+1. `finish`: `parseOrRedirect(req, res, finishDetailsSchema, '/')` (erro de validação — ex.: valor
+   negativo — volta pra home com flash, mesmo padrão de `store`/`update`); passa o resultado como
+   `extra` pra `ActivityModel.finish`.
+
+**Files Touched:** `src/controllers/ActivityController.ts`, `tests/routes/activities.routes.test.ts`
+**Verify:** `npx vitest run tests/routes/activities.routes.test.ts`
+**Done When:** teste cobrindo finish com `descricao`/`valor` no body (repassados ao Model) e finish
+com valor inválido (flash de erro, redirect pra home, Model não chamado).
+
+---
+
+### Fase 8: View + i18n + validação final
+**Objetivo:** UI do `<details>` no card da home; validação cruzada.
+
+**Passos:**
+1. `home/index.ejs`: dentro do `<form action=".../finish">` existente, adicionar
+   `<details class="in-progress-details">` com `<summary>` ("Finalizar com detalhes") + campo
+   `descricao` (textarea, reaproveitando `activities.form.descriptionLabel`/`descriptionPlaceholder`)
+   + campo `valor` **só se** `emAndamento.category.possuiValor` (label = `category.valorLabel` ou
+   `common.valueLabelDefault`, mesmo padrão de `activities/create.ejs`).
+2. i18n (`pt-BR.json`/`en-US.json`): nova chave pro texto do `<summary>` (ex.:
+   `home.inProgress.detailsToggle`); reaproveitar as chaves já existentes de descrição/valor —
+   não duplicar.
+3. Estilo: `<details>`/`<summary>` herdam tipografia normal do body; se o contraste com
+   `.sketch-edge` do card ficar estranho, um ajuste mínimo de `margin`/`padding` em
+   `public/css/styles.css` (sem novo componente).
+
+**Files Touched:** `src/views/home/index.ejs`, `src/i18n/pt-BR.json`, `src/i18n/en-US.json`,
+possivelmente `public/css/styles.css`
+**Verify:** `npm run build && npx vitest run && npm run lint` + `npm run dev`, checagem manual
+contra o banco de dev: iniciar atividade numa categoria com `possuiValor`, finalizar com detalhes
+preenchendo descrição e valor, conferir em `/activities` que ambos aparecem; repetir numa categoria
+sem `possuiValor` (campo de valor não deve aparecer); finalizar rápido (sem abrir os detalhes)
+continua funcionando igual a hoje.
+**Done When:** build/testes/lint verdes; os três cenários manuais acima conferidos, claro/escuro.
+
+### Notas da extensão
+
+- Sem migration — `descricao`/`valor` já são colunas nullable de `Activity`.
+- Sem rota nova — mesmo `POST /activities/:id/finish`, só com body opcional.
+- Cada fase em branch própria, mesma convenção do restante do plano.
+- Replanning trigger: se o usuário quiser que o campo de valor apareça mesmo sem
+  `possuiValor` (ex.: valor "livre" em qualquer categoria), isso muda a Fase 6 (regra 9 deixaria de
+  ser condição pra aceitar `valor`) e a Fase 8 (campo sempre visível) — replanejar antes.

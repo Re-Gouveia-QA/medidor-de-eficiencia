@@ -71,6 +71,14 @@ export const startActivitySchema = z.object({
   categoryId: z.string().uuid('validation.categoryRequired'),
 });
 
+// "Finalizar com detalhes" (extensão de 2026-07-28 da atividade em andamento): descricao/valor
+// opcionais, mesmo formato de activitySchema — o form pode vir totalmente vazio (botão
+// "Finalizar" rápido, sem abrir os detalhes).
+export const finishDetailsSchema = z.object({
+  descricao: z.string().trim().optional().or(z.literal('')),
+  valor: z.coerce.number().positive().optional().or(z.literal('')),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
@@ -78,3 +86,4 @@ export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type CategoryInput = z.infer<typeof categorySchema>;
 export type ActivityInput = z.infer<typeof activitySchema>;
 export type StartActivityInput = z.infer<typeof startActivitySchema>;
+export type FinishDetailsInput = z.infer<typeof finishDetailsSchema>;
