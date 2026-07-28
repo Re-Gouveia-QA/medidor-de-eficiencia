@@ -1,7 +1,11 @@
 # Plan: Unificar o nome do app pra "Sketch your time"
 
 **Date:** 2026-07-28
-**Status:** draft
+**Status:** Fases 1-2 concluídas e mescladas em `master`, cada uma partiu de uma branch própria
+(`chore/rename-sketch-your-time-app`, `docs/rename-sketch-your-time-docs`) — build/testes/lint
+verdes e nenhuma menção a "Medidor" restando fora de `node_modules`/`dist`/planos históricos.
+Fase 3 (opcional, kit de design de referência) não iniciada — depende de pedido explícito, ver
+Fase 3 abaixo.
 
 ## Goal
 
