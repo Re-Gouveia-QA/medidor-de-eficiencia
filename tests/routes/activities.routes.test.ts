@@ -277,7 +277,7 @@ describe('Rotas de atividades', () => {
     const res = await agent.post('/activities/act-1/finish');
     expect(res.status).toBe(302);
     expect(res.headers.location).toBe('/');
-    expect(ActivityModel.finish).toHaveBeenCalledWith('act-1', TEST_USER.id);
+    expect(ActivityModel.finish).toHaveBeenCalledWith('act-1', TEST_USER.id, { descricao: undefined, valor: undefined });
   });
 
   it('POST /activities/:id/finish redireciona com erro quando não encontra a atividade em andamento', async () => {
@@ -287,5 +287,29 @@ describe('Rotas de atividades', () => {
     const res = await agent.post('/activities/inexistente/finish');
     expect(res.status).toBe(302);
     expect(res.headers.location).toBe('/');
+  });
+
+  it('POST /activities/:id/finish (com detalhes) repassa descricao/valor pro Model', async () => {
+    vi.mocked(ActivityModel.finish).mockResolvedValue({ count: 1 } as never);
+
+    const agent = await loginAgent(app);
+    const res = await agent
+      .post('/activities/act-1/finish')
+      .type('form')
+      .send({ descricao: 'Reunião de alinhamento', valor: '50' });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+    expect(ActivityModel.finish).toHaveBeenCalledWith('act-1', TEST_USER.id, {
+      descricao: 'Reunião de alinhamento',
+      valor: 50,
+    });
+  });
+
+  it('POST /activities/:id/finish com valor inválido redireciona com flash de erro sem chamar o Model', async () => {
+    const agent = await loginAgent(app);
+    const res = await agent.post('/activities/act-1/finish').type('form').send({ valor: '-10' });
+    expect(res.status).toBe(302);
+    expect(res.headers.location).toBe('/');
+    expect(ActivityModel.finish).not.toHaveBeenCalled();
   });
 });

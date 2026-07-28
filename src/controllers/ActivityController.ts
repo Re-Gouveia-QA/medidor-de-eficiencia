@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { ActivityModel } from '../models/ActivityModel';
 import { CategoryModel } from '../models/CategoryModel';
-import { activitySchema, startActivitySchema } from '../utils/validators';
+import { activitySchema, finishDetailsSchema, startActivitySchema } from '../utils/validators';
 import { formatMinutes, formatTimeInZone } from '../utils/time';
 import { formatNumber } from '../utils/format';
 
@@ -132,9 +132,17 @@ class ActivityControllerImpl extends BaseController {
     res.redirect('/');
   };
 
-  /** Finaliza a atividade em andamento a partir do card da home. */
+  /**
+   * Finaliza a atividade em andamento a partir do card da home. `descricao`/`valor` são opcionais
+   * ("finalizar com detalhes") — o botão rápido envia o form sem esses campos.
+   */
   finish = async (req: Request, res: Response) => {
-    const { count } = await ActivityModel.finish(req.params.id, req.currentUser!.id);
+    const data = this.parseOrRedirect(req, res, finishDetailsSchema, '/');
+    if (!data) return;
+    const { count } = await ActivityModel.finish(req.params.id, req.currentUser!.id, {
+      descricao: data.descricao || undefined,
+      valor: parseValorInput(data.valor),
+    });
     if (count === 0) {
       req.flash('error', res.locals.t('flash.activity.finishNotFound'));
     } else {
