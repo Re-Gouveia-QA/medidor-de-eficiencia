@@ -1,7 +1,13 @@
 # Plan: Pequenos ajustes visuais (cores, legibilidade, espaçamento)
 
 **Date:** 2026-07-28
-**Status:** draft
+**Status:** concluído — Fases 1-6 implementadas, cada uma em branch própria (`style/paleta-sepia`,
+`style/fonte-handlee`, `style/tamanho-fonte`, `style/links-login`,
+`style/espacamento-relatorio`), mescladas sem conflito numa branch de integração
+(`style/integracao-visual`) só pra validação cruzada da Fase 6 — nenhuma delas mesclada em
+`master` ainda. Build/testes/lint verdes na integração; screenshot de `/`, `/login`, `/register`,
+`/activities`, `/categories`, `/reports` (claro/escuro) sem regressão. `CLAUDE.md` atualizado com
+os valores finais.
 
 ## Goal
 
