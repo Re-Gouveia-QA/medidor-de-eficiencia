@@ -328,8 +328,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    Escopado a .marketing-page (não no body/html global) pra não mudar o comportamento do resto
    do app, que não usa esse truque. */
 .marketing-page { overflow-x: hidden; }
-.marketing-topbar, .marketing-content { max-width: 960px; }
-.marketing-content { margin: 0 auto; padding: 8px 20px 96px; }
+.marketing-content { max-width: 960px; margin: 0 auto; padding: 8px 20px 96px; }
 /* Topbar fixo ao rolar (redesign a partir de mockup de referência) — só na home pública; o
    .topbar autenticado (main.ejs) não ganha isso, a página logada não tem essa composição de
    scroll longo. Começa sem nenhum fundo (totalmente transparente sobre o hero) — o vidro fosco
@@ -345,13 +344,38 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   z-index: 20;
   background: transparent;
   transition: background-color 0.25s ease;
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding: 12px 0;
+  /* max-width:none + margin:0 anulam o max-width:640px/margin:0 auto herdados de .topbar (base
+     class compartilhada com o header autenticado) — sem isso o <header> inteiro (fundo incluso)
+     ficava confinado a uma coluna centralizada, em vez de ocupar a largura real da viewport.
+     Pedido explícito: fundo sempre full-bleed, conteúdo (.marketing-topbar-inner, abaixo) é que
+     respeita a coluna de 960px. display:block anula o display:flex também herdado de .topbar:
+     com o <header> ainda como flex container, .marketing-topbar-inner virava um FLEX ITEM (sizing
+     shrink-to-fit/max-content) em vez de um bloco normal — e é só em fluxo de bloco normal que
+     max-width + margin:0 auto realmente centraliza preenchendo até o limite; como flex item, o
+     max-width nunca era atingido e o wrapper encolhia pro tamanho do conteúdo (~515px em vez de
+     960px), confirmado medindo o getBoundingClientRect() via CDP antes desse fix. */
+  display: block;
+  max-width: none;
+  margin: 0;
 }
 .marketing-topbar.is-scrolled {
   background: color-mix(in oklch, var(--paper) 80%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+}
+/* Conteúdo real do topbar (marca + ações) — antes vivia direto no <header>, que também carregava
+   o max-width:960px; separar num wrapper próprio deixa o <header> livre pra ser só um contêiner
+   de fundo full-bleed (100% da viewport), enquanto isto aqui centraliza e limita a LARGURA DO
+   CONTEÚDO à mesma coluna de 960px do resto da página. */
+.marketing-topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .marketing-hero { padding: 72px 0 56px; text-align: center; position: relative; overflow: hidden; }
@@ -609,6 +633,12 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
+  /* .topbar (base) tem padding horizontal próprio (16px) que se aplicaria ao <header> full-bleed
+     também nessa largura — zera de novo aqui (mesma especificidade, depois no arquivo, vence) e
+     move o espaçamento horizontal pro wrapper de conteúdo, junto com o padding-left/right menor
+     (16px, igual ao resto do app no mobile) que .marketing-topbar-inner usa no desktop (20px). */
+  .marketing-topbar { padding-left: 0; padding-right: 0; }
+  .marketing-topbar-inner { padding: 0 16px; }
   .app-content { padding: 10px 16px 48px; }
   .form-row { grid-template-columns: 1fr; }
   .page-header { flex-direction: column; align-items: flex-start; }
