@@ -102,6 +102,7 @@ Design system **"Caderno de Esboço"** — interface com aparência de caderno d
 - Toda nova regra de validação entra em `src/utils/validators.ts` (Zod) — não validar inline no controller.
 - Migrations: sempre via `npx prisma migrate dev --name <descricao>`; nunca editar o banco manualmente.
 - Antes de finalizar qualquer tarefa: `npm run build && npm test && npm run lint` devem passar.
+- **Testes unitários (Vitest, `tests/`) em estrutura BDD Dado/Quando/Então** (`.claude/plans/testes-bdd-e2e-2026-07-28.md`): `describe('Dado <estado/precondição>', ...)` agrupando `describe('Quando <ação>', ...)` com `it('Então <resultado>', ...)` dentro — sem forçar os 3 níveis quando o teste é trivial (ex.: 1 cenário isolado pode ficar só num `it('Quando X, então Y')` direto dentro do `describe` de precondição, ver exemplo em `tests/routes/activities.routes.test.ts`). Não é Gherkin/Cucumber — decisão consciente de não introduzir um segundo test runner só por isso; convenção de nomenclatura em cima do Vitest já existente. Aplicar a novos arquivos de teste; não é obrigatório migrar os já existentes (evitar rewrite mecânico só por causa da convenção).
 
 ## Fora do escopo do MVP (não implementar sem alinhamento)
 
