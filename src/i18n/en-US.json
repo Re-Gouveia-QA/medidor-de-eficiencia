@@ -48,6 +48,7 @@
   "home.greeting": "Welcome back, {{name}}",
   "home.inProgress.status": "In progress · {{categoria}}",
   "home.inProgress.finish": "Finish",
+  "home.inProgress.detailsToggle": "Finish with details",
   "home.startForm.heading": "What are you doing right now?",
   "home.startForm.namePlaceholder": "E.g.: Team meeting",
   "home.startForm.categoryPlaceholder": "Category",

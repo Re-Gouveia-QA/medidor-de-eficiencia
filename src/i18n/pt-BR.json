@@ -48,6 +48,7 @@
   "home.greeting": "Bem-vindo(a) de volta, {{name}}",
   "home.inProgress.status": "Em andamento · {{categoria}}",
   "home.inProgress.finish": "Finalizar",
+  "home.inProgress.detailsToggle": "Finalizar com detalhes",
   "home.startForm.heading": "O que você está fazendo agora?",
   "home.startForm.namePlaceholder": "Ex.: Reunião de equipe",
   "home.startForm.categoryPlaceholder": "Categoria",

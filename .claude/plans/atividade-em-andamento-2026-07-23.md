@@ -3,9 +3,14 @@
 **Date:** 2026-07-23 · **Estendido:** 2026-07-28 (Fases 6-8)
 **Status:** Fases 1-5 concluídas e mescladas em `master` (`feat(schema)` → `feat(model)` →
 `feat(controller)` → `feat(views)` → `feat(reports)`, mais um `feat(home): cronômetro ao vivo e
-polimento` posterior — tudo já em `master`). Fases 6-8 (abaixo) são uma extensão pedida em
-2026-07-28: opção "finalizar com detalhes" (descrição + valor) na hora de encerrar a atividade em
-andamento — ainda não iniciadas.
+polimento` posterior — tudo já em `master`). Extensão "finalizar com detalhes" (Fases 6-8)
+**concluída** — cada fase em branch própria empilhada (`feature/finish-details-model` →
+`-controller` → `-view`), build/testes/lint verdes (137/137) e fluxo completo verificado contra o
+banco de dev real: categoria com `possuiValor` (campo de valor aparece, pré-preenchido com
+`valorPadrao`, salvo corretamente), categoria sem `possuiValor` (campo de valor não aparece),
+finalizar rápido sem abrir os detalhes (comportamento inalterado). Um bug de dev-server com cache
+de i18n obsoleto foi encontrado e corrigido durante a verificação (ver Notas da extensão). Dados de
+teste removidos do banco após a verificação. Branches aguardando decisão de merge.
 
 ## Goal
 
@@ -253,3 +258,10 @@ continua funcionando igual a hoje.
 - Replanning trigger: se o usuário quiser que o campo de valor apareça mesmo sem
   `possuiValor` (ex.: valor "livre" em qualquer categoria), isso muda a Fase 6 (regra 9 deixaria de
   ser condição pra aceitar `valor`) e a Fase 8 (campo sempre visível) — replanejar antes.
+- **Gotcha de dev server encontrado na verificação da Fase 8:** o processo `tsx watch` rodando
+  desde antes da edição de `src/i18n/*.json` continuou servindo a chave nova
+  (`home.inProgress.detailsToggle`) sem tradução (literal na tela) — o i18n é carregado em memória
+  na inicialização, e `tsx watch` não reinicia automaticamente por mudança em `.json` da mesma
+  forma que faz por `.ts`. Precisou de um restart manual do processo (mesma disciplina de
+  PID-tracking já estabelecida — matar só o PID específico, nunca por nome). CSS/EJS continuam
+  servidos ao vivo sem restart (lidos do disco a cada request em dev); só o i18n fica em memória.

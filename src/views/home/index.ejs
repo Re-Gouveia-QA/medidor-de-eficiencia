@@ -15,6 +15,24 @@
       </svg>
     </span>
     <form action="/activities/<%= emAndamento.id %>/finish" method="POST">
+      <details class="in-progress-details">
+        <summary><%= t('home.inProgress.detailsToggle') %></summary>
+        <div class="field">
+          <label class="field-label" for="descricao"><%= t('activities.form.descriptionLabel') %></label>
+          <div class="sketch-edge input-wrap">
+            <textarea id="descricao" name="descricao" class="input" rows="3" placeholder="<%= t('activities.form.descriptionPlaceholder') %>"></textarea>
+          </div>
+        </div>
+        <% if (emAndamento.category.possuiValor) { %>
+          <div class="field">
+            <label class="field-label" for="valor"><%= emAndamento.category.valorLabel || t('common.valueLabelDefault') %></label>
+            <div class="sketch-edge input-wrap">
+              <input type="number" id="valor" name="valor" class="input" min="0.01" step="0.01" placeholder="0.00"
+                     value="<%= emAndamento.category.valorPadrao ?? '' %>" />
+            </div>
+          </div>
+        <% } %>
+      </details>
       <button type="submit" class="btn btn-primary sketch-edge sketch-hover">
         <%- include('../partials/icon', { name: 'check', size: 16 }) %> <%= t('home.inProgress.finish') %>
       </button>
