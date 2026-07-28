@@ -10,11 +10,15 @@ body {
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--text-base);
+  -webkit-text-stroke-width: var(--font-body-stroke);
+  -webkit-text-stroke-color: currentColor;
   transition: background-color .25s ease, color .25s ease;
 }
 /* line-height próprio (mais apertado que o 1.5 herdado do body, em reset.css) — títulos usam a
    fonte de display em tamanho maior; 1.5 fica solto demais quando o título quebra em duas linhas. */
-h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.25; }
+/* -webkit-text-stroke-width é herdado do body (reforço da Handlee, ver tokens.css) — zerado aqui
+   porque Architects Daughter já é mais encorpada e não precisa do reforço. */
+h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 400; margin: 0; line-height: 1.25; -webkit-text-stroke-width: 0; }
 a { color: var(--accent-blue); }
 a:hover { color: var(--ink); }
 .muted { color: var(--ink-soft); font-size: var(--text-sm); }
@@ -24,6 +28,8 @@ strong, b { letter-spacing: 0.03em; }
 .btn {
   font-family: var(--font-body);
   font-size: var(--text-base);
+  -webkit-text-stroke-width: var(--font-body-stroke);
+  -webkit-text-stroke-color: currentColor;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -99,6 +105,8 @@ strong, b { letter-spacing: 0.03em; }
 .input, .select {
   font-family: var(--font-body);
   font-size: var(--text-base);
+  -webkit-text-stroke-width: var(--font-body-stroke);
+  -webkit-text-stroke-color: currentColor;
   padding: 10px 4px;
   background: transparent;
   border: none;
@@ -139,7 +147,7 @@ textarea.input { padding: 10px 4px; resize: vertical; }
 
 /* Card */
 .card { padding: 26px; --radius: var(--radius-blob); }
-.card-title { font-family: var(--font-display); font-size: var(--text-xl); margin: 0 0 8px; }
+.card-title { font-family: var(--font-display); font-size: var(--text-xl); margin: 0 0 8px; -webkit-text-stroke-width: 0; }
 .card-heading { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
 .card-footer { margin-top: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
 
@@ -162,7 +170,7 @@ textarea.input { padding: 10px 4px; resize: vertical; }
 
 /* Alert (mensagens flash) */
 .alert { display: flex; gap: 12px; align-items: flex-start; padding: 14px 18px; --radius: var(--radius-sm); margin-bottom: 16px; }
-.alert-title { font-family: var(--font-display); font-size: var(--text-lg); margin: 0 0 2px; line-height: 1.25; }
+.alert-title { font-family: var(--font-display); font-size: var(--text-lg); margin: 0 0 2px; line-height: 1.25; -webkit-text-stroke-width: 0; }
 .alert-success::before { background: var(--accent-green-soft); border-color: var(--accent-green); }
 .alert-error::before { background: var(--accent-red-soft); border-color: var(--accent-red); }
 
