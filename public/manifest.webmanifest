@@ -1,0 +1,31 @@
+{
+  "name": "Sketch your time",
+  "short_name": "Sketch",
+  "description": "Registre suas atividades diárias, organize-as em categorias e acompanhe sua eficiência com relatórios de tempo e valor por período.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FAECDA",
+  "theme_color": "#2171CC",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
