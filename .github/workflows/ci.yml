@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      # Valores dummy — não são credenciais reais, só satisfazem a validação Zod de env.ts no
+      # boot de src/app.ts. Os testes unitários mockam src/config/database.ts diretamente (ver
+      # tests/services/ReportService.test.ts, tests/models/CategoryModel.test.ts) e o Prisma
+      # Client não conecta eagerly, então nenhum Postgres real é necessário aqui.
+      NODE_ENV: test
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      SESSION_SECRET: ci-dummy-session-secret-not-real
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run build
+
+      - run: npm test
