@@ -7,8 +7,10 @@ dummy (sem `.env` real, `env -i`) encontrou uma dependência oculta real de Post
 `ActivityModel`/`CategoryModel`, então `HomeController` batia num Prisma Client de verdade — só
 não quebrava localmente porque o Postgres de dev sempre estava no ar). Corrigido adicionando os
 mocks que faltavam com defaults (`findInProgress` → `null`, `listByUser` → `[]`). 137/137 passam
-tanto com env isolado (`env -i` + vars dummy) quanto no ambiente normal de dev. Fase 2 (push +
-confirmar no GitHub Actions) ainda não iniciada.
+tanto com env isolado (`env -i` + vars dummy) quanto no ambiente normal de dev. Fase 2 concluída:
+merge em `master` + push, 1 execução real verde no GitHub Actions (run 30457176454, ~1min10s).
+**Ajuste pós-plano:** trigger trocado de `push:master` + `pull_request` pra só `pull_request` com
+destino `master` (pedido do usuário) — passa a rodar só em PR, não mais em todo push direto.
 
 ## Goal
 
@@ -43,8 +45,8 @@ integração com o GitHub) nem incluir a suíte E2E (Playwright, criada em
   cache npm) → `npm ci` → `npm run lint` → `npm run build` → `npm test`.
 - Variáveis de ambiente do job são valores dummy fixos no YAML (não secrets do GitHub) — não são
   credenciais reais, só precisam satisfazer o schema Zod de `env.ts`.
-- Triggers: `push` em `master` + `pull_request` (qualquer branch de destino) — cobre tanto push
-  direto quanto um eventual fluxo de PR no futuro.
+- Triggers: `pull_request` com destino `master` (ajustado depois — pedido explícito do usuário pra
+  rodar só em PR, não mais em todo push direto a `master`).
 
 ## Escopo
 
