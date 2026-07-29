@@ -10,8 +10,12 @@ nem com o banco de dev, mesmo os dois rodando ao mesmo tempo). Fase 3 concluída
 (`test/e2e-categories`, ainda não mesclada — `e2e/categories.spec.ts`, 5/5). Fase 5 concluída em
 branch separada (`test/e2e-activities`, ainda não mesclada — `e2e/activities.spec.ts`, 4/4). Fase 6
 concluída (`e2e/reports.spec.ts`, 2/2: período padrão = mês corrente, filtro recalcula dias/horas/
-categoria; `e2e/theme.spec.ts`, 2/2: alterna tema e persiste após reload via cookie). Falta só a
-Fase 7 (wiring final/documentação).
+categoria; `e2e/theme.spec.ts`, 2/2: alterna tema e persiste após reload via cookie). Fase 7
+concluída (`CLAUDE.md` documenta `npm run test:e2e` + pré-requisitos; confirmado que `npm test` e
+`npm run test:e2e` rodam de forma independente, sem overlap de arquivos). **Plano concluído** —
+6 branches de teste aguardando decisão de merge: `test/bdd-unit-convention`,
+`test/e2e-playwright-setup`, `test/e2e-auth`, `test/e2e-categories`, `test/e2e-activities`,
+`test/e2e-reports-theme` (esta última já inclui a Fase 7).
 
 **Nota operacional:** o Docker Desktop já parou uma vez no meio da Fase 4 (container `medidor-db`
 inacessível) — checar `docker ps` antes de rodar `npm run test:e2e` se aparecer `AggregateError`
