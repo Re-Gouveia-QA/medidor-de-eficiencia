@@ -108,6 +108,7 @@ export function createApp() {
     res.locals.locale = req.userLocale;
     res.locals.t = createTranslator(req.userLocale);
     res.locals.appUrl = buildAppUrl;
+    res.locals.isProd = isProd;
     next();
   });
 

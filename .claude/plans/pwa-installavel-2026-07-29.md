@@ -1,8 +1,9 @@
 # Plan: Aplicação instalável como PWA
 
 **Date:** 2026-07-29
-**Status:** Fase 1 concluída em `feature/pwa-manifest-icons` (não mesclada — merge só mediante
-pedido explícito). Fase 2 (service worker) ainda não iniciada.
+**Status:** Plano concluído e mesclado em master — Fase 1 (`feature/pwa-manifest-icons`) e Fase 2
+(`feature/pwa-service-worker`, branch independente a partir de `master`, já que o service worker
+não depende do manifest/ícones pra funcionar).
 
 ### Pós-Fase 1 (nota de execução)
 
@@ -15,6 +16,42 @@ resolvidos (`icon-192.png`, `icon-512.png` any + `icon-maskable-512.png` maskabl
 lint verdes. Checagem real em iOS Safari ("Adicionar à Tela de Início") continua pendente — sem
 dispositivo iOS neste ambiente de sessão; risco baixo, já que o manifest é válido por spec e os
 ícones seguem os tamanhos exigidos.
+
+### Pós-Fase 2 (nota de execução)
+
+`public/sw.js` faz precache best-effort (cada `cache.add` isolado com `.catch()`, pra um recurso
+ausente não derrubar o precache inteiro — relevante aqui porque a lista inclui os ícones/manifest
+da Fase 1, que não existem neste branch, já que as duas fases foram propositalmente independentes;
+o `fetch` handler cobre `/icons/`, `/css/`, `/js/`, `favicon.svg`, `manifest.webmanifest` por
+prefixo/exact-match de qualquer forma, então cachear em runtime funciona mesmo sem o precache
+inicial). `res.locals.isProd` exposto em `src/app.ts` (mesmo bloco de `res.locals.theme` etc.);
+`<script src="/js/register-sw.js">` incluído nos 3 layouts, envolvido em `<% if (isProd) { %>`.
+
+Verificado ao vivo, dois cenários:
+- **Dev** (`npm run dev`, `NODE_ENV=development`): `curl http://localhost:3000/login | grep
+  register-sw` não encontra nada — tag não renderizada, SW nunca registrado.
+- **Produção** (`NODE_ENV=production node dist/server.js`): tag presente no HTML; verificado via
+  Chrome headless + CDP (`Runtime.evaluate` chamando `navigator.serviceWorker.getRegistrations()`
+  na própria página, sem registro manual) que o SW carregado pelo script da página registra e ativa
+  (`active: "http://localhost:3000/sw.js"`, `scope: "http://localhost:3000/"`).
+
+**Percalço encontrado (não relacionado à Fase 2 em si):** `npm run build` roda `tsc` seguido de
+`cpy 'src/views/**/*' dist/views ... && cpy 'public/**/*' dist/public` numa única invocação de
+`npm run copy:assets` — nesta sessão, rodando via Bash tool neste Windows, essa cadeia retornou
+exit 0 sem gerar `dist/views`/`dist/public` (aparentemente uma falha silenciosa de timing entre os
+dois `cpy` encadeados nesse ambiente específico). Rodar os dois comandos `cpy` separadamente (não
+encadeados) resolveu nas duas vezes. Não é uma regressão desta Fase — só apareceu porque foi a
+primeira vez nesta sessão rodando o server em modo produção local (`node dist/server.js`) via este
+Bash tool; o deploy real (Railway/Nixpacks, ver Stack no `CLAUDE.md`) usa `npm run build` num
+ambiente Linux diferente e nunca apresentou esse sintoma. Se `dist/views`/`dist/public` aparecerem
+vazios de novo ao testar build de produção localmente nesta sessão, rodar os dois `cpy` em
+comandos separados em vez de confiar na cadeia `&&` do script.
+
+**Lighthouse não foi rodado**: `npx lighthouse` exigiria baixar o pacote (Puppeteer + Chromium
+embutido, download pesado só para uma confirmação pontual) — os mesmos critérios de instalabilidade
+que o audit do Lighthouse checaria (manifest válido, service worker registrado com handler de
+`fetch`, contexto seguro) já foram confirmados diretamente via CDP acima, então o download foi
+cancelado por não agregar evidência nova.
 
 ## Goal
 
