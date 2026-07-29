@@ -15,8 +15,16 @@ concluída (`e2e/reports.spec.ts`, 2/2: período padrão = mês corrente, filtro
 categoria; `e2e/theme.spec.ts`, 2/2: alterna tema e persiste após reload via cookie). Fase 7
 concluída (`CLAUDE.md` documenta `npm run test:e2e` + pré-requisitos; confirmado que `npm test` e
 `npm run test:e2e` rodam de forma independente, sem overlap de arquivos). **Plano concluído e
-mesclado em `master`** — 137 testes unitários (Vitest, convenção BDD) + 22 testes E2E (Playwright)
+mesclado em `master`** — 137 testes unitários (Vitest, convenção BDD) + 19 testes E2E (Playwright)
 cobrindo autenticação, categorias, atividades (incl. o modal de detalhes), relatórios e tema.
+
+**Pós-merge:** rodar a suíte E2E completa (19 specs, todos fazendo login) expôs que
+`.env.test` com `NODE_ENV=development` deixa o `authLimiter` (10 logins/15min por IP) ativo — a
+suíte estourava esse limite no meio da execução e os logins seguintes travavam em `waitForURL`
+sem erro claro. Corrigido trocando pra `NODE_ENV=test` (só isso desliga o rate limit; `isProd`
+continua `false`, sessão seguindo em `MemoryStore` normalmente) — documentado em `CLAUDE.md`. Como
+`.env.test` é git-ignored, essa correção só existe nesta máquina até alguém recriar o arquivo — por
+isso a nota ficou em `CLAUDE.md`, não só aqui.
 
 **Nota operacional:** o Docker Desktop já parou uma vez no meio da Fase 4 (container `medidor-db`
 inacessível) — checar `docker ps` antes de rodar `npm run test:e2e` se aparecer `AggregateError`
