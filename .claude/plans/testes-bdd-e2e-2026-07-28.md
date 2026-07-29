@@ -8,13 +8,14 @@ servidor de teste isolado na porta 3100 — confirmado que não colide com o ser
 nem com o banco de dev, mesmo os dois rodando ao mesmo tempo). Fase 3 concluída (`e2e/auth.spec.ts`,
 4/4 cenários: login válido, senha errada, guarda de rota sem sessão, logout). Fase 4 concluída
 (`e2e/categories.spec.ts`, 5/5 cenários: criar, editar, criar com valor numérico, exclusão
-bloqueada por atividade vinculada — regra 7 — e exclusão sem vínculo). Fases 5-7 ainda não
-iniciadas.
+bloqueada por atividade vinculada — regra 7 — e exclusão sem vínculo). Fase 5 concluída
+(`e2e/activities.spec.ts`, 4/4 cenários: registrar com valor+descrição — card compacto, modal com
+valor por último —, editar, iniciar em andamento com badge, finalizar com detalhes regra 9). Fases
+6-7 ainda não iniciadas.
 
-**Nota operacional:** durante a Fase 4 o Docker Desktop estava parado (container `medidor-db`
-inacessível, `AggregateError` sem detalhe no `global-setup`); precisou ser reiniciado manualmente
-antes de rodar a suíte — não é falha do código, mas vale checar `docker ps` antes de rodar
-`npm run test:e2e` se o erro for esse.
+**Nota operacional:** o Docker Desktop já parou uma vez no meio da Fase 4 (container `medidor-db`
+inacessível) — checar `docker ps` antes de rodar `npm run test:e2e` se aparecer `AggregateError`
+sem detalhe no `global-setup`.
 
 ## Goal
 
