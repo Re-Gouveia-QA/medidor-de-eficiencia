@@ -52,5 +52,8 @@
   <script src="/js/locale-toggle.js"></script>
   <script src="/js/timezone.js"></script>
   <script src="/js/back-button.js"></script>
+  <% if (isProd) { %>
+    <script src="/js/register-sw.js"></script>
+  <% } %>
 </body>
 </html>

@@ -14,5 +14,8 @@
     <%- include('../partials/flash') %>
     <%- body %>
   </main>
+  <% if (isProd) { %>
+    <script src="/js/register-sw.js"></script>
+  <% } %>
 </body>
 </html>
