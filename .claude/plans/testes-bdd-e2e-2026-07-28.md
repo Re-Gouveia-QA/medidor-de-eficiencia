@@ -10,8 +10,13 @@ nem com o banco de dev, mesmo os dois rodando ao mesmo tempo). Fase 3 concluída
 (`e2e/categories.spec.ts`, 5/5 cenários: criar, editar, criar com valor numérico, exclusão
 bloqueada por atividade vinculada — regra 7 — e exclusão sem vínculo). Fase 5 concluída
 (`e2e/activities.spec.ts`, 4/4 cenários: registrar com valor+descrição — card compacto, modal com
-valor por último —, editar, iniciar em andamento com badge, finalizar com detalhes regra 9). Fases
-6-7 ainda não iniciadas.
+valor por último —, editar, iniciar em andamento com badge, finalizar com detalhes regra 9). Fase 6
+concluída (`e2e/reports.spec.ts`, 2/2: período padrão = mês corrente, filtro recalcula dias/horas/
+categoria; `e2e/theme.spec.ts`, 2/2: alterna tema e persiste após reload via cookie). Fase 7
+concluída (`CLAUDE.md` documenta `npm run test:e2e` + pré-requisitos; confirmado que `npm test` e
+`npm run test:e2e` rodam de forma independente, sem overlap de arquivos). **Plano concluído e
+mesclado em `master`** — 137 testes unitários (Vitest, convenção BDD) + 22 testes E2E (Playwright)
+cobrindo autenticação, categorias, atividades (incl. o modal de detalhes), relatórios e tema.
 
 **Nota operacional:** o Docker Desktop já parou uma vez no meio da Fase 4 (container `medidor-db`
 inacessível) — checar `docker ps` antes de rodar `npm run test:e2e` se aparecer `AggregateError`
