@@ -3,12 +3,16 @@ import request from 'supertest';
 import { createApp } from '../../src/app';
 import { UserModel } from '../../src/models/UserModel';
 import { PasswordResetTokenModel } from '../../src/models/PasswordResetTokenModel';
+import { ActivityModel } from '../../src/models/ActivityModel';
+import { CategoryModel } from '../../src/models/CategoryModel';
 import { GoogleAuthService } from '../../src/services/GoogleAuthService';
 import { EmailService } from '../../src/services/EmailService';
 import { loginAgent, TEST_USER } from '../helpers/auth';
 
 vi.mock('../../src/models/UserModel');
 vi.mock('../../src/models/PasswordResetTokenModel');
+vi.mock('../../src/models/ActivityModel');
+vi.mock('../../src/models/CategoryModel');
 vi.mock('../../src/services/GoogleAuthService');
 vi.mock('../../src/services/EmailService');
 
@@ -17,6 +21,12 @@ describe('Rotas de autenticação', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    // Vários testes deste arquivo seguem o login com um GET / (HomeController) pra confirmar que
+    // a autenticação funcionou de ponta a ponta — sem esses defaults, a real conexão Prisma seria
+    // acionada (ActivityModel/CategoryModel não são o foco deste arquivo, mas HomeController os
+    // usa) e o teste passaria a depender de um Postgres real alcançável, o que quebra em CI.
+    vi.mocked(ActivityModel.findInProgress).mockResolvedValue(null);
+    vi.mocked(CategoryModel.listByUser).mockResolvedValue([]);
   });
 
   it('GET /login retorna 200 para visitante não autenticado', async () => {
