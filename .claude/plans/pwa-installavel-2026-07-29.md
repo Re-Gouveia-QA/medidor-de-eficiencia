@@ -1,7 +1,20 @@
 # Plan: Aplicação instalável como PWA
 
 **Date:** 2026-07-29
-**Status:** draft
+**Status:** Fase 1 concluída em `feature/pwa-manifest-icons` (não mesclada — merge só mediante
+pedido explícito). Fase 2 (service worker) ainda não iniciada.
+
+### Pós-Fase 1 (nota de execução)
+
+Verificado com `npm run dev` + Chrome headless via CDP (`Page.getAppManifest`, o mesmo comando que
+a aba Application do DevTools usa): `errors: []`, manifest reconhecido com `name`, `short_name`,
+`description`, `display: standalone`, `background_color`/`theme_color` corretos e os 3 ícones
+resolvidos (`icon-192.png`, `icon-512.png` any + `icon-maskable-512.png` maskable). `curl` confirmou
+`Content-Type: application/manifest+json` (mapeamento correto via `.webmanifest`) e as 3 link tags
+(`manifest`, `theme-color`, `apple-touch-icon`) presentes no HTML de `/login`. Build/testes (137/137)/
+lint verdes. Checagem real em iOS Safari ("Adicionar à Tela de Início") continua pendente — sem
+dispositivo iOS neste ambiente de sessão; risco baixo, já que o manifest é válido por spec e os
+ícones seguem os tamanhos exigidos.
 
 ## Goal
 
