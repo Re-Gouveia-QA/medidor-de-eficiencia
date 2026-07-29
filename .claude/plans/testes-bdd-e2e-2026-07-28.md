@@ -5,7 +5,17 @@
 testes passando, mesma cobertura, só reorganização). Fase 2 concluída (Playwright + banco `_e2e`
 funcionando, smoke spec passando 2x seguidas contra `localhost:5433/medidor_eficiencia_e2e`,
 servidor de teste isolado na porta 3100 — confirmado que não colide com o servidor de dev na 3000
-nem com o banco de dev, mesmo os dois rodando ao mesmo tempo). Fases 3-7 ainda não iniciadas.
+nem com o banco de dev, mesmo os dois rodando ao mesmo tempo). Fase 3 concluída em branch separada
+(`test/e2e-auth`, ainda não mesclada — `e2e/auth.spec.ts`, 4/4). Fase 4 concluída em branch separada
+(`test/e2e-categories`, ainda não mesclada — `e2e/categories.spec.ts`, 5/5). Fase 5 concluída em
+branch separada (`test/e2e-activities`, ainda não mesclada — `e2e/activities.spec.ts`, 4/4). Fase 6
+concluída (`e2e/reports.spec.ts`, 2/2: período padrão = mês corrente, filtro recalcula dias/horas/
+categoria; `e2e/theme.spec.ts`, 2/2: alterna tema e persiste após reload via cookie). Falta só a
+Fase 7 (wiring final/documentação).
+
+**Nota operacional:** o Docker Desktop já parou uma vez no meio da Fase 4 (container `medidor-db`
+inacessível) — checar `docker ps` antes de rodar `npm run test:e2e` se aparecer `AggregateError`
+sem detalhe no `global-setup`.
 
 ## Goal
 
