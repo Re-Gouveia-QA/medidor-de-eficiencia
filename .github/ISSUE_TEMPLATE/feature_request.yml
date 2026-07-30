@@ -1,0 +1,27 @@
+name: "✨ Sugestão de feature"
+description: Proponha uma melhoria ou funcionalidade nova para o Sketch your time.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problema-motivacao
+    attributes:
+      label: Problema / motivação
+      description: Que problema essa sugestão resolve? Por que ela é útil?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solucao-proposta
+    attributes:
+      label: Solução proposta
+      description: Como você imagina que isso deveria funcionar?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternativas-consideradas
+    attributes:
+      label: Alternativas consideradas
+      description: Outras abordagens que você considerou, se houver.
+    validations:
+      required: false
