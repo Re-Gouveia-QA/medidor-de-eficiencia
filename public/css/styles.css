@@ -706,6 +706,13 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 
 @media (max-width: 560px) {
   .topbar { padding: 12px 16px 4px; }
+  /* .topbar-actions (base, gap: 16px) nunca tinha ajuste mobile pro topbar autenticado
+     (main.ejs) — só o de marketing (.marketing-topbar .topbar-actions, abaixo) já reduzia o gap.
+     Em telas estreitas (~320px), até 4 ícones (docs [admin] + idioma + tema + logout) mais a marca
+     "Sketch" não cabiam numa linha só, empurrando o último botão (geralmente o de logout) pra fora
+     da viewport. gap: 8px (mesmo valor já usado pelo topbar de marketing) resolve sem precisar de
+     flex-wrap — validado sem overflow horizontal em 320/360/375px. */
+  .topbar-actions { gap: 8px; }
   /* .topbar (base) tem padding horizontal próprio (16px) que se aplicaria ao <header> full-bleed
      também nessa largura — zera de novo aqui (mesma especificidade, depois no arquivo, vence) e
      move o espaçamento horizontal pro wrapper de conteúdo, junto com o padding-left/right menor
