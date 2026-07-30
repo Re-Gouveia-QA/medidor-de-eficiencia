@@ -1,0 +1,48 @@
+name: "🐛 Relatório de bug"
+description: Reporte algo que não está funcionando como esperado no Sketch your time.
+labels: ["bug"]
+body:
+  - type: textarea
+    id: o-que-aconteceu
+    attributes:
+      label: O que aconteceu?
+      description: Descreva o problema com o máximo de detalhe possível.
+    validations:
+      required: true
+
+  - type: textarea
+    id: passos-para-reproduzir
+    attributes:
+      label: Passos para reproduzir
+      description: Passo a passo pra reproduzir o problema.
+      placeholder: |
+        1. Acesse '...'
+        2. Clique em '...'
+        3. Veja o erro
+    validations:
+      required: true
+
+  - type: textarea
+    id: comportamento-esperado
+    attributes:
+      label: Comportamento esperado
+      description: O que deveria acontecer em vez disso?
+    validations:
+      required: true
+
+  - type: input
+    id: ambiente
+    attributes:
+      label: Ambiente
+      description: Navegador, sistema operacional e/ou dispositivo, se relevante.
+      placeholder: "Ex.: Chrome 128 no Windows 11 / Safari no iPhone"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: duplicidade
+    attributes:
+      label: Checagem
+      options:
+        - label: Já verifiquei que não existe uma issue duplicada pra isso.
+          required: true
