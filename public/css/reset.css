@@ -15,6 +15,15 @@ button, input, select, textarea {
   margin: 0;
   appearance: none;
 }
+/* Exceção ao reset acima: no WebKit (Safari), input[type="date"|"time"] é composto internamente
+   por sub-campos (dia/mês/ano ou hora/minuto) desenhados pelo motor nativo — sem esses tipos terem
+   um fallback de renderização customizada quando appearance é zerado (diferente de <select>/
+   input de texto), o campo vazio aparece como um quadrado em branco, sem o placeholder nativo
+   (dd/mm/aaaa). appearance: auto aqui não reintroduz borda/fundo nativos por cima do visual do
+   design system: .input já zera background/border no próprio elemento, e o contorno visível vem
+   do ::before de .sketch-edge no .input-wrap pai, não do input em si.
+*/
+input[type="date"], input[type="time"] { appearance: auto; }
 button { cursor: pointer; }
 a { text-decoration: none; color: inherit; }
 table { border-collapse: collapse; }
