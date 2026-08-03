@@ -63,6 +63,7 @@
   "home.menu.categories.title": "Categorias",
   "home.menu.categories.subtitle": "Organize do seu jeito",
   "layout.skipLink": "Pular para o conteúdo",
+  "layout.navToggleAriaLabel": "Abrir menu",
   "layout.docsAriaLabel": "Documentação da API",
   "layout.themeToggleAriaLabel": "Alternar tema claro/escuro",
   "layout.localeToggleAriaLabel": "Mudar idioma para inglês",

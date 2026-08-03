@@ -14,7 +14,10 @@
     <a class="skip-link" href="#main-content"><%= t('layout.skipLink') %></a>
     <header class="topbar">
       <a class="brand" href="/">Sketch</a>
-      <div class="topbar-actions">
+      <button type="button" id="navToggle" class="icon-btn sketch-edge sketch-hover btn-secondary nav-toggle" aria-label="<%= t('layout.navToggleAriaLabel') %>" aria-expanded="false" aria-controls="topbarActions">
+        <%- include('../partials/icon', { name: 'menu', size: 20 }) %>
+      </button>
+      <div class="topbar-actions sketch-edge" id="topbarActions">
         <% if (currentUser.isAdmin) { %>
           <a class="icon-btn sketch-edge sketch-hover btn-secondary docs-btn" href="/docs" aria-label="<%= t('layout.docsAriaLabel') %>">
             <%- include('../partials/icon', { name: 'info', size: 18 }) %>
@@ -48,6 +51,7 @@
 
   <script src="/js/confirm-submit.js"></script>
   <script src="/js/activity-detail-modal.js"></script>
+  <script src="/js/nav-toggle.js"></script>
   <script src="/js/theme-toggle.js"></script>
   <script src="/js/locale-toggle.js"></script>
   <script src="/js/timezone.js"></script>
