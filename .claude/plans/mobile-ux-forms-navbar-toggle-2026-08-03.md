@@ -3,7 +3,8 @@
 **Date:** 2026-08-03
 **Status:** Plano concluído — 4 fases. Fase 3 (`feature/mobile-filters-stack`, PR #4) e Fase 4
 (`feature/required-field-indicator`, PR #5) já mescladas em `master`. Fase 1
-(`feature/mobile-nav-toggle`) e Fase 2 (`feature/form-cards`) com PR aberto, aguardando revisão/merge.
+(`feature/mobile-nav-toggle`, PR #6) e Fase 2 (`feature/form-cards`) com PR aberto, aguardando
+revisão/merge.
 
 ## Goal
 
@@ -99,7 +100,7 @@ comportamento em desktop.
 
 ## Phases
 
-### Phase 1: Toggle mobile no topbar autenticado — CONCLUÍDA (PR aberto)
+### Phase 1: Toggle mobile no topbar autenticado — CONCLUÍDA (PR #6 aberto)
 **Objetivo:** em telas ≤560px, o topbar autenticado mostra só marca + 1 botão de menu; clicar
 revela docs/idioma/tema/logout num painel; desktop não muda em nada.
 
