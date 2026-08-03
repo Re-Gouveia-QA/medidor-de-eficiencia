@@ -17,6 +17,9 @@
 .brand:hover { color: var(--ink); }
 .topbar-actions { display: flex; align-items: center; gap: 16px; }
 .topbar-actions form { display: contents; }
+/* Escondido por padrão — só aparece dentro do media query mobile abaixo. O topbar de marketing
+   (marketing.ejs) não renderiza esse botão nem tem o JS de abertura, então nunca precisa dele. */
+.nav-toggle { display: none; }
 
 /* Botão de docs: mantém a cor azul de link (herdada de "a", components.css) também no hover/focus —
    sem isso, a regra "a:hover" (mais específica) troca pra --ink, perdendo a cor no hover. */
@@ -721,6 +724,27 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
      da viewport. gap: 8px (mesmo valor já usado pelo topbar de marketing) resolve sem precisar de
      flex-wrap — validado sem overflow horizontal em 320/360/375px. */
   .topbar-actions { gap: 8px; }
+  /* Toggle mobile do topbar autenticado: recolhe docs/idioma/tema/logout num painel, em vez de só
+     caber numa fileira (fix anterior). #topbarActions (id, não a classe .topbar-actions sozinha)
+     porque a classe é compartilhada com .marketing-topbar — se as regras de colapso/painel fossem
+     escritas em cima da classe, o topbar de marketing (CTAs "Entrar"/"Criar conta", sem toggle nem
+     JS de abertura) sumiria sem forma de reabrir. .topbar position:relative ancora o painel
+     absoluto ao header, não à página inteira. */
+  .topbar { position: relative; }
+  .nav-toggle { display: inline-flex; }
+  #topbarActions {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 16px;
+    margin-top: 8px;
+    padding: 14px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    z-index: 30;
+  }
+  #topbarActions.is-open { display: flex; }
   /* .topbar (base) tem padding horizontal próprio (16px) que se aplicaria ao <header> full-bleed
      também nessa largura — zera de novo aqui (mesma especificidade, depois no arquivo, vence) e
      move o espaçamento horizontal pro wrapper de conteúdo, junto com o padding-left/right menor
