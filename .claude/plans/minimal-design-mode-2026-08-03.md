@@ -1,7 +1,7 @@
 # Plan: Modo de design minimalista (alternativa ao "Caderno de Esboço", habilitada por default)
 
 **Date:** 2026-08-03
-**Status:** Fases 0-1 concluídas (commits `3316e21`, `cf8617d`, `05b2ffa`, branch `feature/minimal-design-mode`) — direção "Grade" escolhida via comparação em Artifact (Big Shoulders Text, geometria quase reta, borda fina). **Escopo corrigido em 2026-08-03: o toggle é exclusivo das páginas internas autenticadas — Fase 2 (auth + landing pública) cancelada, ver seção Scope.** Fase 3 (renumerada, ver abaixo) pendente.
+**Status:** Plano concluído (2026-08-03) — Fases 0, 1 e 3 implementadas (commits `3316e21`, `cf8617d`, `05b2ffa`, `613863d`, `37cd866`, branch `feature/minimal-design-mode`; falta o commit da Fase 3 em si). Direção "Grade" escolhida via comparação em Artifact (Big Shoulders Text, geometria quase reta, borda fina). Fase 2 original (auth + landing pública) cancelada — escopo corrigido pelo usuário pra só páginas internas autenticadas, ver Scope. Branch ainda não tem PR/merge.
 
 ## Goal
 
