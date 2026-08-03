@@ -2,7 +2,7 @@
 
 <form action="<%= categoria ? `/categories/${categoria.id}?_method=PUT` : '/categories' %>" method="POST" class="form form-narrow category-form">
   <div class="field sketch-in" style="--stagger-index: 0;">
-    <label class="field-label" for="nome"><%= t('categories.form.nameLabel') %></label>
+    <label class="field-label is-required" for="nome"><%= t('categories.form.nameLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="text" id="nome" name="nome" class="input" required placeholder="<%= t('categories.form.namePlaceholder') %>" value="<%= categoria?.nome ?? '' %>" />
     </div>
