@@ -199,6 +199,11 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
    largura toda do card (comportamento padrão de flex-column). */
 .in-progress-card { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; margin: 1.25rem 0; }
 .in-progress-card h2 { font-size: var(--text-lg); }
+/* CTA principal do card (Iniciar/Finalizar) em largura cheia — align-items: flex-start acima
+   mantém os campos em seu tamanho natural (necessário pro <details> não esticar estranho), mas
+   deixava o botão mais importante do card isolado à esquerda, com bastante espaço morto ao lado no
+   mobile. Largura cheia dá mais peso visual à ação mais frequente do app. */
+.in-progress-card button[type="submit"] { width: 100%; justify-content: center; }
 
 /* Estado "ao vivo" (atividade em andamento): ponto pulsante + cronômetro que conta em tempo real
    (public/js/in-progress-timer.js). O número reaproveita o mesmo tratamento de destaque dos
