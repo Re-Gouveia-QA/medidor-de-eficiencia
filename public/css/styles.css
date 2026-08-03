@@ -721,6 +721,11 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
   .marketing-topbar-inner { padding: 0 16px; }
   .app-content { padding: 10px 16px 48px; }
   .form-row { grid-template-columns: 1fr; }
+  /* Filtros de /activities (período + categoria + botão): sem ajuste mobile, os 3 campos + botão
+     quebravam linha de forma desalinhada (cada .field só tão largo quanto o próprio conteúdo).
+     Empilhar em coluna cheia é mais legível que o wrap padrão do flexbox nessa largura. */
+  .filters { flex-direction: column; align-items: stretch; }
+  .filters button[type="submit"] { width: 100%; justify-content: center; }
   .page-header { flex-direction: column; align-items: flex-start; }
   .list-item { flex-wrap: wrap; }
   .actions { width: 100%; justify-content: flex-end; }
