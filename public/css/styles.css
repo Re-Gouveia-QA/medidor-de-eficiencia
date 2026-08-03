@@ -157,7 +157,13 @@
 /* Formulários */
 .form { display: flex; flex-direction: column; gap: 14px; margin-top: 1rem; }
 .form-narrow { max-width: 480px; margin-left: auto; margin-right: auto; }
-.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+/* width: 100% explícito: o card de início rápido da home reusa a classe .in-progress-card
+   (align-items: flex-start, ver mais abaixo) no próprio <form>, o que faz .form-row (sem essa
+   largura própria) encolher pro max-content dos campos (~200px) em vez de ocupar o card - o
+   input/select ficavam bem mais estreitos que o card ao redor, principalmente visível no mobile
+   (1 coluna só). Nos outros usos de .form-row (align-items padrão stretch), a regra é redundante
+   e inofensiva. */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; width: 100%; }
 /* Formulário de atividade/categoria agora vive dentro de um .card (agrupamento visual, fase 2 do
    plano de mobile/UX) — o padding: 26px do card já dá respiro acima do 1º campo, então o
    margin-top: 1rem próprio de .form (pensado pra um form solto direto abaixo do page-header)
