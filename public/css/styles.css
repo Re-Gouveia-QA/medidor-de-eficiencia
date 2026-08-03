@@ -161,6 +161,7 @@
    ficaria dobrado. Classe dedicada (.form-card), não ".card > .form" genérico: .auth-card (login/
    registro/etc., auth.ejs) TAMBÉM é um .card com um .form como filho direto, e perder aquele
    margin-top ali não foi pedido nesta fase — escopar pela classe evita esse efeito colateral. */
+.form-card { margin-top: 1.5rem; }
 .form-card > .form { margin-top: 0; }
 
 /* Cor de seção nos formulários (fase 2 do polimento) — reforça a mesma cor usada no card da home
