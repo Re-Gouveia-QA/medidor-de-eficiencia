@@ -1,7 +1,8 @@
 <%- include('../partials/page-header', { title: atividade ? t('activities.form.editTitle') : t('activities.form.newTitle'), backHref: '/activities' }) %>
 
+<div class="card sketch-edge form-narrow form-card">
 <form id="activityForm" action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>"
-      method="POST" class="form form-narrow" data-editing="<%= atividade ? 'true' : 'false' %>">
+      method="POST" class="form" data-editing="<%= atividade ? 'true' : 'false' %>">
   <div class="field sketch-in" style="--stagger-index: 0;">
     <label class="field-label is-required" for="nome"><%= t('activities.form.nameLabel') %></label>
     <div class="sketch-edge input-wrap">
@@ -68,5 +69,6 @@
 
   <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 5;"><%= atividade ? t('common.submitSave') : t('common.submitNew') %></button>
 </form>
+</div>
 
 <script src="/js/activity-form.js"></script>
