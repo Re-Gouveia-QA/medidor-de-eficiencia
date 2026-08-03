@@ -1,6 +1,7 @@
 <%- include('../partials/page-header', { title: categoria ? t('categories.form.editTitle') : t('categories.form.newTitle'), backHref: '/categories' }) %>
 
-<form action="<%= categoria ? `/categories/${categoria.id}?_method=PUT` : '/categories' %>" method="POST" class="form form-narrow category-form">
+<div class="card sketch-edge form-narrow form-card">
+<form action="<%= categoria ? `/categories/${categoria.id}?_method=PUT` : '/categories' %>" method="POST" class="form category-form">
   <div class="field sketch-in" style="--stagger-index: 0;">
     <label class="field-label" for="nome"><%= t('categories.form.nameLabel') %></label>
     <div class="sketch-edge input-wrap">
@@ -64,5 +65,6 @@
 
   <button type="submit" class="btn btn-primary sketch-edge sketch-hover sketch-in" style="--stagger-index: 6;"><%= categoria ? t('common.submitSave') : t('common.submitNew') %></button>
 </form>
+</div>
 
 <script src="/js/category-form.js"></script>
