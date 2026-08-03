@@ -1,7 +1,7 @@
 # Plan: Modo de design minimalista (alternativa ao "Caderno de Esboço", habilitada por default)
 
 **Date:** 2026-08-03
-**Status:** Fases 0-1 concluídas (commits `3316e21`, `cf8617d`, `05b2ffa`, branch `feature/minimal-design-mode`) — direção "Grade" escolhida via comparação em Artifact (Big Shoulders Text, geometria quase reta, borda fina). Fases 2-3 pendentes.
+**Status:** Fases 0-1 concluídas (commits `3316e21`, `cf8617d`, `05b2ffa`, branch `feature/minimal-design-mode`) — direção "Grade" escolhida via comparação em Artifact (Big Shoulders Text, geometria quase reta, borda fina). **Escopo corrigido em 2026-08-03: o toggle é exclusivo das páginas internas autenticadas — Fase 2 (auth + landing pública) cancelada, ver seção Scope.** Fase 3 (renumerada, ver abaixo) pendente.
 
 ## Goal
 
@@ -15,10 +15,11 @@ Adicionar um segundo modo visual — minimalista, sem os efeitos de "traço à m
 - Botão de alternância no topbar autenticado (`layouts/main.ejs`), mesmo padrão visual/JS dos toggles de tema/idioma já existentes.
 - Um novo arquivo CSS aditivo (`public/css/minimal.css`), carregado depois de `styles.css` nos dois layouts, com todas as regras escopadas por `html:not([data-design="sketch"])` — ou seja, **nenhuma regra existente em `tokens.css`/`components.css`/`styles.css` é removida ou reescrita**, só neutralizada condicionalmente quando não em modo sketch.
 - Neutralização especificamente de: bordas/preenchimento "à mão" (`.sketch-edge::before`, filtro SVG `feDisplacementMap`), animação de tremor no hover (`.sketch-wobble`), entrada animada escalonada (`.sketch-in`), textura de grade de caderno no `body`, distorção "rabiscada" dos ícones (filtro inline `url(#sketch-rough-icon)`, via `!important` — é `style=""` inline, precisa dessa especificidade pra vencer), fontes decorativas (Handlee/Architects Daughter/Kalam) e a geometria orgânica dos tokens de raio (`--radius-blob` etc.) — trocando por uma tipografia/geometria limpa a decidir na Fase 0 (ver Notas).
-- Cobertura visual de todas as páginas autenticadas (home nos dois estados, atividades, categorias, relatórios), páginas de auth (login/registro/recuperação de senha) e a landing pública.
+- Cobertura visual de todas as páginas autenticadas internas (home nos dois estados, atividades, categorias, relatórios) — `currentUser` truthy em `layouts/main.ejs`.
 - Atualização da seção "Identidade visual" do `CLAUDE.md` documentando o novo modo/default.
 
 ### Out-of-Scope
+- **Páginas de auth (login/registro/recuperação de senha, `layouts/auth.ejs`) e a landing pública (`layouts/marketing.ejs`) — decisão explícita do usuário (2026-08-03): o toggle é só pras páginas internas autenticadas.** Essas páginas permanecem sempre no design "Caderno de Esboço" original, independente do cookie `design` — `layouts/auth.ejs` nunca leu/lê o cookie, e `layouts/main.ejs` só linka `minimal.css`/renderiza o atributo `data-design` quando `currentUser` existe. (A Fase 2 original deste plano cobria essas páginas — cancelada; ver Fase 2 abaixo.)
 - Trocar a paleta de cores (`--paper`/`--ink`/`--accent-*`) — o minimalista reaproveita os mesmos tokens oklch já testados nos dois temas; só a geometria/tipografia/efeitos mudam. Se o usuário quiser uma paleta neutra separada depois, é um pedido novo.
 - `/docs` (Swagger admin) — já tem CSP/estilo próprios, fora do design system.
 - Qualquer novo controle de admin para forçar o modo de outros usuários (isso é por sessão/cookie do próprio visitante, igual tema/idioma).
@@ -71,22 +72,15 @@ Adicionar um segundo modo visual — minimalista, sem os efeitos de "traço à m
 **Replanning triggers:**
 - Se algum componente precisar de mudança estrutural no HTML (não só CSS) para ficar limpo em modo minimal → replanejar esse componente como sub-tarefa própria antes de seguir.
 
-### Phase 2: Auth pages + landing pública
+### Phase 2: ~~Auth pages + landing pública~~ — CANCELADA (2026-08-03)
 
-**Objective:** Garantir que login/registro/recuperação de senha e a home pública (visitante não autenticado) também respeitam o modo escolhido — essas páginas usam `layouts/auth.ejs` (sem topbar/toggle, só leem o cookie) ou a landing dentro de `layouts/main.ejs`.
+Escopo original: estender o toggle pras páginas de auth (`layouts/auth.ejs`) e pra landing pública (`layouts/marketing.ejs`). O usuário decidiu explicitamente que a mudança é só pras páginas internas autenticadas — essas duas superfícies ficam de fora por completo, sempre no sketch original. Correção já aplicada (não fazia parte de nenhum commit anterior, então não há revert de código — só a reversão do `data-design`/`<link>` de `minimal.css` que tinham sido adicionados a `layouts/auth.ejs` na Fase 0, feita junto com esta atualização do plano):
+- `src/views/layouts/main.ejs`: `<link rel="stylesheet" href="/css/minimal.css">` e o atributo `data-design` no `<html>` agora só renderizam quando `currentUser` existe — cobre tanto o app autenticado (queria) quanto exclui a landing pública (`layouts/marketing.ejs`, layout separado, nunca teve esses trechos) e o branch anônimo de fallback do próprio `main.ejs` (páginas de erro deslogadas).
+- `src/views/layouts/auth.ejs`: revertido para o estado pré-Fase 0 (sem `data-design`, sem `<link>` de `minimal.css`).
 
-**Steps:**
-1. Verificar `/login`, `/register`, `/forgot-password`, `/reset-password/:token` em minimal (claro/escuro).
-2. Verificar a landing pública (`marketing/landing.ejs`, visitante deslogado) em minimal — provavelmente precisa de ajustes extras em `minimal.css` pros elementos só dela (hero, watermark, carrossel de post-its, `.marketing-feature`).
-3. Confirmar que sketch mode (cookie setado manualmente) ainda renderiza essas mesmas páginas sem regressão.
+**Files Touched:** `src/views/layouts/main.ejs`, `src/views/layouts/auth.ejs`
 
-**Files Touched:** `public/css/minimal.css`
-
-**Verify:** `npm run build && npm test && npm run lint` + CDP visual nas rotas de auth e na landing, minimal e sketch, claro e escuro.
-
-**Done When:** todas as páginas de auth + landing corretas em minimal; sketch sem regressão visual perceptível.
-
-**Time:** ~1h30
+**Verify:** `npm run build && npm test && npm run lint` + CDP confirmando que `/login`, `/register` e a landing pública continuam sketch mesmo com o cookie `design=minimal` setado manualmente.
 
 ### Phase 3: Regressão final + documentação
 
@@ -99,9 +93,9 @@ Adicionar um segundo modo visual — minimalista, sem os efeitos de "traço à m
 
 **Files Touched:** `CLAUDE.md`
 
-**Verify:** `npm run build && npm test && npm run lint` completo; passe final de CDP cobrindo pelo menos home + 1 página interna + 1 página de auth, nos 4 combos.
+**Verify:** `npm run build && npm test && npm run lint` completo; passe final de CDP cobrindo home + 1 página interna nos 4 combos (minimal/sketch × claro/escuro), mais confirmação de que `/login` e a landing pública nunca mudam (sempre sketch, mesmo com `design=minimal`/`design=sketch` setado manualmente).
 
-**Done When:** os 137+ testes passam, lint limpo, e a checagem manual confirma default minimal + sketch preservado.
+**Done When:** os 137+ testes passam, lint limpo, checagem manual confirma default minimal + sketch preservado nas páginas internas, e auth/landing comprovadamente imunes ao cookie `design`.
 
 **Time:** ~1h
 
