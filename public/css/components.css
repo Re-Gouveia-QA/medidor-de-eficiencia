@@ -101,6 +101,11 @@ strong, b { letter-spacing: 0.03em; }
 /* Campos de formulário */
 .field { display: flex; flex-direction: column; gap: 8px; font-family: var(--font-body); }
 .field-label { font-size: var(--text-sm); color: var(--ink-soft); }
+/* Marcador de campo obrigatório — só onde há mistura de obrigatório/opcional no mesmo formulário
+   (atividade/categoria); auth fica de fora de propósito (100% dos campos lá já são obrigatórios,
+   marcar todos não agregaria sinal nenhum). Aplicado via classe (is-required) direto no label de
+   cada campo, não em todo .field-label. */
+.field-label.is-required::after { content: ' *'; color: var(--accent-red); }
 .input-wrap { display: flex; align-items: center; gap: 8px; padding: 0 10px; }
 .input, .select {
   font-family: var(--font-body);
