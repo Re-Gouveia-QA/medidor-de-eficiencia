@@ -107,6 +107,13 @@ strong, b { letter-spacing: 0.03em; }
    cada campo, não em todo .field-label. */
 .field-label.is-required::after { content: ' *'; color: var(--accent-red); }
 .input-wrap { display: flex; align-items: center; gap: 8px; padding: 0 10px; }
+/* Variante maior, mesmo espírito de .btn-lg (14px de padding vertical) — usada no card de início
+   rápido da home, onde o CTA já ganhou mais peso (largura cheia); campos no tamanho padrão ficavam
+   pequenos demais perto do botão. Só o padding muda (não o font-size), pra não alterar a escala
+   tipográfica só nesse card. */
+.input-wrap.input-wrap-lg { padding: 0 14px; }
+.input-wrap.input-wrap-lg .input,
+.input-wrap.input-wrap-lg .select { padding: 14px 4px; }
 .input, .select {
   font-family: var(--font-body);
   font-size: var(--text-base);

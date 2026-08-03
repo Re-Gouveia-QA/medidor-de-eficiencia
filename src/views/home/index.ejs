@@ -2,7 +2,7 @@
 <p class="muted home-date"><%= dataHoje %></p>
 
 <% if (emAndamento) { %>
-  <div class="card sketch-edge in-progress-card is-live">
+  <div class="card sketch-edge in-progress-card is-live sketch-in" style="--stagger-index: 0;">
     <div class="in-progress-status">
       <span class="live-dot" aria-hidden="true"></span>
       <%= t('home.inProgress.status', { categoria: emAndamento.category.nome }) %>
@@ -40,16 +40,18 @@
   </div>
   <script src="/js/in-progress-timer.js"></script>
 <% } else if (categorias.length > 0) { %>
-  <form action="/activities/start" method="POST" class="card sketch-edge in-progress-card form">
-    <h2><%= t('home.startForm.heading') %></h2>
+  <form action="/activities/start" method="POST" class="card sketch-edge in-progress-card form sketch-in" style="--stagger-index: 0;">
+    <div class="card-heading">
+      <h2><%= t('home.startForm.heading') %></h2>
+    </div>
     <div class="form-row">
       <div class="field">
-        <div class="sketch-edge input-wrap">
+        <div class="sketch-edge input-wrap input-wrap-lg">
           <input type="text" name="nome" class="input" required placeholder="<%= t('home.startForm.namePlaceholder') %>" autofocus />
         </div>
       </div>
       <div class="field">
-        <div class="sketch-edge input-wrap">
+        <div class="sketch-edge input-wrap input-wrap-lg">
           <select name="categoryId" class="select" required>
             <option value="" disabled selected><%= t('home.startForm.categoryPlaceholder') %></option>
             <% categorias.forEach((c) => { %>
