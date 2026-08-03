@@ -202,8 +202,15 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 /* CTA principal do card (Iniciar/Finalizar) em largura cheia — align-items: flex-start acima
    mantém os campos em seu tamanho natural (necessário pro <details> não esticar estranho), mas
    deixava o botão mais importante do card isolado à esquerda, com bastante espaço morto ao lado no
-   mobile. Largura cheia dá mais peso visual à ação mais frequente do app. */
-.in-progress-card button[type="submit"] { width: 100%; justify-content: center; }
+   mobile. Largura cheia dá mais peso visual à ação mais frequente do app. padding-top/bottom
+   (14px, igual ao .input-wrap-lg) alinha a altura do botão com a dos campos acima — antes ficava
+   8px mais baixo (padding vertical padrão do .btn é só 10px), destoando do resto do card. */
+.in-progress-card button[type="submit"] {
+  width: 100%;
+  justify-content: center;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
 
 /* Estado "ao vivo" (atividade em andamento): ponto pulsante + cronômetro que conta em tempo real
    (public/js/in-progress-timer.js). O número reaproveita o mesmo tratamento de destaque dos
