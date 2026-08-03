@@ -4,14 +4,14 @@
 <form id="activityForm" action="<%= atividade ? `/activities/${atividade.id}?_method=PUT` : '/activities' %>"
       method="POST" class="form" data-editing="<%= atividade ? 'true' : 'false' %>">
   <div class="field sketch-in" style="--stagger-index: 0;">
-    <label class="field-label" for="nome"><%= t('activities.form.nameLabel') %></label>
+    <label class="field-label is-required" for="nome"><%= t('activities.form.nameLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="text" id="nome" name="nome" class="input" required placeholder="<%= t('activities.form.namePlaceholder') %>" value="<%= atividade?.nome ?? '' %>" />
     </div>
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 1;">
-    <label class="field-label" for="categoryId"><%= t('activities.filters.categoryLabel') %></label>
+    <label class="field-label is-required" for="categoryId"><%= t('activities.filters.categoryLabel') %></label>
     <div class="sketch-edge input-wrap">
       <select id="categoryId" name="categoryId" class="select" required>
         <% categorias.forEach((c) => { %>
@@ -28,7 +28,7 @@
   </div>
 
   <div class="field sketch-in" style="--stagger-index: 2;">
-    <label class="field-label" for="data"><%= t('activities.form.dateLabel') %></label>
+    <label class="field-label is-required" for="data"><%= t('activities.form.dateLabel') %></label>
     <div class="sketch-edge input-wrap">
       <input type="date" id="data" name="data" class="input" required
              value="<%= atividade ? atividade.data.toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10) %>" />
@@ -37,14 +37,14 @@
 
   <div class="form-row sketch-in" style="--stagger-index: 3;">
     <div class="field">
-      <label class="field-label" for="horaInicio"><%= t('activities.form.startTimeLabel') %></label>
+      <label class="field-label is-required" for="horaInicio"><%= t('activities.form.startTimeLabel') %></label>
       <div class="sketch-edge input-wrap">
         <input type="time" id="horaInicio" name="horaInicio" class="input" required
                value="<%= atividade ? formatTime(atividade.horaInicio) : '' %>" />
       </div>
     </div>
     <div class="field">
-      <label class="field-label" for="horaFim"><%= t('activities.form.endTimeLabel') %></label>
+      <label class="field-label is-required" for="horaFim"><%= t('activities.form.endTimeLabel') %></label>
       <div class="sketch-edge input-wrap">
         <input type="time" id="horaFim" name="horaFim" class="input" required
                value="<%= atividade && atividade.horaFim ? formatTime(atividade.horaFim) : '' %>" />

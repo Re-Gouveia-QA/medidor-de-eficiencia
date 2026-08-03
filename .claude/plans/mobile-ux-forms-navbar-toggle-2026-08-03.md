@@ -1,10 +1,10 @@
 # Plan: Toggle mobile no topbar + limpeza visual de formulários e listagens
 
 **Date:** 2026-08-03
-**Status:** Fase 1 concluída em `feature/mobile-nav-toggle` (não mesclada). Fase 2 concluída nesta
-branch, `feature/form-cards` (não mesclada) — branch independente, criada a partir de `master`, não
-empilhada sobre a Fase 1 (fases são independentes entre si, ver "Dependências e suposições"). Merge
-de qualquer uma só mediante pedido explícito. Fases 3-4 ainda não iniciadas.
+**Status:** Plano concluído — 4 fases. Fase 3 (`feature/mobile-filters-stack`, PR #4) e Fase 4
+(`feature/required-field-indicator`, PR #5) já mescladas em `master`. Fase 1
+(`feature/mobile-nav-toggle`, PR #6) e Fase 2 (`feature/form-cards`) com PR aberto, aguardando
+revisão/merge.
 
 ## Goal
 
@@ -35,8 +35,7 @@ comportamento em desktop.
   (`Entrar`/`Criar conta`) simplesmente desapareceriam no mobile, sem forma de reabrir. Mitigação:
   todo o CSS novo do painel colapsável usa `#topbarActions` (ID novo, exclusivo do `main.ejs`), nunca
   a classe `.topbar-actions` sozinha — a classe e suas regras existentes (inclusive as de marketing)
-  continuam intocadas. **Confirmado por CDP na Fase 1 (ver status): marketing/mobile não foi
-  afetado.**
+  continuam intocadas. **Confirmado por CDP na Fase 1: marketing/mobile não foi afetado.**
 - **Formulários de atividade/categoria** (`src/views/activities/create.ejs`,
   `src/views/categories/create.ejs`): o `<form class="form form-narrow">` fica solto direto sobre o
   papel quadriculado da página, sem nenhum agrupamento visual — diferente de quase todo outro
@@ -101,7 +100,7 @@ comportamento em desktop.
 
 ## Phases
 
-### Phase 1: Toggle mobile no topbar autenticado — CONCLUÍDA
+### Phase 1: Toggle mobile no topbar autenticado — CONCLUÍDA (PR #6 aberto)
 **Objetivo:** em telas ≤560px, o topbar autenticado mostra só marca + 1 botão de menu; clicar
 revela docs/idioma/tema/logout num painel; desktop não muda em nada.
 
@@ -122,7 +121,7 @@ revela docs/idioma/tema/logout num painel; desktop não muda em nada.
    - Dentro do `@media (max-width: 560px)` já existente (linha ~707): `.topbar { position:
      relative; }` (âncora pro painel absoluto), `.nav-toggle { display: inline-flex; }`,
      `#topbarActions { display: none; position: absolute; top: 100%; right: 16px; margin-top: 8px;
-     padding: 14px; flex-direction: column; align-items: stretch; gap: 10px; z-index: 30; }` e
+     padding: 14px; flex-direction: column; align-items: stretch; gap: 16px; z-index: 30; }` e
      `#topbarActions.is-open { display: flex; }`. **Usar `#topbarActions` (id), nunca a classe
      `.topbar-actions` sozinha** — ver risco de contaminação do topbar de marketing na Investigação.
    - `#topbarActions` já ganha a moldura "à mão" (borda + fundo `--surface`) de graça, porque a
@@ -146,17 +145,18 @@ painel mobile abre/fecha corretamente e é navegável por teclado (Tab alcança 
 ativa, Escape fecha).
 **Time:** 45min
 
-**Resultado real:** feito em `feature/mobile-nav-toggle` (commit `674a569`). CDP confirmou: 320px
-com painel escondido por padrão, abre no clique com os 4 itens visíveis e dentro da viewport, fecha
-em clique fora/Escape; 1024px sem toggle (ações sempre inline, `position: relative` da regra mobile
-não se aplica); marketing/320px deslogado sem hamburguer e sem alteração nos CTAs existentes. Build,
+**Resultado real:** feito em `feature/mobile-nav-toggle` (commit `674a569` + `ae71fee`, gap do
+painel aumentado de 10px pra 16px depois de feedback visual). CDP confirmou: 320px com painel
+escondido por padrão, abre no clique com os 4 itens visíveis e dentro da viewport, fecha em clique
+fora/Escape; 1024px sem toggle (ações sempre inline, `position: relative` da regra mobile não se
+aplica); marketing/320px deslogado sem hamburguer e sem alteração nos CTAs existentes. Build,
 137/137 testes e lint verdes.
 
 **Replanning triggers:**
 - Se o painel absoluto colidir com outro elemento posicionado (ex.: skip-link) em algum navegador
   testado — ajustar `z-index`/posição em vez de redesenhar o mecanismo. (Não ocorreu.)
 
-### Phase 2: Formulários de atividade/categoria dentro de um card — CONCLUÍDA
+### Phase 2: Formulários de atividade/categoria dentro de um card — CONCLUÍDA (PR aberto)
 **Objetivo:** os formulários de criar/editar atividade e categoria ganham o mesmo agrupamento
 visual ("card de caderno") já usado no resto do app, em vez de flutuar soltos sobre o papel.
 
@@ -173,6 +173,9 @@ visual ("card de caderno") já usado no resto do app, em vez de flutuar soltos s
    dedicada `.form-card`, não o seletor genérico `.card > .form`** — ver achado na Investigação
    acima: `.auth-card` (auth.ejs) também é um `.card` com um `.form` como filho direto, e o seletor
    genérico zeraria o respiro de lá também, fora do escopo desta fase.
+4. `public/css/styles.css`: `.form-card { margin-top: 1.5rem; }` — respiro entre o título da
+   página (page-header) e o topo do card, adicionado depois de feedback visual (sem isso o card
+   ficava colado no título).
 
 **Files Touched:** `src/views/activities/create.ejs`, `src/views/categories/create.ejs`,
 `public/css/styles.css`
@@ -184,12 +187,12 @@ mobile 320/375px) nas 4 rotas (`/activities/new`, `/activities/:id/edit`, `/cate
 regressão visual nas outras páginas que usam `.card` (home, categorias, relatórios).
 **Time:** 20min
 
-**Resultado real:** feito em `feature/form-cards` (branch própria, a partir de `master` — independente
-da Fase 1, conforme "Dependências e suposições"). CDP confirmou: `/activities/new` e
-`/categories/new` com `.form-card > .form` medindo `margin-top: 0px` (sem gap duplicado);
-`/activities/:id/edit` renderiza os dados existentes corretamente dentro do card; `/login` — fora do
-escopo desta fase — manteve `margin-top: 16px` no formulário, confirmando que a regra escopada por
-classe não vazou pro auth-card. Build, 137/137 testes e lint verdes.
+**Resultado real:** feito em `feature/form-cards` (commit `c1dc6cd` + `9a9c112`, margem superior do
+card adicionada depois de feedback visual). CDP confirmou: `/activities/new` e `/categories/new`
+com `.form-card > .form` medindo `margin-top: 0px` (sem gap duplicado); `/activities/:id/edit`
+renderiza os dados existentes corretamente dentro do card; `/login` — fora do escopo desta fase —
+manteve `margin-top: 16px` no formulário, confirmando que a regra escopada por classe não vazou pro
+auth-card. Build, 137/137 testes e lint verdes.
 
 **Replanning triggers:**
 - Se `.card > .form` afetar algum outro `.form` aninhado em `.card` que já exista (ex.:
@@ -198,7 +201,7 @@ classe não vazou pro auth-card. Build, 137/137 testes e lint verdes.
   visualmente na home mesmo assim). (Mitigado preventivamente ao usar `.form-card` em vez do
   seletor genérico — ver Investigação.)
 
-### Phase 3: Filtros de atividades empilhados no mobile
+### Phase 3: Filtros de atividades empilhados no mobile — CONCLUÍDA (mesclada, PR #4)
 **Objetivo:** em telas ≤560px, os filtros de `/activities` (período + categoria + botão) empilham
 em coluna cheia, em vez de quebrar linha de forma desalinhada.
 
@@ -216,7 +219,13 @@ linha).
 verdes.
 **Time:** 10min
 
-### Phase 4: Indicador visual de campo obrigatório
+**Resultado real:** feito em `feature/mobile-filters-stack` (commit `ac4e385`), mesclada em
+`master` via PR #4. CDP confirmou nas 3 larguras (320/360/375px): `flexDirection: column`, os 3
+campos + botão "Filtrar" com a MESMA largura entre si (largura cheia do container), sem overflow
+horizontal (`bodyScrollWidth === bodyClientWidth` nas 3). Desktop (1024px): `flexDirection: row`
+confirmado inalterado. Build, 137/137 testes e lint verdes.
+
+### Phase 4: Indicador visual de campo obrigatório — CONCLUÍDA (mesclada, PR #5)
 **Objetivo:** sinalizar visualmente quais campos são obrigatórios nos formulários que têm mistura
 de obrigatório/opcional (atividade e categoria) — auth fica de fora (ver Investigação: 100% dos
 campos lá já são obrigatórios, marcador não agregaria sinal).
@@ -237,6 +246,18 @@ vermelho só nos campos obrigatórios listados acima, nos dois temas (claro/escu
 mudança em formulários de auth.
 **Time:** 10min
 
+**Resultado real:** feito em `feature/required-field-indicator` (commit `fca9011`), mesclada em
+`master` via PR #5. CDP confirmou em `/activities/new`: asterisco presente em nome/categoria/data/
+hora início/hora fim, ausente em descrição/valor. Em `/categories/new`: asterisco só em nome,
+ausente nos demais 6 campos. Testado em tema claro e escuro. `/login` confirmado sem NENHUM
+`.is-required` na página, confirmando que auth ficou intocado como planejado. Build, 137/137 testes
+e lint verdes.
+
+**Nota:** esta fase tocou os MESMOS dois arquivos de view que a Fase 2 (`activities/create.ejs`,
+`categories/create.ejs`), mas em linhas diferentes (rótulos de campo, não a estrutura de wrapping
+do form) — confirmado que o merge de ambas em `master` não gerou conflito de código nesses
+arquivos (só no arquivo deste plano, ver nota técnica no final).
+
 ## Dependências e suposições
 
 - Assume que o breakpoint `560px` (já usado em toda a folha de estilo pro ajuste mobile) continua
@@ -245,27 +266,26 @@ mudança em formulários de auth.
 - Assume que "toggle para navbar" se refere ao topbar autenticado (`main.ejs`), não ao de marketing
   — decisão registrada explicitamente na Investigação/Out-of-Scope, revisitar se o usuário quis
   dizer o contrário.
-- As 4 fases são independentes entre si (nenhuma depende do resultado de outra) — podem ser
-  implementadas e revisadas em qualquer ordem, mas o plano segue a ordem em que o pedido original
-  foi escrito (toggle → disposição limpa → formulários → UX). **Confirmado na prática:** Fases 1 e 2
-  foram implementadas em branches irmãs, ambas a partir de `master`, sem depender uma da outra.
+- As 4 fases são independentes entre si (nenhuma depende do resultado de outra) — foram
+  implementadas em branches irmãs, todas a partir de `master`, sem depender uma da outra.
+  **Confirmado na prática, inclusive no merge:** Fases 3 e 4 mescladas em `master` sem nenhum
+  conflito de código (só no arquivo deste plano).
 
 ## Notes
 
-- Cada fase deste plano segue o padrão já estabelecido nesta sessão: branch própria por fase, merge
-  só mediante confirmação explícita do usuário.
+- Cada fase deste plano seguiu o padrão já estabelecido nesta sessão: branch própria por fase,
+  merge só mediante confirmação explícita do usuário (Fases 3 e 4 já mescladas; Fases 1 e 2 com PR
+  aberto aguardando).
 - Risco de contaminação do topbar de marketing (Phase 1) foi encontrado durante a investigação,
   antes de qualquer código ser escrito — mitigação (usar `#topbarActions` em vez da classe
   compartilhada) já está descrita nos Steps, e foi confirmada por CDP depois da implementação.
 - Risco análogo encontrado DURANTE a implementação da Fase 2 (não na investigação inicial): o
-  seletor genérico `.card > .form` bateria também em `.auth-card`, fora do escopo desta fase — corrigido
-  antes de rodar qualquer verificação, usando uma classe dedicada (`.form-card`) em vez do seletor
-  genérico. Ambos os riscos têm a mesma forma: uma classe/seletor do design system reaproveitado por
-  mais de um contexto (topbar autenticado vs. marketing; formulário de atividade/categoria vs. auth)
-  — vale conferir esse padrão de novo nas Fases 3-4, caso `.filters`/`.field-label` sejam usados em
-  algum contexto que a investigação inicial não tenha mapeado.
-- **Nota técnica sobre este arquivo de plano:** as Fases 1 e 2 foram commitadas em branches
-  separadas, ambas criadas a partir de `master` (não uma em cima da outra), cada uma com sua própria
-  cópia deste arquivo de plano atualizada de forma independente. Ao mesclar as duas branches em
-  `master`, é esperado um conflito trivial neste arquivo (cabeçalho de status + seção da Fase
-  correspondente) — resolver combinando as duas atualizações, não descartando uma delas.
+  seletor genérico `.card > .form` bateria também em `.auth-card`, fora do escopo desta fase —
+  corrigido antes de rodar qualquer verificação, usando uma classe dedicada (`.form-card`) em vez do
+  seletor genérico.
+- **Nota técnica sobre este arquivo de plano:** as 4 fases foram commitadas em branches separadas,
+  todas criadas a partir de `master`, cada uma com sua própria cópia deste arquivo de plano
+  atualizada de forma independente — como previsto, isso gerou um conflito de "add/add" (só neste
+  arquivo, nunca no código) a cada merge. Esta versão consolida o estado real de todas as 4 fases
+  depois dos merges de PR #4 e #5, e é a versão que deve prevalecer ao resolver o mesmo conflito nas
+  Fases 1 e 2.
