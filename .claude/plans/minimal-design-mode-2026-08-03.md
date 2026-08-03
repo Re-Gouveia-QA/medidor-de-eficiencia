@@ -1,7 +1,7 @@
 # Plan: Modo de design minimalista (alternativa ao "Caderno de Esboço", habilitada por default)
 
 **Date:** 2026-08-03
-**Status:** draft
+**Status:** Fase 0 concluída (commit `3316e21`, branch `feature/minimal-design-mode`) — direção "Grade" escolhida via comparação em Artifact (Big Shoulders Text, geometria quase reta, borda fina). Fases 1-3 pendentes.
 
 ## Goal
 
