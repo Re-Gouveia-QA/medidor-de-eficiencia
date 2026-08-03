@@ -66,3 +66,36 @@
 :root:not([data-design="sketch"]) .washi-tape {
   display: none;
 }
+
+/* Sombra sólida "adesivo descolado" (badge, tooltip do gráfico de linha) — mesmo espírito do
+   traço à mão: efeito de papel/colagem que não combina com o minimalismo. */
+:root:not([data-design="sketch"]) .badge::before,
+:root:not([data-design="sketch"]) .chart-tooltip::before {
+  box-shadow: none;
+}
+
+/* Tilt estático (não o wobble de hover) aplicado inline nos cards de categoria e nos 2 cards de
+   resumo do relatório (style="...transform: rotate(var(--tilt))") — precisa de !important pra
+   vencer o atributo style inline, mesmo motivo do filtro dos ícones acima. Seletor por atributo
+   (não por classe) porque é bem específico ao padrão --tilt, sem afetar outros usos de transform
+   inline (ex.: o toast de confirmação usa transform pra entrar/sair de tela, isso não pode mudar). */
+:root:not([data-design="sketch"]) [style*="rotate(var(--tilt))"] {
+  transform: none !important;
+}
+
+/* Sublinhado "rabiscado" sob os números grandes do relatório — puramente decorativo (aria-hidden). */
+:root:not([data-design="sketch"]) .stat-underline {
+  display: none;
+}
+
+/* Gráfico de linha (valor x tempo): mantém o traço (é dado real, não decoração) mas sem a
+   animação de "desenhar à mão" — stroke-dashoffset: 0 evita ficar com a linha invisível (o
+   dashoffset de descanso, fora da animação, é o mesmo valor de "escondido"). .bar-fill (barras de
+   tempo por categoria) não precisa desse reset: o transform de descanso já é o valor final certo. */
+:root:not([data-design="sketch"]) .line-chart polyline {
+  animation: none;
+  stroke-dashoffset: 0;
+}
+:root:not([data-design="sketch"]) .bar-fill {
+  animation: none;
+}
