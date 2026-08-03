@@ -1,11 +1,11 @@
 # Plan: Toggle mobile no topbar + limpeza visual de formulários e listagens
 
 **Date:** 2026-08-03
-**Status:** Plano concluído — 4 fases, 4 branches independentes, todas a partir de `master`, nenhuma
-mesclada ainda: Fase 1 em `feature/mobile-nav-toggle`, Fase 2 em `feature/form-cards`, Fase 3 em
-`feature/mobile-filters-stack`, Fase 4 em `feature/required-field-indicator` (esta branch). Merge de
-qualquer uma só mediante pedido explícito do usuário. Cada branch tem sua própria cópia deste
-arquivo — ver nota técnica no final sobre o conflito trivial esperado ao mesclar todas em `master`.
+**Status:** Fase 1 concluída em `feature/mobile-nav-toggle` (não mesclada). Fase 2 concluída em
+`feature/form-cards` (não mesclada). Fase 3 concluída nesta branch, `feature/mobile-filters-stack`
+(não mesclada). Todas as 3 branches são independentes, criadas a partir de `master`, não empilhadas
+umas sobre as outras (fases são independentes entre si, ver "Dependências e suposições"). Merge de
+qualquer uma só mediante pedido explícito. Fase 4 ainda não iniciada.
 
 ## Goal
 
@@ -36,7 +36,8 @@ comportamento em desktop.
   (`Entrar`/`Criar conta`) simplesmente desapareceriam no mobile, sem forma de reabrir. Mitigação:
   todo o CSS novo do painel colapsável usa `#topbarActions` (ID novo, exclusivo do `main.ejs`), nunca
   a classe `.topbar-actions` sozinha — a classe e suas regras existentes (inclusive as de marketing)
-  continuam intocadas. **Confirmado por CDP na Fase 1: marketing/mobile não foi afetado.**
+  continuam intocadas. **Confirmado por CDP na Fase 1 (ver status): marketing/mobile não foi
+  afetado.**
 - **Formulários de atividade/categoria** (`src/views/activities/create.ejs`,
   `src/views/categories/create.ejs`): o `<form class="form form-narrow">` fica solto direto sobre o
   papel quadriculado da página, sem nenhum agrupamento visual — diferente de quase todo outro
@@ -222,7 +223,7 @@ com a MESMA largura entre si (largura cheia do container), sem overflow horizont
 (`bodyScrollWidth === bodyClientWidth` nas 3). Desktop (1024px): `flexDirection: row` confirmado
 inalterado. Build, 137/137 testes e lint verdes.
 
-### Phase 4: Indicador visual de campo obrigatório — CONCLUÍDA
+### Phase 4: Indicador visual de campo obrigatório
 **Objetivo:** sinalizar visualmente quais campos são obrigatórios nos formulários que têm mistura
 de obrigatório/opcional (atividade e categoria) — auth fica de fora (ver Investigação: 100% dos
 campos lá já são obrigatórios, marcador não agregaria sinal).
@@ -243,14 +244,6 @@ vermelho só nos campos obrigatórios listados acima, nos dois temas (claro/escu
 mudança em formulários de auth.
 **Time:** 10min
 
-**Resultado real:** feito em `feature/required-field-indicator` (branch própria, a partir de
-`master`). CDP confirmou em `/activities/new`: asterisco presente em nome/categoria/data/hora
-início/hora fim, ausente em descrição/valor. Em `/categories/new`: asterisco só em nome, ausente
-nos demais 6 campos. Testado em tema claro e escuro — cor `--accent-red` legível nos dois. `/login`
-confirmado sem NENHUM `.is-required` na página (busca por `classList.contains('is-required')` em
-todos os `.field-label` retornou `false`), confirmando que auth ficou intocado como planejado. Build,
-137/137 testes e lint verdes.
-
 **Nota:** esta fase toca os MESMOS dois arquivos de view que a Fase 2 (`activities/create.ejs`,
 `categories/create.ejs`), mas em linhas diferentes (rótulos de campo, não a estrutura de
 wrapping do form) — como cada fase é uma branch própria a partir de `master`, o merge das duas
@@ -267,24 +260,26 @@ diferentes do mesmo arquivo), mas confirmar depois que ambas estiverem mescladas
   dizer o contrário.
 - As 4 fases são independentes entre si (nenhuma depende do resultado de outra) — podem ser
   implementadas e revisadas em qualquer ordem, mas o plano segue a ordem em que o pedido original
-  foi escrito (toggle → disposição limpa → formulários → UX). **Confirmado na prática:** as 4 fases
-  foram implementadas em branches irmãs, todas a partir de `master`, sem depender uma da outra.
+  foi escrito (toggle → disposição limpa → formulários → UX). **Confirmado na prática:** Fases 1, 2
+  e 3 foram implementadas em branches irmãs, todas a partir de `master`, sem depender uma da outra.
 
 ## Notes
 
-- Cada fase deste plano seguiu o padrão já estabelecido nesta sessão: branch própria por fase, merge
-  só mediante confirmação explícita do usuário — nenhuma das 4 branches foi mesclada ainda.
+- Cada fase deste plano segue o padrão já estabelecido nesta sessão: branch própria por fase, merge
+  só mediante confirmação explícita do usuário.
 - Risco de contaminação do topbar de marketing (Phase 1) foi encontrado durante a investigação,
   antes de qualquer código ser escrito — mitigação (usar `#topbarActions` em vez da classe
   compartilhada) já está descrita nos Steps, e foi confirmada por CDP depois da implementação.
 - Risco análogo encontrado DURANTE a implementação da Fase 2 (não na investigação inicial): o
   seletor genérico `.card > .form` bateria também em `.auth-card`, fora do escopo desta fase — corrigido
   antes de rodar qualquer verificação, usando uma classe dedicada (`.form-card`) em vez do seletor
-  genérico. Esse padrão de risco (classe/seletor do design system reaproveitado por mais de um
-  contexto) não se repetiu nas Fases 3 e 4: `.filters` só existe em `activities/index.ejs`, e o
-  indicador de obrigatório (Fase 4) é opt-in por classe (`is-required` adicionada só nos labels
-  certos), não uma redefinição de `.field-label` que pudesse vazar pra outros formulários.
-- **Próximo passo natural, fora deste plano:** as 4 branches precisam ser mescladas em `master`
-  (uma de cada vez, mediante pedido do usuário) para o conjunto de melhorias ir ao ar. Cada merge
-  desse arquivo de plano (presente nas 4 branches, cada uma com sua própria versão) vai gerar um
-  conflito trivial de texto — resolver combinando as atualizações, não descartando nenhuma.
+  genérico. Ambos os riscos têm a mesma forma: uma classe/seletor do design system reaproveitado por
+  mais de um contexto (topbar autenticado vs. marketing; formulário de atividade/categoria vs. auth)
+  — a Fase 3 não repetiu esse padrão de risco (`.filters` é usado só em `activities/index.ejs`,
+  nenhum outro lugar do app tem essa classe); vale conferir de novo na Fase 4, já que
+  `.field-label` é uma classe bem mais reaproveitada (todo formulário do app usa).
+- **Nota técnica sobre este arquivo de plano:** as Fases 1, 2 e 3 foram commitadas em branches
+  separadas, todas criadas a partir de `master` (não uma em cima da outra), cada uma com sua própria
+  cópia deste arquivo de plano atualizada de forma independente. Ao mesclar as branches em `master`,
+  é esperado um conflito trivial neste arquivo (cabeçalho de status + seção da Fase correspondente)
+  a cada merge — resolver combinando as atualizações, não descartando nenhuma delas.
