@@ -1,7 +1,7 @@
 # Plan: Modelos prontos de setup (categorias automáticas por caso de uso)
 
 **Date:** 2026-08-04
-**Status:** Fases 0, 1 e 2 concluídas (2026-08-04, branch `feature/category-setup-templates`). Fase 0: presets em `src/config/categoryPresets.ts` + sanity test. Fase 1: `SetupController` + rotas + `tests/routes/categorySetup.routes.test.ts`, mais `setup-index.ejs`/`setup-show.ejs` como stubs funcionais. Fase 2: i18n completo (pt-BR + en-US, 24 chaves novas em `categories.setup.*`) + verificação visual via CDP nas duas telas, nos 2 modos de design (sketch/minimal) e em pt-BR/en-US — confirmado sem chave crua, badges/cores/layout corretos nos dois modos. Fases 3-4 pendentes. Fase 4 (modal-tutorial de primeiro acesso) adicionada em 2026-08-04, mesmo dia — extensão do escopo original, não um plano novo.
+**Status:** Fases 0, 1, 2 e 3 concluídas (2026-08-04, branch `feature/category-setup-templates`). Fase 0: presets + sanity test. Fase 1: `SetupController` + rotas + testes de rota. Fase 2: i18n completo + verificação visual (2 modos de design × 2 idiomas). Fase 3: botão "Usar um modelo pronto" em `/categories` (`.page-header-actions`, novo) + card de destaque na home quando `categorias.length === 0` + regressão end-to-end via CDP com usuário genuinamente novo (registro real, não seed) — confirmado: card aparece só sem categoria, aplicar preset cria e mostra flash correto, reaplicar o mesmo preset pula os 4 nomes duplicados sem quebrar (regra 6), card some depois de ter categoria. Só falta a Fase 4 (modal-tutorial de primeiro acesso).
 
 ## Goal
 
