@@ -29,6 +29,20 @@ function readThemeCookie(req: Request): 'dark' | 'light' {
   return match?.slice('theme='.length) === 'dark' ? 'dark' : 'light';
 }
 
+/**
+ * Lê o cookie "design" (setado via JS por public/js/design-toggle.js, mesmo padrão do cookie
+ * "theme") — alterna entre o design system "Caderno de Esboço" (sketch) e uma variante
+ * minimalista. Ausência de cookie = 'minimal': é o novo default (ver .claude/plans/
+ * minimal-design-mode-2026-08-03.md) — cobre todo usuário existente automaticamente, sem
+ * precisar de migração, já que o cookie nunca existiu antes desta feature.
+ */
+function readDesignCookie(req: Request): 'sketch' | 'minimal' {
+  const header = req.headers.cookie;
+  if (!header) return 'minimal';
+  const match = header.split(';').map((part) => part.trim()).find((part) => part.startsWith('design='));
+  return match?.slice('design='.length) === 'sketch' ? 'sketch' : 'minimal';
+}
+
 function isValidTimeZone(tz: string): boolean {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: tz });
@@ -103,6 +117,7 @@ export function createApp() {
       : null;
     res.locals.currentPath = req.path; // usado pela sidebar para destacar o item ativo
     res.locals.theme = readThemeCookie(req);
+    res.locals.design = readDesignCookie(req);
     req.userTimezone = readTimezoneCookie(req);
     req.userLocale = readLocaleCookie(req);
     res.locals.locale = req.userLocale;
