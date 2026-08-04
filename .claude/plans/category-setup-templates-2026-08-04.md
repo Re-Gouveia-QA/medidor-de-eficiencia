@@ -1,7 +1,7 @@
 # Plan: Modelos prontos de setup (categorias automáticas por caso de uso)
 
 **Date:** 2026-08-04
-**Status:** Plano concluído e mergeado (2026-08-04, PR #10, commit `54bee4e` em `master`, Fases 0-4). Fase 0: presets + sanity test. Fase 1: `SetupController` + rotas + testes de rota. Fase 2: i18n completo + verificação visual (2 modos de design × 2 idiomas). Fase 3: botão "Usar um modelo pronto" em `/categories` + card de destaque na home quando `categorias.length === 0`, regressão end-to-end com usuário genuinamente novo. Fase 4: modal de tutorial no primeiro acesso (`setupTutorialSeen` cookie, mesmo padrão de `theme`/`design`). **Refinamento pós-merge (2026-08-04, branch `feature/setup-templates-refinement`)** — ver seção "Refinamento — terminologia e conteúdo" abaixo.
+**Status:** Plano concluído e mergeado (2026-08-04, PR #10, commit `54bee4e` em `master`, Fases 0-4). Fase 0: presets + sanity test. Fase 1: `SetupController` + rotas + testes de rota. Fase 2: i18n completo + verificação visual (2 modos de design × 2 idiomas). Fase 3: botão "Usar um modelo pronto" em `/categories` + card de destaque na home quando `categorias.length === 0`, regressão end-to-end com usuário genuinamente novo. Fase 4: modal de tutorial no primeiro acesso (`setupTutorialSeen` cookie, mesmo padrão de `theme`/`design`). **Refinamento pós-merge (2026-08-04, branch `feature/setup-templates-refinement`)** — ver seção "Refinamento — terminologia e conteúdo" abaixo. **Fase 5 concluída (2026-08-04, branch `feature/setup-presets-value-field`)** — campo valor adicionado nas 6 categorias da tabela abaixo, textos de uso atualizados, sanity test novo, verificado via CDP (badges corretos nas 4 telas afetadas + persistência confirmada em `/categories` depois de aplicar).
 
 ## Goal
 
@@ -162,3 +162,43 @@ Feedback do usuário depois do merge da PR #10, branch `feature/setup-templates-
 **Verify:** `npm run build && npm test && npm run lint` (151 testes) + verificação visual via CDP com usuário novo (registro real): título/subtítulo novos, 6 cards em `/categories/setup` (5 presets + "do zero" com `href="/categories/new"`), espaçamento visivelmente corrigido nas duas telas, texto de uso mais longo renderizando sem chave crua.
 
 **Done When:** feito — build/test/lint verdes, checagem visual confirmou os 4 pontos do pedido.
+
+## Fase 5 — Campo valor onde for relevante nos presets (2026-08-04, planejada)
+
+Pedido do usuário: além dos 3 exemplos citados (Estudante/"Trabalhos e Provas" → nota, Concurseiro/"Simulado" → nota, Academia/"Musculação" → peso), "adicione o campo valor aonde for relevante" — pede julgamento sobre o restante dos presets, não só os 3 exemplos.
+
+**Objective:** Habilitar `possuiValor`/`valorLabel` (regra 9, campo já existente no schema — `CategoryPresetCategory` já tem esses campos opcionais, nenhuma mudança de tipo necessária) nas categorias de cada preset onde um valor numérico de referência faz sentido, além de atualizar o texto de "como usar" pra mencionar o novo campo.
+
+**Categorias revisadas e decisão (todos os 20 itens dos 5 presets, não só os 3 citados):**
+
+| Preset | Categoria | Adicionar valor? | `valorLabel` |
+|---|---|---|---|
+| Estudante | Trabalhos e Provas | **Sim** (pedido explícito) | "Nota" |
+| Estudante | Aulas / Estudo e Revisão / Leitura | Não | — |
+| Concurseiro | Simulado | **Sim** (pedido explícito) | "Nota" |
+| Concurseiro | Questões | **Sim** (julgamento — sessão de questões tem uma métrica natural de acerto, mesmo espírito do pedido) | "% de acertos" |
+| Concurseiro | Teoria / Revisão / Redação | Não (Redação também é corrigida com nota em muitos concursos, mas deixar de fora evita 3 de 5 categorias com valor no mesmo preset — reavaliar se pedido depois) | — |
+| Gestão financeira pessoal | (todas as 4) | Já têm `possuiValor` desde a Fase 0 — preset inteiro já é sobre valor | — |
+| Academia | Musculação | **Sim** (pedido explícito) | "Peso (kg)" |
+| Academia | Cardio | **Sim** (julgamento — distância é a métrica natural de cardio, mesmo espírito do peso na musculação) | "Distância (km)" |
+| Academia | Alongamento e mobilidade / Aula em grupo | Não | — |
+| Diário pessoal | Humor e emoções | **Sim** (julgamento — nota de humor 1-10 é um padrão comum em apps de diário/mood tracking) | "Nota de humor (1-10)" |
+| Diário pessoal | Reflexão do dia / Gratidão / Metas e planejamento | Não (categorias de texto livre, sem métrica numérica natural) | — |
+
+Nenhuma recebe `valorPadrao` (notas/peso/distância variam demais sessão a sessão pra ter um padrão sensato — diferente de "Deslocamento" no seed, que tem um custo de passagem relativamente estável).
+
+**Steps:**
+1. `src/config/categoryPresets.ts`: adicionar `possuiValor: true, valorLabel: '...'` nas 6 categorias da tabela acima.
+2. `src/i18n/pt-BR.json`/`en-US.json`: ajustar `categories.setup.estudante.usage`, `.concurseiro.usage`, `.academia.usage`, `.diarioPessoal.usage` pra mencionar o novo campo de valor onde relevante (ex.: "registre a nota depois de corrigida", "anote o peso usado pra acompanhar a evolução").
+3. `tests/config/categoryPresets.test.ts`: novo caso — toda categoria com `possuiValor: true` deve ter `valorLabel` não-vazio (presets não passam pelo `categorySchema`, então esse é o único guard-rail contra esquecer o rótulo e cair no fallback genérico "Valor").
+4. Nenhuma mudança de view necessária — `setup-show.ejs` já renderiza o badge amarelo de valor genericamente a partir de `c.possuiValor`/`c.valorLabel` (mesmo código usado desde a Fase 2).
+
+**Files Touched:** `src/config/categoryPresets.ts`, `src/i18n/pt-BR.json`, `src/i18n/en-US.json`, `tests/config/categoryPresets.test.ts`
+
+**Verify:** `npm run build && npm test && npm run lint` + verificação visual via CDP nas 4 páginas de preset afetadas (`/categories/setup/estudante`, `/concurseiro`, `/academia`, `/diario-pessoal`) confirmando o badge amarelo de valor aparece nas 6 categorias certas e em nenhuma outra; aplicar um preset afetado (ex.: academia) e confirmar em `/categories` que `possuiValor`/`valorLabel` foram persistidos corretamente.
+
+**Done When:** as 6 categorias mostram o badge de valor na prévia do preset, o texto de uso menciona o campo onde foi adicionado, teste de sanity cobre `valorLabel` ausente, build/test/lint verdes.
+
+**Time:** ~1h
+
+**Replanning triggers:** se o usuário pedir mais categorias com valor (ex.: Redação) ou discordar de alguma das 6 escolhidas, ajustar só a tabela acima antes de implementar — não é uma mudança estrutural.

@@ -27,6 +27,16 @@ describe('Dado o catálogo de presets de categorias', () => {
     });
   });
 
+  it('Então toda categoria com possuiValor tem um valorLabel não-vazio', () => {
+    categoryPresets.forEach((preset) => {
+      preset.categorias
+        .filter((categoria) => categoria.possuiValor)
+        .forEach((categoria) => {
+          expect(categoria.valorLabel?.trim()).toBeTruthy();
+        });
+    });
+  });
+
   describe('Quando busca um preset por id existente', () => {
     it('Então retorna o preset correspondente', () => {
       const preset = findCategoryPreset('estudante');
