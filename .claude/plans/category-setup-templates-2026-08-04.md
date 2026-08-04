@@ -1,7 +1,7 @@
 # Plan: Modelos prontos de setup (categorias automáticas por caso de uso)
 
 **Date:** 2026-08-04
-**Status:** Fase 0 concluída (2026-08-04, branch `feature/category-setup-templates`) — presets definidos em `src/config/categoryPresets.ts` + sanity test em `tests/config/categoryPresets.test.ts`. Fases 1-4 pendentes. Fase 4 (modal-tutorial de primeiro acesso) adicionada em 2026-08-04, mesmo dia — extensão do escopo original, não um plano novo.
+**Status:** Fases 0 e 1 concluídas (2026-08-04, branch `feature/category-setup-templates`). Fase 0: presets em `src/config/categoryPresets.ts` + sanity test. Fase 1: `SetupController` + rotas + `tests/routes/categorySetup.routes.test.ts`, mais `src/views/categories/setup-index.ejs`/`setup-show.ejs` como stubs funcionais (não previstos no "Files Touched" original da Fase 1, mas necessários pra `res.render` não quebrar — copy final/i18n desses arquivos fica pra Fase 2, como planejado). Fases 2-4 pendentes. Fase 4 (modal-tutorial de primeiro acesso) adicionada em 2026-08-04, mesmo dia — extensão do escopo original, não um plano novo.
 
 ## Goal
 
