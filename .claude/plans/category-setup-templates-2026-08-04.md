@@ -1,7 +1,7 @@
 # Plan: Modelos prontos de setup (categorias automáticas por caso de uso)
 
 **Date:** 2026-08-04
-**Status:** Fases 0, 1, 2 e 3 concluídas (2026-08-04, branch `feature/category-setup-templates`). Fase 0: presets + sanity test. Fase 1: `SetupController` + rotas + testes de rota. Fase 2: i18n completo + verificação visual (2 modos de design × 2 idiomas). Fase 3: botão "Usar um modelo pronto" em `/categories` (`.page-header-actions`, novo) + card de destaque na home quando `categorias.length === 0` + regressão end-to-end via CDP com usuário genuinamente novo (registro real, não seed) — confirmado: card aparece só sem categoria, aplicar preset cria e mostra flash correto, reaplicar o mesmo preset pula os 4 nomes duplicados sem quebrar (regra 6), card some depois de ter categoria. Só falta a Fase 4 (modal-tutorial de primeiro acesso).
+**Status:** Plano concluído (2026-08-04, branch `feature/category-setup-templates`, Fases 0-4). Fase 0: presets + sanity test. Fase 1: `SetupController` + rotas + testes de rota. Fase 2: i18n completo + verificação visual (2 modos de design × 2 idiomas). Fase 3: botão "Usar um modelo pronto" em `/categories` + card de destaque na home quando `categorias.length === 0`, regressão end-to-end com usuário genuinamente novo. Fase 4: modal de tutorial no primeiro acesso (`setupTutorialSeen` cookie, mesmo padrão de `theme`/`design`) — verificado via CDP: aparece no 1º load (2 modos de design), fechar por qualquer via (X/scrim/Escape/"Agora não") grava o cookie e não reaparece, clicar "Ver modelos" grava o cookie e navega, voltar sem aplicar preset não reabre o modal. Branch ainda não tem PR/merge.
 
 ## Goal
 

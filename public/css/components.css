@@ -270,3 +270,29 @@ textarea.input { padding: 10px 4px; resize: vertical; }
 .activity-detail-body::-webkit-scrollbar { width: 8px; }
 .activity-detail-body::-webkit-scrollbar-track { background: transparent; }
 .activity-detail-body::-webkit-scrollbar-thumb { background: var(--ink-soft); border-radius: 999px; }
+
+/* Modal de tutorial dos modelos prontos de categoria, no primeiro acesso (ver
+   public/js/setup-tutorial-modal.js e .claude/plans/category-setup-templates-2026-08-04.md, Fase
+   4) — mesma estrutura de scrim/card/header do .activity-detail-modal acima, mas componente
+   próprio (o projeto já tem 2 overlays paralelos independentes, confirm-toast e
+   activity-detail-modal; este segue o mesmo precedente em vez de generalizar os 2 existentes). */
+.setup-tutorial-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+.setup-tutorial-modal.is-visible { opacity: 1; pointer-events: auto; }
+.setup-tutorial-modal-card { width: min(440px, 100%); max-height: min(85vh, 600px); padding: 22px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; }
+.setup-tutorial-modal-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: none; }
+.setup-tutorial-modal-header h2 { font-size: var(--text-xl); }
+.setup-tutorial-usecases { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.setup-tutorial-usecases li { display: flex; align-items: center; gap: 10px; }
+.setup-tutorial-modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }

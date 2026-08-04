@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { BaseController } from './BaseController';
 import { ActivityModel } from '../models/ActivityModel';
 import { CategoryModel } from '../models/CategoryModel';
+import { categoryPresets } from '../config/categoryPresets';
 
 /**
  * Estende BaseController por uniformidade de hierarquia com os demais
@@ -27,6 +28,7 @@ class HomeControllerImpl extends BaseController {
       dataHoje: dataHojeRaw.charAt(0).toUpperCase() + dataHojeRaw.slice(1),
       emAndamento,
       categorias,
+      presets: categoryPresets,
     });
   };
 }

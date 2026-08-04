@@ -43,6 +43,19 @@ function readDesignCookie(req: Request): 'sketch' | 'minimal' {
   return match?.slice('design='.length) === 'sketch' ? 'sketch' : 'minimal';
 }
 
+/**
+ * Lê o cookie "setupTutorialSeen" (setado via JS por public/js/setup-tutorial-modal.js, mesmo
+ * padrão dos demais cookies deste arquivo) — controla se o modal de tutorial dos modelos prontos
+ * de categoria (ver .claude/plans/category-setup-templates-2026-08-04.md, Fase 4) já foi
+ * dispensado. Diferente dos outros cookies acima, aqui só a presença importa (flag booleana),
+ * não um valor com múltiplos estados válidos.
+ */
+function hasSetupTutorialSeenCookie(req: Request): boolean {
+  const header = req.headers.cookie;
+  if (!header) return false;
+  return header.split(';').map((part) => part.trim()).some((part) => part === 'setupTutorialSeen=1');
+}
+
 function isValidTimeZone(tz: string): boolean {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: tz });
@@ -118,6 +131,7 @@ export function createApp() {
     res.locals.currentPath = req.path; // usado pela sidebar para destacar o item ativo
     res.locals.theme = readThemeCookie(req);
     res.locals.design = readDesignCookie(req);
+    res.locals.setupTutorialSeen = hasSetupTutorialSeenCookie(req);
     req.userTimezone = readTimezoneCookie(req);
     req.userLocale = readLocaleCookie(req);
     res.locals.locale = req.userLocale;

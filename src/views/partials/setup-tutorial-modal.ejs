@@ -1,0 +1,27 @@
+<div id="setupTutorialModal" class="setup-tutorial-modal" role="dialog" aria-modal="true" aria-labelledby="setupTutorialModalTitle">
+  <div class="setup-tutorial-modal-card card sketch-edge">
+    <div class="setup-tutorial-modal-header">
+      <h2 id="setupTutorialModalTitle"><%= t('home.setupTutorial.title') %></h2>
+      <button type="button" class="icon-btn sketch-edge sketch-hover btn-secondary setup-tutorial-modal-close" aria-label="<%= t('home.setupTutorial.closeAriaLabel') %>">
+        <%- include('./icon', { name: 'x', size: 18 }) %>
+      </button>
+    </div>
+    <p class="muted"><%= t('home.setupTutorial.description') %></p>
+    <ul class="setup-tutorial-usecases">
+      <% presets.forEach((preset) => { %>
+        <li>
+          <%- include('./icon', { name: 'star', size: 16, color: 'var(--accent-yellow)' }) %>
+          <%= t(preset.titleKey) %>
+        </li>
+      <% }) %>
+    </ul>
+    <div class="setup-tutorial-modal-actions">
+      <a id="setupTutorialPrimaryButton" class="btn btn-primary sketch-edge sketch-hover" href="/categories/setup">
+        <%- include('./icon', { name: 'star', size: 16 }) %> <%= t('home.setupTutorial.primaryButton') %>
+      </a>
+      <button type="button" class="btn btn-secondary sketch-edge sketch-hover setup-tutorial-modal-dismiss">
+        <%= t('home.setupTutorial.secondaryButton') %>
+      </button>
+    </div>
+  </div>
+</div>

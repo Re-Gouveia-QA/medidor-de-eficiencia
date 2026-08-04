@@ -1,6 +1,11 @@
 <h1 class="home-greeting"><%= t('home.greeting', { name: userName }) %></h1>
 <p class="muted home-date"><%= dataHoje %></p>
 
+<% if (categorias.length === 0 && !setupTutorialSeen) { %>
+  <%- include('../partials/setup-tutorial-modal') %>
+  <script src="/js/setup-tutorial-modal.js"></script>
+<% } %>
+
 <% if (emAndamento) { %>
   <div class="card sketch-edge in-progress-card is-live sketch-in" style="--stagger-index: 0;">
     <div class="in-progress-status">
