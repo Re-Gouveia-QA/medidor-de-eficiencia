@@ -1,7 +1,7 @@
 # Plan: Modelos prontos de setup (categorias automáticas por caso de uso)
 
 **Date:** 2026-08-04
-**Status:** Plano concluído (2026-08-04, branch `feature/category-setup-templates`, Fases 0-4). Fase 0: presets + sanity test. Fase 1: `SetupController` + rotas + testes de rota. Fase 2: i18n completo + verificação visual (2 modos de design × 2 idiomas). Fase 3: botão "Usar um modelo pronto" em `/categories` + card de destaque na home quando `categorias.length === 0`, regressão end-to-end com usuário genuinamente novo. Fase 4: modal de tutorial no primeiro acesso (`setupTutorialSeen` cookie, mesmo padrão de `theme`/`design`) — verificado via CDP: aparece no 1º load (2 modos de design), fechar por qualquer via (X/scrim/Escape/"Agora não") grava o cookie e não reaparece, clicar "Ver modelos" grava o cookie e navega, voltar sem aplicar preset não reabre o modal. Branch ainda não tem PR/merge.
+**Status:** Plano concluído e mergeado (2026-08-04, PR #10, commit `54bee4e` em `master`, Fases 0-4). Fase 0: presets + sanity test. Fase 1: `SetupController` + rotas + testes de rota. Fase 2: i18n completo + verificação visual (2 modos de design × 2 idiomas). Fase 3: botão "Usar um modelo pronto" em `/categories` + card de destaque na home quando `categorias.length === 0`, regressão end-to-end com usuário genuinamente novo. Fase 4: modal de tutorial no primeiro acesso (`setupTutorialSeen` cookie, mesmo padrão de `theme`/`design`). **Refinamento pós-merge (2026-08-04, branch `feature/setup-templates-refinement`)** — ver seção "Refinamento — terminologia e conteúdo" abaixo.
 
 ## Goal
 
@@ -147,3 +147,18 @@ Reduzir a fricção do primeiro uso: em vez de o usuário precisar criar cada ca
 
 - 5 presets cobrem exatamente os 5 casos de uso citados pelo usuário: estudantes, concurseiros, gestão financeira pessoal, academia, diário pessoal. Novos presets no futuro são só mais entradas em `categoryPresets.ts` — a estrutura de dados já suporta N presets sem mudança de código.
 - O card de "gestão financeira pessoal" reaproveita um caso de uso já citado na landing pública (`marketing.useCases.budget`, "Orçamento doméstico informal") — o preset dá a esse caso de uso um caminho de setup de verdade, não só menção em copy de marketing.
+
+## Refinamento — terminologia e conteúdo (2026-08-04, pós-merge)
+
+Feedback do usuário depois do merge da PR #10, branch `feature/setup-templates-refinement`:
+
+- **Terminologia**: "modelo"/"template" trocado por "modo de uso" em toda a copy de interface (botões, títulos, mensagens) — chaves de i18n mantidas com o mesmo nome (`categories.setup.*`), só os valores mudaram, pra não gerar churn desnecessário em identificadores internos. Título da tela de escolha virou a pergunta direta pedida pelo usuário ("Pra que você gostaria de usar o app?" / subtítulo "Qual das opções abaixo melhor se encaixa no seu contexto?"). Nomes das categorias criadas no banco continuam em pt-BR literal (fora do escopo desta mudança — ver Notes acima).
+- **Opção "Quero construir algo do zero"**: 6º card em `/categories/setup`, mesmo estilo dos 5 presets, mas linkando direto pra `/categories/new` (criação manual) em vez de `/categories/setup/:id`. Chave nova `categories.setup.index.fromScratch.*` (pt-BR/en-US).
+- **Espaçamento**: `setup-index.ejs` e `setup-show.ejs` nunca tinham sido envolvidos em `<div class="page-header">` (só chamavam `partials/page-header` direto) — diferente de `categories/index.ejs`/`activities/index.ejs`, que sempre tiveram esse wrapper. Sem ele, faltava o `margin-bottom: 1.25rem` de `.page-header` entre o título e o conteúdo seguinte (bug real de espaçamento, não só percepção). Corrigido envolvendo os dois arquivos no wrapper. Mesmo problema entre o card "Como usar" e o heading "Categorias que serão criadas" em `setup-show.ejs` (h1-h4 zeram `margin` por padrão, ver CLAUDE.md) — resolvido com `.setup-section-heading` (`margin: 2rem 0 1rem`), mesma receita de `.report-section-heading` mas como classe própria (aquela é intencionalmente escopada só a `/reports`). `.setup-apply-form` (`margin-top: 2rem`) separa o botão de aplicar do grid de categorias acima.
+- **Conteúdo dos presets**: categorias de cada preset mantidas como estavam (já razoavelmente bem estruturadas pro caso de uso — concurseiro em particular já espelha o ciclo real de estudo: teoria/revisão/questões/redação/simulado). O que estava raso era o texto de "como usar" (Fase 2), reduzido a 1 frase — reescrito nos 5 presets como um guia mais completo (2-3 frases): explica o papel de cada categoria, dá uma dica concreta de uso do dia a dia, e fecha com o que observar no relatório depois de um tempo de uso. Julgamento: não reestruturar os conjuntos de categoria em si, já que nenhum tinha problema óbvio de design — se o usuário queria uma revisão mais profunda do *conjunto de categorias*, não só do texto, é um pedido a mais.
+
+**Files Touched:** `src/i18n/pt-BR.json`, `src/i18n/en-US.json`, `src/views/categories/setup-index.ejs`, `src/views/categories/setup-show.ejs`, `public/css/styles.css`, `tests/routes/home.routes.test.ts`
+
+**Verify:** `npm run build && npm test && npm run lint` (151 testes) + verificação visual via CDP com usuário novo (registro real): título/subtítulo novos, 6 cards em `/categories/setup` (5 presets + "do zero" com `href="/categories/new"`), espaçamento visivelmente corrigido nas duas telas, texto de uso mais longo renderizando sem chave crua.
+
+**Done When:** feito — build/test/lint verdes, checagem visual confirmou os 4 pontos do pedido.

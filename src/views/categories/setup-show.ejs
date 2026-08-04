@@ -1,11 +1,13 @@
-<%- include('../partials/page-header', { title: t(preset.titleKey), backHref: '/categories/setup' }) %>
+<div class="page-header">
+  <%- include('../partials/page-header', { title: t(preset.titleKey), backHref: '/categories/setup' }) %>
+</div>
 
 <div class="card sketch-edge">
   <h2 class="card-heading"><%= t('categories.setup.show.usageHeading') %></h2>
   <p><%= t(preset.usageKey) %></p>
 </div>
 
-<h3><%= t('categories.setup.show.categoriesHeading') %></h3>
+<h3 class="setup-section-heading"><%= t('categories.setup.show.categoriesHeading') %></h3>
 <div class="grid-menu">
   <% preset.categorias.forEach((c, i) => { %>
     <div class="card sketch-edge sketch-in" style="--stagger-index: <%= i %>;">
@@ -25,7 +27,7 @@
   <% }) %>
 </div>
 
-<form action="/categories/setup/<%= preset.id %>" method="POST">
+<form action="/categories/setup/<%= preset.id %>" method="POST" class="setup-apply-form">
   <button type="submit" class="btn btn-primary sketch-edge sketch-hover">
     <%- include('../partials/icon', { name: 'check', size: 16 }) %> <%= t('categories.setup.show.applyButton') %>
   </button>

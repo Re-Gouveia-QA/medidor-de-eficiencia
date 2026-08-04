@@ -61,7 +61,7 @@ describe('GET / (modal de tutorial dos modelos prontos de categoria)', () => {
     const res = await agent.get('/');
     expect(res.status).toBe(200);
     expect(res.text).toContain('id="setupTutorialModal"');
-    expect(res.text).toContain('Modelos prontos de categorias');
+    expect(res.text).toContain('Modos de uso');
   });
 
   it('sem categorias, mas com cookie "setupTutorialSeen=1", não mostra o modal', async () => {
