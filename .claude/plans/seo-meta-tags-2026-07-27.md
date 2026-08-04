@@ -1,8 +1,13 @@
 # Plan: Meta tags — SEO, redes sociais e divulgação
 
 **Date:** 2026-07-27 (Fases 1-5 concluídas em 2026-07-27)
-**Status:** concluído (Fases 1-5) em `feature/seo-meta-tags`, não mesclado em `master` ainda
-(mesma convenção: push/merge só mediante pedido explícito).
+**Status:** concluído (Fases 1-5), mesclado em `master` desde então (fases de features
+subsequentes já partiram deste código). **Pendência do domínio de produção resolvida em
+2026-08-04** — app implantado no Railway (`https://medidor-de-eficiencia-production.up.railway.app`,
+`APP_URL` já configurado no ambiente de produção); `public/robots.txt`/`public/sitemap.xml`
+atualizados de `localhost:3000` pro domínio real, TODOs removidos. Único item da lista de
+pendências (seção final abaixo) que segue em aberto: checagem visual real de favicon/preview
+social em navegador/rede social de verdade — ainda sem ferramenta pra isso nesta sessão.
 
 Fase 1: `src/views/partials/meta-tags.ejs` criado e incluído nos dois layouts —
 `main.ejs` sempre com `noindex: true` (hardcoded no include, não uma flag por controller, já que
