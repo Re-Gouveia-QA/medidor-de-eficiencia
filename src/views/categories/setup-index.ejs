@@ -1,4 +1,6 @@
-<%- include('../partials/page-header', { title: t('categories.setup.index.title'), backHref: '/categories' }) %>
+<div class="page-header">
+  <%- include('../partials/page-header', { title: t('categories.setup.index.title'), backHref: '/categories' }) %>
+</div>
 <p class="muted"><%= t('categories.setup.index.subtitle') %></p>
 
 <div class="grid-menu">
@@ -8,4 +10,8 @@
       <span class="muted"><%= t(preset.descriptionKey) %></span>
     </a>
   <% }) %>
+  <a class="card sketch-edge sketch-hover sketch-in" style="--stagger-index: <%= presets.length %>;" href="/categories/new">
+    <strong><%= t('categories.setup.index.fromScratch.title') %></strong>
+    <span class="muted"><%= t('categories.setup.index.fromScratch.description') %></span>
+  </a>
 </div>
