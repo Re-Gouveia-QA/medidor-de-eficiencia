@@ -42,7 +42,13 @@ export const categoryPresets: CategoryPreset[] = [
         descricao: 'Leitura de matéria, resumos, revisão de conteúdo',
         tempoDesejadoMin: 120,
       },
-      { nome: 'Trabalhos e Provas', cor: '#F59E0B', descricao: 'Produção de trabalhos, provas e avaliações' },
+      {
+        nome: 'Trabalhos e Provas',
+        cor: '#F59E0B',
+        descricao: 'Produção de trabalhos, provas e avaliações',
+        possuiValor: true,
+        valorLabel: 'Nota',
+      },
       { nome: 'Leitura', cor: '#9333EA', descricao: 'Livros e materiais complementares', duracaoPadraoMin: 30 },
     ],
   },
@@ -64,6 +70,8 @@ export const categoryPresets: CategoryPreset[] = [
         cor: '#DC2626',
         descricao: 'Resolução de exercícios e questões de provas anteriores',
         tempoDesejadoMin: 60,
+        possuiValor: true,
+        valorLabel: '% de acertos',
       },
       {
         nome: 'Redação',
@@ -71,7 +79,13 @@ export const categoryPresets: CategoryPreset[] = [
         descricao: 'Prática de redação/discursiva, quando aplicável ao concurso',
         duracaoPadraoMin: 60,
       },
-      { nome: 'Simulado', cor: '#F59E0B', descricao: 'Simulados completos, cronometrados' },
+      {
+        nome: 'Simulado',
+        cor: '#F59E0B',
+        descricao: 'Simulados completos, cronometrados',
+        possuiValor: true,
+        valorLabel: 'Nota',
+      },
     ],
   },
   {
@@ -116,8 +130,8 @@ export const categoryPresets: CategoryPreset[] = [
     descriptionKey: 'categories.setup.academia.description',
     usageKey: 'categories.setup.academia.usage',
     categorias: [
-      { nome: 'Musculação', cor: '#2563EB', duracaoPadraoMin: 60 },
-      { nome: 'Cardio', cor: '#DC2626', duracaoPadraoMin: 30 },
+      { nome: 'Musculação', cor: '#2563EB', duracaoPadraoMin: 60, possuiValor: true, valorLabel: 'Peso (kg)' },
+      { nome: 'Cardio', cor: '#DC2626', duracaoPadraoMin: 30, possuiValor: true, valorLabel: 'Distância (km)' },
       { nome: 'Alongamento e mobilidade', cor: '#16A34A', duracaoPadraoMin: 15 },
       { nome: 'Aula em grupo', cor: '#9333EA', descricao: 'Crossfit, funcional, spinning, etc.', duracaoPadraoMin: 45 },
     ],
@@ -130,7 +144,13 @@ export const categoryPresets: CategoryPreset[] = [
     categorias: [
       { nome: 'Reflexão do dia', cor: '#2563EB', descricao: 'O que aconteceu, o que você sentiu', duracaoPadraoMin: 10 },
       { nome: 'Gratidão', cor: '#F59E0B', duracaoPadraoMin: 5 },
-      { nome: 'Humor e emoções', cor: '#9333EA', duracaoPadraoMin: 5 },
+      {
+        nome: 'Humor e emoções',
+        cor: '#9333EA',
+        duracaoPadraoMin: 5,
+        possuiValor: true,
+        valorLabel: 'Nota de humor (1-10)',
+      },
       {
         nome: 'Metas e planejamento',
         cor: '#16A34A',
