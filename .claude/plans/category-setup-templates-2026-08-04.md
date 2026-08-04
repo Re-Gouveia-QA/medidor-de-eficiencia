@@ -1,7 +1,7 @@
 # Plan: Modelos prontos de setup (categorias automáticas por caso de uso)
 
 **Date:** 2026-08-04
-**Status:** Fases 0 e 1 concluídas (2026-08-04, branch `feature/category-setup-templates`). Fase 0: presets em `src/config/categoryPresets.ts` + sanity test. Fase 1: `SetupController` + rotas + `tests/routes/categorySetup.routes.test.ts`, mais `src/views/categories/setup-index.ejs`/`setup-show.ejs` como stubs funcionais (não previstos no "Files Touched" original da Fase 1, mas necessários pra `res.render` não quebrar — copy final/i18n desses arquivos fica pra Fase 2, como planejado). Fases 2-4 pendentes. Fase 4 (modal-tutorial de primeiro acesso) adicionada em 2026-08-04, mesmo dia — extensão do escopo original, não um plano novo.
+**Status:** Fases 0, 1 e 2 concluídas (2026-08-04, branch `feature/category-setup-templates`). Fase 0: presets em `src/config/categoryPresets.ts` + sanity test. Fase 1: `SetupController` + rotas + `tests/routes/categorySetup.routes.test.ts`, mais `setup-index.ejs`/`setup-show.ejs` como stubs funcionais. Fase 2: i18n completo (pt-BR + en-US, 24 chaves novas em `categories.setup.*`) + verificação visual via CDP nas duas telas, nos 2 modos de design (sketch/minimal) e em pt-BR/en-US — confirmado sem chave crua, badges/cores/layout corretos nos dois modos. Fases 3-4 pendentes. Fase 4 (modal-tutorial de primeiro acesso) adicionada em 2026-08-04, mesmo dia — extensão do escopo original, não um plano novo.
 
 ## Goal
 
