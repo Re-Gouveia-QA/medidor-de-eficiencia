@@ -1,6 +1,11 @@
 <h1 class="home-greeting"><%= t('home.greeting', { name: userName }) %></h1>
 <p class="muted home-date"><%= dataHoje %></p>
 
+<% if (categorias.length === 0 && !setupTutorialSeen) { %>
+  <%- include('../partials/setup-tutorial-modal') %>
+  <script src="/js/setup-tutorial-modal.js"></script>
+<% } %>
+
 <% if (emAndamento) { %>
   <div class="card sketch-edge in-progress-card is-live sketch-in" style="--stagger-index: 0;">
     <div class="in-progress-status">
@@ -66,6 +71,22 @@
       <%- include('../partials/icon', { name: 'plus', size: 16 }) %> <%= t('home.startForm.submit') %>
     </button>
   </form>
+<% } else { %>
+  <div class="card sketch-edge in-progress-card sketch-in" style="--stagger-index: 0;">
+    <div class="card-heading">
+      <%- include('../partials/icon', { name: 'star', size: 22, color: 'var(--accent-yellow)' }) %>
+      <h2><%= t('home.emptyState.heading') %></h2>
+    </div>
+    <p class="muted"><%= t('home.emptyState.description') %></p>
+    <div class="card-footer">
+      <a class="btn btn-primary sketch-edge sketch-hover" href="/categories/setup">
+        <%- include('../partials/icon', { name: 'star', size: 16 }) %> <%= t('home.emptyState.setupButton') %>
+      </a>
+      <a class="btn btn-secondary sketch-edge sketch-hover" href="/categories/new">
+        <%- include('../partials/icon', { name: 'plus', size: 16 }) %> <%= t('home.emptyState.manualButton') %>
+      </a>
+    </div>
+  </div>
 <% } %>
 
 <h3 class=""><%= t('home.menu.heading') %></h3>

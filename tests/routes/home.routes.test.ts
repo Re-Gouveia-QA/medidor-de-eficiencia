@@ -47,6 +47,42 @@ describe('GET / (home pública x dashboard — plano de landing page)', () => {
   });
 });
 
+describe('GET / (modal de tutorial dos modelos prontos de categoria)', () => {
+  const app = createApp();
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    vi.mocked(ActivityModel.findInProgress).mockResolvedValue(null);
+  });
+
+  it('sem categorias e sem cookie "setupTutorialSeen", mostra o modal', async () => {
+    vi.mocked(CategoryModel.listByUser).mockResolvedValue([]);
+    const agent = await loginAgent(app);
+    const res = await agent.get('/');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('id="setupTutorialModal"');
+    expect(res.text).toContain('Modelos prontos de categorias');
+  });
+
+  it('sem categorias, mas com cookie "setupTutorialSeen=1", não mostra o modal', async () => {
+    vi.mocked(CategoryModel.listByUser).mockResolvedValue([]);
+    const agent = await loginAgent(app);
+    const res = await agent.get('/').set('Cookie', 'setupTutorialSeen=1');
+    expect(res.status).toBe(200);
+    expect(res.text).not.toContain('id="setupTutorialModal"');
+  });
+
+  it('com categorias existentes, não mostra o modal mesmo sem o cookie', async () => {
+    vi.mocked(CategoryModel.listByUser).mockResolvedValue([
+      { id: 'cat-1', nome: 'Trabalho', cor: '#2563EB' } as never,
+    ]);
+    const agent = await loginAgent(app);
+    const res = await agent.get('/');
+    expect(res.status).toBe(200);
+    expect(res.text).not.toContain('id="setupTutorialModal"');
+  });
+});
+
 describe('GET / (i18n Fase 0 — RNF04)', () => {
   const app = createApp();
 

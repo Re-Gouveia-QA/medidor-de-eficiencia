@@ -246,6 +246,7 @@ a.card svg { color: var(--accent-blue); margin-bottom: 6px; }
 
 /* Listas (atividades) */
 .page-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.25rem; }
+.page-header-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
 .list { list-style: none; display: flex; flex-direction: column; gap: 18px; margin-top: 1rem; padding: 0; }
 .list-item { display: flex; align-items: center; gap: 14px; padding: 18px 20px; }
 /* Área clicável do item (abre o modal de detalhes) — <button> em vez de handler no <li> inteiro

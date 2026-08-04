@@ -1,8 +1,13 @@
 <div class="page-header">
   <%- include('../partials/page-header', { title: t('categories.index.title'), backHref: '/' }) %>
-  <a class="btn btn-primary sketch-edge sketch-hover" href="/categories/new">
-    <%- include('../partials/icon', { name: 'plus', size: 16 }) %> <%= t('categories.newCategoryLabel') %>
-  </a>
+  <div class="page-header-actions">
+    <a class="btn btn-secondary sketch-edge sketch-hover" href="/categories/setup">
+      <%- include('../partials/icon', { name: 'star', size: 16 }) %> <%= t('categories.setup.entryButton') %>
+    </a>
+    <a class="btn btn-primary sketch-edge sketch-hover" href="/categories/new">
+      <%- include('../partials/icon', { name: 'plus', size: 16 }) %> <%= t('categories.newCategoryLabel') %>
+    </a>
+  </div>
 </div>
 
 <% if (categorias.length === 0) { %>

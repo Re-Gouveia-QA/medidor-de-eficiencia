@@ -1,0 +1,32 @@
+<%- include('../partials/page-header', { title: t(preset.titleKey), backHref: '/categories/setup' }) %>
+
+<div class="card sketch-edge">
+  <h2 class="card-heading"><%= t('categories.setup.show.usageHeading') %></h2>
+  <p><%= t(preset.usageKey) %></p>
+</div>
+
+<h3><%= t('categories.setup.show.categoriesHeading') %></h3>
+<div class="grid-menu">
+  <% preset.categorias.forEach((c, i) => { %>
+    <div class="card sketch-edge sketch-in" style="--stagger-index: <%= i %>;">
+      <div class="card-heading">
+        <span class="color-dot" style="background: <%= c.cor %>" aria-hidden="true"></span>
+        <h3 class="card-title"><%= c.nome %></h3>
+      </div>
+      <% if (c.descricao) { %><p class="muted"><%= c.descricao %></p><% } %>
+      <% if (c.tempoDesejadoMin || c.duracaoPadraoMin || c.possuiValor) { %>
+        <div class="badge-row">
+          <% if (c.tempoDesejadoMin) { %><span class="badge sketch-edge badge-blue"><%= t('categories.index.goalBadge', { min: c.tempoDesejadoMin }) %></span><% } %>
+          <% if (c.duracaoPadraoMin) { %><span class="badge sketch-edge badge-neutral"><%= t('categories.index.durationBadge', { min: c.duracaoPadraoMin }) %></span><% } %>
+          <% if (c.possuiValor) { %><span class="badge sketch-edge badge-yellow"><%= c.valorLabel || t('common.valueLabelDefault') %></span><% } %>
+        </div>
+      <% } %>
+    </div>
+  <% }) %>
+</div>
+
+<form action="/categories/setup/<%= preset.id %>" method="POST">
+  <button type="submit" class="btn btn-primary sketch-edge sketch-hover">
+    <%- include('../partials/icon', { name: 'check', size: 16 }) %> <%= t('categories.setup.show.applyButton') %>
+  </button>
+</form>
