@@ -58,6 +58,27 @@
   </div>
 <% } %>
 
+<h2 class="report-section-heading"><%= t('reports.goalsHeading') %></h2>
+<% if (metas.length === 0) { %>
+  <p class="muted"><%= t('reports.goalsEmpty') %></p>
+<% } else { %>
+  <div class="card sketch-edge">
+    <ul class="bars">
+      <% metas.forEach((m, i) => { %>
+        <li class="sketch-in" style="--stagger-index: <%= i %>;">
+          <div class="bar-label">
+            <span><span class="color-dot" style="background: <%= m.cor %>" aria-hidden="true"></span> <%= m.categoria %></span>
+            <span class="muted"><%= t('reports.goals.progressLabel', { diasComMeta: m.diasComMeta, diasNoPeriodo: m.diasNoPeriodo, metaFormatada: m.metaFormatada }) %></span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="--pct: <%= m.percentual / 100 %>; background: <%= m.cor %>"></div>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
+
 <h2 class="report-section-heading"><%= t('reports.valueByCategoryHeading') %></h2>
 <% if (seriesValor.length === 0) { %>
   <p class="muted"><%= t('reports.valueByCategoryEmpty') %></p>
