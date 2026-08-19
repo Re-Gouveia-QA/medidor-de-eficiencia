@@ -5,6 +5,9 @@ vi.mock('../../src/config/database', () => ({
     activity: {
       findMany: vi.fn(),
     },
+    category: {
+      findMany: vi.fn(),
+    },
   },
 }));
 
@@ -72,6 +75,110 @@ describe('ReportService (BaseModel — escopo por usuário, RF12)', () => {
       expect(series[0].pontos).toEqual([{ atividadeId: 'a3', nome: 'Depósito', horaInicio: new Date('2026-07-02T12:00:00.000Z'), valor: 100 }]);
       expect(series[1].categoria).toBe('Transporte');
       expect(series[1].pontos.map((p) => p.atividadeId)).toEqual(['a1', 'a2']);
+    });
+  });
+
+  describe('buildGoals (meta diária por categoria)', () => {
+    describe('Dado que nenhuma categoria do usuário tem meta diária definida', () => {
+      it('Quando buildGoals é chamado, então retorna lista vazia sem consultar atividades', async () => {
+        vi.mocked(prisma.category.findMany).mockResolvedValue([]);
+
+        const progresso = await ReportService.buildGoals(USER_ID, PERIODO);
+
+        expect(progresso).toEqual([]);
+        expect(prisma.category.findMany).toHaveBeenCalledWith({
+          where: { userId: USER_ID, tempoDesejadoMin: { not: null } },
+          select: { id: true, nome: true, cor: true, tempoDesejadoMin: true },
+        });
+        expect(prisma.activity.findMany).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('Dado categorias do usuário com meta diária definida', () => {
+      it('Quando buildGoals é chamado, então busca atividades do período restritas às categorias com meta', async () => {
+        vi.mocked(prisma.category.findMany).mockResolvedValue([
+          { id: 'cat-estudo', nome: 'Estudo', cor: '#0D9488', tempoDesejadoMin: 60 },
+        ] as never);
+        vi.mocked(prisma.activity.findMany).mockResolvedValue([]);
+
+        await ReportService.buildGoals(USER_ID, PERIODO);
+
+        expect(prisma.activity.findMany).toHaveBeenCalledWith({
+          where: {
+            userId: USER_ID,
+            data: { gte: PERIODO.inicio, lte: PERIODO.fim },
+            horaFim: { not: null },
+            categoryId: { in: ['cat-estudo'] },
+          },
+          select: { data: true, duracaoMin: true, categoryId: true },
+        });
+      });
+
+      it('Quando a duração diária somada atinge a meta em alguns dias e não em outros, então conta só os dias que bateram a meta', async () => {
+        vi.mocked(prisma.category.findMany).mockResolvedValue([
+          { id: 'cat-estudo', nome: 'Estudo', cor: '#0D9488', tempoDesejadoMin: 60 },
+        ] as never);
+        vi.mocked(prisma.activity.findMany).mockResolvedValue([
+          // 01/07: 40 + 50 = 90min, bate a meta de 60min.
+          { data: new Date('2026-07-01T00:00:00.000Z'), duracaoMin: 40, categoryId: 'cat-estudo' },
+          { data: new Date('2026-07-01T00:00:00.000Z'), duracaoMin: 50, categoryId: 'cat-estudo' },
+          // 02/07: 30min, não bate a meta de 60min.
+          { data: new Date('2026-07-02T00:00:00.000Z'), duracaoMin: 30, categoryId: 'cat-estudo' },
+        ] as never);
+
+        const progresso = await ReportService.buildGoals(USER_ID, PERIODO);
+
+        expect(progresso).toEqual([
+          {
+            categoryId: 'cat-estudo',
+            categoria: 'Estudo',
+            cor: '#0D9488',
+            metaMin: 60,
+            metaFormatada: '1h',
+            diasComMeta: 1,
+            diasNoPeriodo: 31,
+            percentual: Math.round((1 / 31) * 100),
+          },
+        ]);
+      });
+
+      it('Quando a categoria não tem nenhuma atividade no período, então aparece com diasComMeta 0 (não some da lista)', async () => {
+        vi.mocked(prisma.category.findMany).mockResolvedValue([
+          { id: 'cat-leitura', nome: 'Leitura', cor: '#16A34A', tempoDesejadoMin: 120 },
+        ] as never);
+        vi.mocked(prisma.activity.findMany).mockResolvedValue([]);
+
+        const progresso = await ReportService.buildGoals(USER_ID, PERIODO);
+
+        expect(progresso).toEqual([
+          {
+            categoryId: 'cat-leitura',
+            categoria: 'Leitura',
+            cor: '#16A34A',
+            metaMin: 120,
+            metaFormatada: '2h',
+            diasComMeta: 0,
+            diasNoPeriodo: 31,
+            percentual: 0,
+          },
+        ]);
+      });
+
+      it('Quando há mais de uma categoria com meta, então ordena o resultado por percentual decrescente', async () => {
+        vi.mocked(prisma.category.findMany).mockResolvedValue([
+          { id: 'cat-baixo', nome: 'Baixo cumprimento', cor: '#DC2626', tempoDesejadoMin: 60 },
+          { id: 'cat-alto', nome: 'Alto cumprimento', cor: '#16A34A', tempoDesejadoMin: 60 },
+        ] as never);
+        vi.mocked(prisma.activity.findMany).mockResolvedValue([
+          { data: new Date('2026-07-01T00:00:00.000Z'), duracaoMin: 60, categoryId: 'cat-baixo' },
+          { data: new Date('2026-07-01T00:00:00.000Z'), duracaoMin: 60, categoryId: 'cat-alto' },
+          { data: new Date('2026-07-02T00:00:00.000Z'), duracaoMin: 60, categoryId: 'cat-alto' },
+        ] as never);
+
+        const progresso = await ReportService.buildGoals(USER_ID, PERIODO);
+
+        expect(progresso.map((p) => p.categoryId)).toEqual(['cat-alto', 'cat-baixo']);
+      });
     });
   });
 });

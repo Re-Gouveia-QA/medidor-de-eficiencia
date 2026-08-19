@@ -37,6 +37,17 @@ export interface CategoryValueSeries {
   pontos: ValueSeriesPoint[];
 }
 
+export interface CategoryGoalProgress {
+  categoryId: string;
+  categoria: string;
+  cor: string;
+  metaMin: number;
+  metaFormatada: string;
+  diasComMeta: number;
+  diasNoPeriodo: number;
+  percentual: number;
+}
+
 /**
  * Service de relatórios (RF09/RF10) — mantém o ReportController fino.
  * Regra 9: "dia registrado" = dia com ao menos uma atividade.
@@ -125,6 +136,53 @@ class ReportServiceImpl extends BaseModel {
     }
 
     return [...porCategoria.values()].sort((a, b) => a.categoria.localeCompare(b.categoria));
+  }
+
+  /** Meta diária opcional (`tempoDesejadoMin`) — quantos dias do período tiveram, para a
+   * categoria, duração total ≥ meta. Denominador é `diasNoPeriodo` (mesma base do card "dias
+   * registrados" de `build`), não os dias em que a categoria teve atividade, pra manter a leitura
+   * consistente com o resto da página. */
+  async buildGoals(userId: string, { inicio, fim }: ReportPeriod): Promise<CategoryGoalProgress[]> {
+    const categorias = await this.db.category.findMany({
+      where: this.scopeToUser(userId, { tempoDesejadoMin: { not: null } }),
+      select: { id: true, nome: true, cor: true, tempoDesejadoMin: true },
+    });
+    if (categorias.length === 0) return [];
+
+    const diasNoPeriodo = Math.floor((fim.getTime() - inicio.getTime()) / 86_400_000) + 1;
+
+    const atividades = await this.db.activity.findMany({
+      where: this.scopeToUser(userId, {
+        data: { gte: inicio, lte: fim },
+        horaFim: { not: null },
+        categoryId: { in: categorias.map((c) => c.id) },
+      }),
+      select: { data: true, duracaoMin: true, categoryId: true },
+    });
+
+    const progresso: CategoryGoalProgress[] = categorias.map((cat) => {
+      const minPorDia = new Map<string, number>();
+      for (const a of atividades) {
+        if (a.categoryId !== cat.id) continue;
+        const dia = a.data.toISOString().slice(0, 10);
+        minPorDia.set(dia, (minPorDia.get(dia) ?? 0) + (a.duracaoMin ?? 0));
+      }
+      // tempoDesejadoMin não é nulo aqui (filtrado no where acima).
+      const metaMin = cat.tempoDesejadoMin!;
+      const diasComMeta = [...minPorDia.values()].filter((min) => min >= metaMin).length;
+      return {
+        categoryId: cat.id,
+        categoria: cat.nome,
+        cor: cat.cor,
+        metaMin,
+        metaFormatada: formatMinutes(metaMin),
+        diasComMeta,
+        diasNoPeriodo,
+        percentual: diasNoPeriodo > 0 ? Math.round((diasComMeta / diasNoPeriodo) * 100) : 0,
+      };
+    });
+
+    return progresso.sort((a, b) => b.percentual - a.percentual);
   }
 }
 
