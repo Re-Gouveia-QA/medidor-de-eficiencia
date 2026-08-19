@@ -20,6 +20,7 @@ describe('Rotas de relatórios', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     vi.mocked(ReportService.buildValueSeries).mockResolvedValue([]);
+    vi.mocked(ReportService.buildGoals).mockResolvedValue([]);
   });
 
   it('GET /reports usa o período padrão (mês corrente) quando nenhum filtro é informado (regra 8)', async () => {
@@ -124,5 +125,44 @@ describe('Rotas de relatórios', () => {
     const res = await agent.get('/reports');
     expect(res.status).toBe(200);
     expect(res.text).toContain('Nenhuma categoria com valor registrado no período selecionado.');
+  });
+
+  it('GET /reports exibe o progresso de metas diárias por categoria quando há categoria com meta definida', async () => {
+    vi.mocked(ReportService.defaultPeriod).mockReturnValue({
+      inicio: new Date('2026-07-01T00:00:00.000Z'),
+      fim: new Date('2026-07-31T00:00:00.000Z'),
+    });
+    vi.mocked(ReportService.build).mockResolvedValue(relatorioVazio);
+    vi.mocked(ReportService.buildGoals).mockResolvedValue([
+      {
+        categoryId: 'cat-1',
+        categoria: 'Estudo',
+        cor: '#0D9488',
+        metaMin: 60,
+        metaFormatada: '1h',
+        diasComMeta: 3,
+        diasNoPeriodo: 31,
+        percentual: 10,
+      },
+    ]);
+
+    const agent = await loginAgent(app);
+    const res = await agent.get('/reports');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Estudo');
+    expect(res.text).toContain('3/31 dias · meta 1h/dia');
+  });
+
+  it('GET /reports exibe mensagem vazia quando nenhuma categoria tem meta diária definida', async () => {
+    vi.mocked(ReportService.defaultPeriod).mockReturnValue({
+      inicio: new Date('2026-07-01T00:00:00.000Z'),
+      fim: new Date('2026-07-31T00:00:00.000Z'),
+    });
+    vi.mocked(ReportService.build).mockResolvedValue(relatorioVazio);
+
+    const agent = await loginAgent(app);
+    const res = await agent.get('/reports');
+    expect(res.status).toBe(200);
+    expect(res.text).toContain('Nenhuma categoria com meta diária definida.');
   });
 });
