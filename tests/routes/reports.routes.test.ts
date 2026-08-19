@@ -14,11 +14,16 @@ const relatorioVazio = {
   distribuicao: [],
 };
 
+// Sentinela: o controller busca as atividades uma vez (fetchActivitiesInPeriod) e repassa o
+// mesmo array pra build/buildGoals — usado aqui só pra identidade nas asserções abaixo.
+const ATIVIDADES_MOCK: never[] = [];
+
 describe('Rotas de relatórios', () => {
   const app = createApp();
 
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.mocked(ReportService.fetchActivitiesInPeriod).mockResolvedValue(ATIVIDADES_MOCK);
     vi.mocked(ReportService.buildValueSeries).mockResolvedValue([]);
     vi.mocked(ReportService.buildGoals).mockResolvedValue([]);
   });
@@ -35,7 +40,7 @@ describe('Rotas de relatórios', () => {
     const res = await agent.get('/reports');
     expect(res.status).toBe(200);
     expect(ReportService.defaultPeriod).toHaveBeenCalled();
-    expect(ReportService.build).toHaveBeenCalledWith(TEST_USER.id, periodoPadrao);
+    expect(ReportService.build).toHaveBeenCalledWith(TEST_USER.id, periodoPadrao, ATIVIDADES_MOCK);
   });
 
   it('GET /reports?inicio=&fim= usa o período informado pelo usuário', async () => {
@@ -48,7 +53,7 @@ describe('Rotas de relatórios', () => {
     expect(ReportService.build).toHaveBeenCalledWith(TEST_USER.id, {
       inicio: new Date('2026-01-01T00:00:00.000Z'),
       fim: new Date('2026-01-31T00:00:00.000Z'),
-    });
+    }, ATIVIDADES_MOCK);
   });
 
   it('GET /reports exibe os totais retornados pelo serviço', async () => {

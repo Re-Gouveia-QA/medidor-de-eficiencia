@@ -33,6 +33,20 @@ describe('ReportService (BaseModel — escopo por usuário, RF12)', () => {
     });
   });
 
+  it('build usa atividades pré-buscadas quando fornecidas, sem consultar activity.findMany de novo', async () => {
+    const atividadesPreBuscadas = [
+      { data: new Date('2026-07-01T00:00:00.000Z'), duracaoMin: 60, categoryId: 'cat-1', category: { nome: 'Trabalho', cor: '#2563EB' } },
+    ] as never;
+
+    const relatorio = await ReportService.build(USER_ID, PERIODO, atividadesPreBuscadas);
+
+    expect(prisma.activity.findMany).not.toHaveBeenCalled();
+    expect(relatorio.totalMin).toBe(60);
+    expect(relatorio.distribuicao).toEqual([
+      { categoria: 'Trabalho', cor: '#2563EB', totalMin: 60, totalFormatado: '1h', percentual: 100 },
+    ]);
+  });
+
   describe('buildValueSeries (regra 9 — valor x tempo por categoria)', () => {
     it('inclui userId, filtro de período, valor não nulo e possuiValor no where, e ordena por categoria+horaInicio', async () => {
       vi.mocked(prisma.activity.findMany).mockResolvedValue([]);
@@ -89,13 +103,14 @@ describe('ReportService (BaseModel — escopo por usuário, RF12)', () => {
         expect(prisma.category.findMany).toHaveBeenCalledWith({
           where: { userId: USER_ID, tempoDesejadoMin: { not: null } },
           select: { id: true, nome: true, cor: true, tempoDesejadoMin: true },
+          orderBy: { nome: 'asc' },
         });
         expect(prisma.activity.findMany).not.toHaveBeenCalled();
       });
     });
 
     describe('Dado categorias do usuário com meta diária definida', () => {
-      it('Quando buildGoals é chamado, então busca atividades do período restritas às categorias com meta', async () => {
+      it('Quando buildGoals é chamado sem atividades pré-buscadas, então busca as atividades do período (mesma consulta usada por build) e filtra por categoria em memória', async () => {
         vi.mocked(prisma.category.findMany).mockResolvedValue([
           { id: 'cat-estudo', nome: 'Estudo', cor: '#0D9488', tempoDesejadoMin: 60 },
         ] as never);
@@ -108,10 +123,36 @@ describe('ReportService (BaseModel — escopo por usuário, RF12)', () => {
             userId: USER_ID,
             data: { gte: PERIODO.inicio, lte: PERIODO.fim },
             horaFim: { not: null },
-            categoryId: { in: ['cat-estudo'] },
           },
-          select: { data: true, duracaoMin: true, categoryId: true },
+          select: { data: true, duracaoMin: true, categoryId: true, category: { select: { nome: true, cor: true } } },
         });
+      });
+
+      it('Quando atividades já buscadas são passadas, então não consulta activity.findMany de novo', async () => {
+        vi.mocked(prisma.category.findMany).mockResolvedValue([
+          { id: 'cat-estudo', nome: 'Estudo', cor: '#0D9488', tempoDesejadoMin: 60 },
+        ] as never);
+        const atividadesPreBuscadas = [
+          { data: new Date('2026-07-01T00:00:00.000Z'), duracaoMin: 90, categoryId: 'cat-estudo', category: { nome: 'Estudo', cor: '#0D9488' } },
+          // Atividade de outra categoria (sem meta) — não deve contar pro progresso de "Estudo".
+          { data: new Date('2026-07-01T00:00:00.000Z'), duracaoMin: 200, categoryId: 'cat-sem-meta', category: { nome: 'Outra', cor: '#000' } },
+        ] as never;
+
+        const progresso = await ReportService.buildGoals(USER_ID, PERIODO, atividadesPreBuscadas);
+
+        expect(prisma.activity.findMany).not.toHaveBeenCalled();
+        expect(progresso).toEqual([
+          {
+            categoryId: 'cat-estudo',
+            categoria: 'Estudo',
+            cor: '#0D9488',
+            metaMin: 60,
+            metaFormatada: '1h',
+            diasComMeta: 1,
+            diasNoPeriodo: 31,
+            percentual: Math.round((1 / 31) * 100),
+          },
+        ]);
       });
 
       it('Quando a duração diária somada atinge a meta em alguns dias e não em outros, então conta só os dias que bateram a meta', async () => {

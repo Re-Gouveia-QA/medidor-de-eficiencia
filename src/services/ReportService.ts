@@ -48,6 +48,13 @@ export interface CategoryGoalProgress {
   percentual: number;
 }
 
+interface ActivityInPeriod {
+  data: Date;
+  duracaoMin: number | null;
+  categoryId: string;
+  category: { nome: string; cor: string };
+}
+
 /**
  * Service de relatórios (RF09/RF10) — mantém o ReportController fino.
  * Regra 9: "dia registrado" = dia com ao menos uma atividade.
@@ -61,13 +68,21 @@ class ReportServiceImpl extends BaseModel {
     return { inicio, fim };
   }
 
-  async build(userId: string, { inicio, fim }: ReportPeriod): Promise<EfficiencyReport> {
+  /** Atividades concluídas do período (regra 8) — usado por `build` e `buildGoals`, que agregam
+   * o mesmo conjunto de linhas de formas diferentes; buscar uma vez e reaproveitar evita duas
+   * consultas idênticas à tabela de atividades na mesma requisição de `/reports`. */
+  async fetchActivitiesInPeriod(userId: string, { inicio, fim }: ReportPeriod): Promise<ActivityInPeriod[]> {
     // horaFim: { not: null } exclui atividades ainda em andamento — duração desconhecida até
     // finalizar, não deveriam contar nem pra "dia registrado" nem pros totais/distribuição.
-    const atividades = await this.db.activity.findMany({
+    return this.db.activity.findMany({
       where: this.scopeToUser(userId, { data: { gte: inicio, lte: fim }, horaFim: { not: null } }),
-      select: { data: true, duracaoMin: true, category: { select: { nome: true, cor: true } } },
+      select: { data: true, duracaoMin: true, categoryId: true, category: { select: { nome: true, cor: true } } },
     });
+  }
+
+  async build(userId: string, periodo: ReportPeriod, atividadesPreBuscadas?: ActivityInPeriod[]): Promise<EfficiencyReport> {
+    const { inicio, fim } = periodo;
+    const atividades = atividadesPreBuscadas ?? (await this.fetchActivitiesInPeriod(userId, periodo));
 
     const diasComRegistro = new Set(atividades.map((a) => a.data.toISOString().slice(0, 10)));
     const diasNoPeriodo = Math.floor((fim.getTime() - inicio.getTime()) / 86_400_000) + 1;
@@ -142,34 +157,42 @@ class ReportServiceImpl extends BaseModel {
    * categoria, duração total ≥ meta. Denominador é `diasNoPeriodo` (mesma base do card "dias
    * registrados" de `build`), não os dias em que a categoria teve atividade, pra manter a leitura
    * consistente com o resto da página. */
-  async buildGoals(userId: string, { inicio, fim }: ReportPeriod): Promise<CategoryGoalProgress[]> {
+  async buildGoals(
+    userId: string,
+    periodo: ReportPeriod,
+    atividadesPreBuscadas?: ActivityInPeriod[],
+  ): Promise<CategoryGoalProgress[]> {
+    const { inicio, fim } = periodo;
     const categorias = await this.db.category.findMany({
       where: this.scopeToUser(userId, { tempoDesejadoMin: { not: null } }),
       select: { id: true, nome: true, cor: true, tempoDesejadoMin: true },
+      // Ordem estável (mesma convenção de CategoryModel.findAll) — sem isso, o desempate de
+      // `percentual` no sort abaixo herdaria a ordem não garantida com que o Postgres devolve as
+      // linhas, podendo reordenar a lista entre uma requisição e outra sem nada ter mudado.
+      orderBy: { nome: 'asc' },
     });
     if (categorias.length === 0) return [];
 
     const diasNoPeriodo = Math.floor((fim.getTime() - inicio.getTime()) / 86_400_000) + 1;
+    const atividades = atividadesPreBuscadas ?? (await this.fetchActivitiesInPeriod(userId, periodo));
 
-    const atividades = await this.db.activity.findMany({
-      where: this.scopeToUser(userId, {
-        data: { gte: inicio, lte: fim },
-        horaFim: { not: null },
-        categoryId: { in: categorias.map((c) => c.id) },
-      }),
-      select: { data: true, duracaoMin: true, categoryId: true },
-    });
+    // Uma única passada pelas atividades (em vez de uma por categoria) — agrupa direto por
+    // categoria e dia.
+    const metaCategoryIds = new Set(categorias.map((c) => c.id));
+    const minPorCategoriaEDia = new Map<string, Map<string, number>>();
+    for (const a of atividades) {
+      if (!metaCategoryIds.has(a.categoryId)) continue;
+      const porDia = minPorCategoriaEDia.get(a.categoryId) ?? new Map<string, number>();
+      const dia = a.data.toISOString().slice(0, 10);
+      porDia.set(dia, (porDia.get(dia) ?? 0) + (a.duracaoMin ?? 0));
+      minPorCategoriaEDia.set(a.categoryId, porDia);
+    }
 
     const progresso: CategoryGoalProgress[] = categorias.map((cat) => {
-      const minPorDia = new Map<string, number>();
-      for (const a of atividades) {
-        if (a.categoryId !== cat.id) continue;
-        const dia = a.data.toISOString().slice(0, 10);
-        minPorDia.set(dia, (minPorDia.get(dia) ?? 0) + (a.duracaoMin ?? 0));
-      }
+      const minPorDia = minPorCategoriaEDia.get(cat.id);
       // tempoDesejadoMin não é nulo aqui (filtrado no where acima).
       const metaMin = cat.tempoDesejadoMin!;
-      const diasComMeta = [...minPorDia.values()].filter((min) => min >= metaMin).length;
+      const diasComMeta = minPorDia ? [...minPorDia.values()].filter((min) => min >= metaMin).length : 0;
       return {
         categoryId: cat.id,
         categoria: cat.nome,
