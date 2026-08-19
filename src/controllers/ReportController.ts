@@ -36,10 +36,13 @@ class ReportControllerImpl extends BaseController {
       periodo = ReportService.defaultPeriod();
     }
 
+    // build e buildGoals agregam o mesmo conjunto de atividades do período de formas diferentes —
+    // buscar uma vez e passar pros dois evita duas consultas idênticas à tabela de atividades.
+    const atividades = await ReportService.fetchActivitiesInPeriod(req.currentUser!.id, periodo);
     const [relatorio, seriesPorCategoria, metas] = await Promise.all([
-      ReportService.build(req.currentUser!.id, periodo),
+      ReportService.build(req.currentUser!.id, periodo, atividades),
       ReportService.buildValueSeries(req.currentUser!.id, periodo),
-      ReportService.buildGoals(req.currentUser!.id, periodo),
+      ReportService.buildGoals(req.currentUser!.id, periodo, atividades),
     ]);
 
     // Eixo X proporcional ao instante real (horaInicio), não ao índice do ponto — mais fiel ao
