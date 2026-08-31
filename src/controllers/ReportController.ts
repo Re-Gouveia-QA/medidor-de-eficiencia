@@ -36,9 +36,10 @@ class ReportControllerImpl extends BaseController {
       periodo = ReportService.defaultPeriod();
     }
 
-    const [relatorio, seriesPorCategoria] = await Promise.all([
+    const [relatorio, seriesPorCategoria, metas] = await Promise.all([
       ReportService.build(req.currentUser!.id, periodo),
       ReportService.buildValueSeries(req.currentUser!.id, periodo),
+      ReportService.buildGoals(req.currentUser!.id, periodo),
     ]);
 
     // Eixo X proporcional ao instante real (horaInicio), não ao índice do ponto — mais fiel ao
@@ -51,6 +52,7 @@ class ReportControllerImpl extends BaseController {
     res.render('reports/index', {
       title: res.locals.t('reports.index.pageTitle'),
       relatorio,
+      metas,
       seriesValor,
       formatNumber: (v: Parameters<typeof formatNumber>[0]) => formatNumber(v, req.userLocale),
       formatTime: (d: Date) => formatTimeInZone(d, req.userTimezone, req.userLocale),
